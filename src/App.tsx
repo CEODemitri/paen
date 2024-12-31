@@ -5,7 +5,26 @@ import { Button } from "@/components/ui/button";
 
 function App() {
   // script things here
-   const places = ['Mars', 'Jupiter', 'Venus'];
+   const places = [
+     {
+       id: 0,
+       name: "Mars",
+       href: "/",
+     },
+     {
+       id: 0,
+       name: "Jupiter",
+       href: "/",
+     },
+     {
+       id: 0,
+       name: "Venus",
+       href: "/",
+     },
+   ];
+
+   const links = places.map(place => <li><a href={place.href} className="text-blue-600">{place.name}</a></li>);
+
   
     return (
     <>
@@ -25,7 +44,8 @@ function App() {
           </section>
         </article>
         <div className="image w-full h-60 bg-black rounded-md"></div>
-                <div className="flex w-full mx-auto max-w-md">
+        <ul className="flex justify-center gap-8">{links}</ul>
+        <div className="flex w-full mx-auto max-w-md">
           <Input type="text" placeholder="topic" />
           <Button type="submit">Search</Button>
         </div>

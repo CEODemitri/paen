@@ -23,7 +23,7 @@ function App() {
      },
    ];
 
-   const links = places.map(place => <li><a href={place.href} className="text-blue-600">{place.name}</a></li>);
+   const links = places.map(place => <li><a href={place.href} className="text-2xl hover:underline">{place.name}</a></li>);
 
   
     return (
@@ -88,6 +88,8 @@ function App() {
             </section>
           </div>
         </article>
+        {/* i need to add this anchor to the bottom of the article above and stretch it's width to screen */}
+        <a href="/" className="w-screen bg-red-600">See More</a>
       </div>
     </>
   );

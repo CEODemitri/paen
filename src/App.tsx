@@ -30,10 +30,10 @@ function App() {
     <>
       <div className="flex flex-col gap-20 mb-40">
         <article>
-          <Badge variant="outline" className="my-8">Twinkle Twinkle little staer</Badge>
+          <Badge variant="outline" className="my-8">Twinkle Twinkle Little Staer</Badge>
           <section className="flex justify-between">
             <h1 className="text-4xl font-extrabold lg:text-5xl">
-              Explore the Bigger Earth
+              Explore our Bigger Earth
             </h1>
             <p className="w-2/5 text-justify">
               Lorem ipsum dolor sit, amet consectetur adipisicing elit. Animi
@@ -43,8 +43,10 @@ function App() {
             </p>
           </section>
         </article>
-        <div className="image w-full h-60 bg-black rounded-md"></div>
-        <ul className="flex justify-center gap-8">{links}</ul>
+        <div className="image w-full h-60 bg-black rounded-md">
+          <img src="https://images.unsplash.com/photo-1444703686981-a3abbc4d4fe3?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Greg Rakozy" className="h-60"/>
+        </div>
+        <ul className="flex justify-center gap-24 uppercase text-[hsl(0,0%,17%)]">{links}</ul>
         <div className="flex w-full mx-auto max-w-md">
           <Input type="text" placeholder="topic" />
           <Button type="submit">Search</Button>

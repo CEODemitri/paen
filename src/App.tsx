@@ -2,6 +2,8 @@ import "./App.css";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import Footer from "./components/ui/Footer";
+import AppBar from "./components/ui/AppBar";
 
 function App() {
   // script things here
@@ -28,6 +30,10 @@ function App() {
   
     return (
     <>
+      <div className="nav my-20">
+        <AppBar />
+      </div>
+
       <div className="flex flex-col gap-20 mb-40">
         <article>
           <Badge variant="outline" className="my-8">Twinkle Twinkle Little Staer</Badge>
@@ -53,13 +59,14 @@ function App() {
         </div>
       </div>
 
-      {/* services */}
+      {/* services - Particular Places */}
       <div>
         <article className="mb-20">
           <h2 className="m-8 text-3xl tracking-wider uppercase font-bold underline">Particular Places</h2>
           <div className="h-[500px] grid grid-cols-12 grid-rows-12 gap-12">
             <section className="col-start-1 col-span-3 row-start-2 row-span-11 flex flex-col gap-8">
-              <div className="img bg-black w-full h-1/2"></div>
+              <div className="img bg-black w-full h-1/3 rounded-md">
+                <img src="https://images.unsplash.com/photo-1739609439850-2eace0b03218?q=80&w=2671&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Image by Benaja Germann from Unsplash" className="w-full rounded-sm"/></div>
               <div className="img bg-black w-full h-1/2"></div>
             </section>
 
@@ -91,8 +98,15 @@ function App() {
           </div>
         </article>
         {/* i need to add this anchor to the bottom of the article above and stretch it's width to screen */}
-        <a href="/" className="w-screen bg-red-600">See More</a>
+        <a href="/" className="w-full bg-red-600 text-white text-center py-4 mt-6 block rounded-lg shadow-lg hover:bg-red-700 transition-all duration-300">
+    See More
+  </a>
+
+        
       </div>
+
+      {/* footer */}
+      <Footer/>
     </>
   );
 }

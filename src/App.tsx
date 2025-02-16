@@ -30,16 +30,18 @@ function App() {
   
     return (
     <>
+      {/* navigation */}
       <div className="nav my-20">
         <AppBar />
       </div>
 
+      {/* hero section */}
       <div className="flex flex-col gap-20 mb-40">
         <article>
-          <Badge variant="outline" className="my-8">Twinkle Twinkle Little Staer</Badge>
-          <section className="flex justify-between">
-            <h1 className="text-4xl font-extrabold lg:text-5xl">
-              Explore our Bigger Earth
+          <Badge variant="outline" className="my-8 px-3">Twinkle Twinkle Little Staer</Badge>
+          <section className="flex justify-between my-16">
+            <h1 className="text-4xl font-extrabold lg:text-5xl w-1/2 text-left">
+              Get Away & <span className="text-yellow-600 font-serif uppercase">Explore</span> our Bigger Earth
             </h1>
             <p className="w-2/5 text-justify">
               Lorem ipsum dolor sit, amet consectetur adipisicing elit. Animi
@@ -50,7 +52,7 @@ function App() {
           </section>
         </article>
         <div className="image w-full h-60 bg-black rounded-md">
-          <img src="https://images.unsplash.com/photo-1444703686981-a3abbc4d4fe3?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Greg Rakozy" className="h-60"/>
+          <img src="https://images.unsplash.com/photo-1444703686981-a3abbc4d4fe3?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Greg Rakozy" className="h-60 w-full"/>
         </div>
         <ul className="flex justify-center gap-24 uppercase text-[hsl(0,0%,17%)]">{links}</ul>
         <div className="flex w-full mx-auto max-w-md">

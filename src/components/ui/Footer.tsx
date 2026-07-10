@@ -1,219 +1,103 @@
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Container from '@mui/material/Container';
-import IconButton from '@mui/material/IconButton';
-import InputLabel from '@mui/material/InputLabel';
-import Link from '@mui/material/Link';
-import Stack from '@mui/material/Stack';
-import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
-import FacebookIcon from '@mui/icons-material/GitHub';
-import LinkedInIcon from '@mui/icons-material/LinkedIn';
-import TwitterIcon from '@mui/icons-material/X';
-import SitemarkIcon from './SitemarkIcon';
-
-function Copyright() {
-  return (
-    <Typography variant="body2" sx={{ color: 'text.secondary', mt: 1 }}>
-      {'Copyright © '}
-      <Link color="text.secondary" href="https://mui.com/">
-        Sitemark
-      </Link>
-      &nbsp;
-      {new Date().getFullYear()}
-    </Typography>
-  );
-}
+import React, { useState } from "react";
+import { ShieldCheck } from "lucide-react";
 
 export default function Footer() {
+  const [email, setEmail] = useState("");
+  const [subscribed, setSubscribed] = useState(false);
+
+  const handleSubscribe = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) return;
+    setSubscribed(true);
+    setEmail("");
+    setTimeout(() => setSubscribed(false), 5000);
+  };
+
   return (
-    <Container
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        gap: { xs: 4, sm: 8 },
-        py: { xs: 8, sm: 10 },
-        textAlign: { sm: 'center', md: 'left' },
-      }}
-    >
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: { xs: 'column', sm: 'row' },
-          width: '100%',
-          justifyContent: 'space-between',
-        }}
-      >
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 4,
-            minWidth: { xs: '100%', sm: '60%' },
-          }}
-        >
-          <Box sx={{ width: { xs: '100%', sm: '60%' } }}>
-            <SitemarkIcon />
-            <Typography variant="body2" gutterBottom sx={{ fontWeight: 600, mt: 2 }}>
-              Join the newsletter
-            </Typography>
-            <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2 }}>
-              Subscribe for weekly updates. No spams ever!
-            </Typography>
-            <InputLabel htmlFor="email-newsletter">Email</InputLabel>
-            <Stack direction="row" spacing={1} useFlexGap>
-              <TextField
-                id="email-newsletter"
-                hiddenLabel
-                size="small"
-                variant="outlined"
-                fullWidth
-                aria-label="Enter your email address"
-                placeholder="Your email address"
-                slotProps={{
-                  htmlInput: {
-                    autoComplete: 'off',
-                    'aria-label': 'Enter your email address',
-                  },
-                }}
-                sx={{ width: '250px' }}
-              />
-              <Button
-                variant="contained"
-                color="primary"
-                size="small"
-                sx={{ flexShrink: 0 }}
-              >
-                Subscribe
-              </Button>
-            </Stack>
-          </Box>
-        </Box>
-        <Box
-          sx={{
-            display: { xs: 'none', sm: 'flex' },
-            flexDirection: 'column',
-            gap: 1,
-          }}
-        >
-          <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
-            Product
-          </Typography>
-          <Link color="text.secondary" variant="body2" href="#">
-            Features
-          </Link>
-          <Link color="text.secondary" variant="body2" href="#">
-            Testimonials
-          </Link>
-          <Link color="text.secondary" variant="body2" href="#">
-            Highlights
-          </Link>
-          <Link color="text.secondary" variant="body2" href="#">
-            Pricing
-          </Link>
-          <Link color="text.secondary" variant="body2" href="#">
-            FAQs
-          </Link>
-        </Box>
-        <Box
-          sx={{
-            display: { xs: 'none', sm: 'flex' },
-            flexDirection: 'column',
-            gap: 1,
-          }}
-        >
-          <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
-            Company
-          </Typography>
-          <Link color="text.secondary" variant="body2" href="#">
-            About us
-          </Link>
-          <Link color="text.secondary" variant="body2" href="#">
-            Careers
-          </Link>
-          <Link color="text.secondary" variant="body2" href="#">
-            Press
-          </Link>
-        </Box>
-        <Box
-          sx={{
-            display: { xs: 'none', sm: 'flex' },
-            flexDirection: 'column',
-            gap: 1,
-          }}
-        >
-          <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
-            Legal
-          </Typography>
-          <Link color="text.secondary" variant="body2" href="#">
-            Terms
-          </Link>
-          <Link color="text.secondary" variant="body2" href="#">
-            Privacy
-          </Link>
-          <Link color="text.secondary" variant="body2" href="#">
-            Contact
-          </Link>
-        </Box>
-      </Box>
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          pt: { xs: 4, sm: 8 },
-          width: '100%',
-          borderTop: '1px solid',
-          borderColor: 'divider',
-        }}
-      >
-        <div>
-          <Link color="text.secondary" variant="body2" href="#">
-            Privacy Policy
-          </Link>
-          <Typography sx={{ display: 'inline', mx: 0.5, opacity: 0.5 }}>
-            &nbsp;•&nbsp;
-          </Typography>
-          <Link color="text.secondary" variant="body2" href="#">
-            Terms of Service
-          </Link>
-          <Copyright />
+    <footer className="bg-[#0a100c] text-zinc-400 border-t border-[#1a2d21]/30 py-16 md:py-24 transition-colors duration-500" id="editorial-footer">
+      <div className="max-w-7xl mx-auto px-5 grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-14">
+        {/* Brand Block */}
+        <div className="md:col-span-4 flex flex-col gap-4">
+          <div className="flex items-center gap-2 text-white">
+            <span className="text-xl font-semibold font-serif tracking-tight text-white flex items-center gap-2">
+              PAEN NATURA
+              <span className="w-1.5 h-1.5 bg-emerald-500 block" />
+            </span>
+          </div>
+          <p className="text-xs text-zinc-500 leading-relaxed text-justify font-sans font-light">
+            Paen Natura is an independent global press body dedicated to the objective monitoring of ecological conservation, biological systems synthesis, planetary climatology, and indigenous environmental culture. Supported by a world-wide network of naturalists and botanical sensor telemetry.
+          </p>
+          <div className="text-[9px] font-mono uppercase tracking-widest text-zinc-600 flex items-center gap-1.5 mt-4">
+            <ShieldCheck className="w-4 h-4 text-emerald-500" /> DECRYPTION KEY COGNITIVE ACTIVE
+          </div>
         </div>
-        <Stack
-          direction="row"
-          spacing={1}
-          useFlexGap
-          sx={{ justifyContent: 'left', color: 'text.secondary' }}
-        >
-          <IconButton
-            color="inherit"
-            size="small"
-            href="https://github.com/mui"
-            aria-label="GitHub"
-            sx={{ alignSelf: 'center' }}
-          >
-            <FacebookIcon />
-          </IconButton>
-          <IconButton
-            color="inherit"
-            size="small"
-            href="https://x.com/MaterialUI"
-            aria-label="X"
-            sx={{ alignSelf: 'center' }}
-          >
-            <TwitterIcon />
-          </IconButton>
-          <IconButton
-            color="inherit"
-            size="small"
-            href="https://www.linkedin.com/company/mui/"
-            aria-label="LinkedIn"
-            sx={{ alignSelf: 'center' }}
-          >
-            <LinkedInIcon />
-          </IconButton>
-        </Stack>
-      </Box>
-    </Container>
+
+        {/* Newsletter subscription */}
+        <div className="md:col-span-5 flex flex-col gap-4">
+          <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-emerald-500 font-bold">THE DAILY BULLETIN</span>
+          <h4 className="font-serif font-medium text-xl text-white">Subscribe to the Peer-Reviewed Ledger</h4>
+          <p className="text-xs text-zinc-500 leading-relaxed font-sans font-light">
+            Receive major ecological updates, planetary science briefs, and botanical disclosures directly to your terminal. Delivered weekly.
+          </p>
+
+          <form onSubmit={handleSubscribe} className="flex gap-2 max-w-md mt-2 border-b border-emerald-950 pb-2">
+            <input
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="OPERATOR@DOMAIN.COM"
+              className="bg-transparent border-none text-xs text-white placeholder-zinc-700 focus:outline-none flex-1 font-mono uppercase tracking-widest"
+            />
+            <button
+              type="submit"
+              className="bg-emerald-600 text-white px-5 py-2 text-[10px] uppercase tracking-widest font-mono font-bold hover:bg-emerald-700 transition-colors shrink-0"
+            >
+              {subscribed ? "ACTIVE" : "SUBSCRIBE"}
+            </button>
+          </form>
+          {subscribed && (
+            <span className="text-[9px] font-mono text-emerald-500 animate-pulse mt-2 block">
+              ✓ Address registered. Your digital credentials have been deployed.
+            </span>
+          )}
+        </div>
+
+        {/* Links Grid */}
+        <div className="md:col-span-3 grid grid-cols-2 gap-6 text-xs font-sans">
+          <div className="flex flex-col gap-2.5">
+            <span className="font-mono text-[9px] text-zinc-600 uppercase tracking-widest font-bold">CHANNELS</span>
+            <a href="#" className="hover:text-emerald-500 transition-colors text-zinc-500 text-xs font-light">Eco-Tech Ledger</a>
+            <a href="#" className="hover:text-emerald-500 transition-colors text-zinc-500 text-xs font-light">Planetary Science</a>
+            <a href="#" className="hover:text-emerald-500 transition-colors text-zinc-500 text-xs font-light">Earth Polity</a>
+            <a href="#" className="hover:text-emerald-500 transition-colors text-zinc-500 text-xs font-light">Ecological Culture</a>
+            <a href="#" className="hover:text-emerald-500 transition-colors text-zinc-500 text-xs font-light">Green Finance</a>
+          </div>
+          <div className="flex flex-col gap-2.5">
+            <span className="font-mono text-[9px] text-zinc-600 uppercase tracking-widest font-bold">RESOURCES</span>
+            <a href="#" className="hover:text-emerald-500 transition-colors text-zinc-500 text-xs font-light">Press Credentials</a>
+            <a href="#" className="hover:text-emerald-500 transition-colors text-zinc-500 text-xs font-light">Acoustic Feeds</a>
+            <a href="#" className="hover:text-emerald-500 transition-colors text-zinc-500 text-xs font-light">Satellite Maps</a>
+            <a href="#" className="hover:text-emerald-500 transition-colors text-zinc-500 text-xs font-light">Source Crypt</a>
+            <a href="#" className="hover:text-emerald-500 transition-colors text-zinc-500 text-xs font-light">Privacy Charter</a>
+          </div>
+        </div>
+      </div>
+
+      {/* Sub-footer metadata */}
+      <div className="max-w-7xl mx-auto px-5 border-t border-zinc-900 mt-16 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-[9px] font-mono uppercase tracking-[0.2em] text-zinc-600">
+        <div className="text-center md:text-left font-light">
+          Copyright © {new Date().getFullYear()} Paen Natura. All rights reserved under the Global Press Accord.
+        </div>
+        <div className="flex flex-wrap gap-4 justify-center">
+          <a href="#" className="hover:text-amber-500 transition-colors">Fact-Check Charter</a>
+          <span>•</span>
+          <a href="#" className="hover:text-amber-500 transition-colors">Objectivity Metrics</a>
+          <span>•</span>
+          <a href="#" className="hover:text-amber-500 transition-colors">Operator Panel</a>
+        </div>
+      </div>
+    </footer>
   );
 }
+export { Footer };

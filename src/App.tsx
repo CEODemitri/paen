@@ -184,7 +184,7 @@ function App() {
         </main>
       ) : (
         /* Main Newspaper Frontpage layout */
-        <main className="flex-grow max-w-7xl mx-auto px-5 py-12 md:py-16 w-full">
+        <main className="flex-grow w-full px-6 md:px-10 xl:px-16 py-12 md:py-16">
           {/* Frontpage Grid Column Layout */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
             

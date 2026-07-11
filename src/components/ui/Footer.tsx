@@ -15,7 +15,7 @@ export default function Footer() {
 
   return (
     <footer className="bg-[#0a100c] text-zinc-400 border-t border-[#1a2d21]/30 py-16 md:py-24 transition-colors duration-500" id="editorial-footer">
-      <div className="max-w-7xl mx-auto px-5 grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-14">
+      <div className="w-full px-6 md:px-10 xl:px-16 grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-14">
         {/* Brand Block */}
         <div className="md:col-span-4 flex flex-col gap-4">
           <div className="flex items-center gap-2 text-white">
@@ -85,7 +85,7 @@ export default function Footer() {
       </div>
 
       {/* Sub-footer metadata */}
-      <div className="max-w-7xl mx-auto px-5 border-t border-zinc-900 mt-16 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-[9px] font-mono uppercase tracking-[0.2em] text-zinc-600">
+      <div className="w-full px-6 md:px-10 xl:px-16 border-t border-zinc-900 mt-16 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-[9px] font-mono uppercase tracking-[0.2em] text-zinc-600">
         <div className="text-center md:text-left font-light">
           Copyright © {new Date().getFullYear()} Paen Natura. All rights reserved under the Global Press Accord.
         </div>

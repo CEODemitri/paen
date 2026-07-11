@@ -130,7 +130,7 @@ export default function EditorialHeader({
       </div>
 
       {/* Main Classical Masthead (Washington Post & National Geographic Heritage aesthetic) */}
-      <div className="max-w-7xl mx-auto px-4 py-10 md:py-16 text-center flex flex-col items-center justify-between relative select-none">
+      <div className="w-full px-6 md:px-10 xl:px-16 py-10 md:py-16 text-center flex flex-col items-center justify-between relative select-none">
         <div className="text-[10px] md:text-[11px] font-mono uppercase tracking-[0.45em] text-zinc-500 dark:text-zinc-400 mb-4 flex items-center gap-3">
           <span>AMAZONIA</span> ✦ <span>GALAPAGOS</span> ✦ <span>MADAGASCAR</span> ✦ <span>SIBERIA</span>
         </div>
@@ -193,7 +193,7 @@ export default function EditorialHeader({
 
       {/* BBC/NatGeo Styled Category Navigation Bar */}
       <nav className="bg-zinc-100/50 dark:bg-zinc-950/40 border-t border-b border-zinc-250 dark:border-zinc-850/80 transition-colors duration-500">
-        <div className="max-w-7xl mx-auto px-4">
+        <div className="w-full px-6 md:px-10 xl:px-16">
           <ul className="flex justify-start md:justify-center overflow-x-auto whitespace-nowrap scrollbar-none py-1 gap-2 md:gap-5 scroll-smooth">
             {categories.map((cat) => {
               const isActive = currentCategory === cat.value;

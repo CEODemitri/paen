@@ -1,0 +1,96 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+  line-height: 1.6;
+  font-weight: 400;
+  color-scheme: light dark;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom organic sleek scrollbars */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(180,160,130,0.3); border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(180,160,130,0.6); }
+
+/* Beautiful custom content selection */
+::selection { background-color: rgba(217,119,6,0.15); color: inherit; }
+
+@layer base {
+  :root {
+    --background: 55 18% 95%;
+    --foreground: 145 18% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 145 18% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 145 18% 11%;
+    --primary: 145 35% 15%;
+    --primary-foreground: 55 18% 95%;
+    --secondary: 60 12% 90%;
+    --secondary-foreground: 145 35% 15%;
+    --muted: 60 8% 86%;
+    --muted-foreground: 145 10% 38%;
+    --accent: 38 65% 42%;
+    --accent-foreground: 145 18% 11%;
+    --destructive: 0 75% 55%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 55 12% 84%;
+    --input: 55 12% 84%;
+    --ring: 145 35% 20%;
+    --radius: 0rem;
+  }
+  .dark {
+    --background: 145 35% 5%;
+    --foreground: 60 15% 90%;
+    --card: 145 35% 7%;
+    --card-foreground: 60 15% 90%;
+    --popover: 145 35% 7%;
+    --popover-foreground: 60 15% 90%;
+    --primary: 60 15% 90%;
+    --primary-foreground: 145 35% 5%;
+    --secondary: 145 20% 12%;
+    --secondary-foreground: 60 15% 90%;
+    --muted: 145 20% 12%;
+    --muted-foreground: 145 10% 65%;
+    --accent: 40 60% 50%;
+    --accent-foreground: 145 35% 5%;
+    --border: 145 20% 12%;
+    --input: 145 20% 12%;
+    --ring: 145 45% 45%;
+  }
+}
+
+@layer base {
+  * { @apply border-border; }
+  body { @apply bg-background text-foreground; }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Cormorant Garamond', 'Playfair Display', serif;
+  }
+}
+
+.font-serif { font-family: 'Cormorant Garamond', 'Playfair Display', serif !important; }
+.font-sans  { font-family: 'Plus Jakarta Sans', 'Inter', sans-serif !important; }
+.font-mono  { font-family: 'JetBrains Mono', 'Fira Code', monospace !important; }
+
+.editorial-ornament { position: relative; text-align: center; }
+.editorial-ornament::before,
+.editorial-ornament::after {
+  content: "";
+  display: inline-block;
+  width: 50px;
+  height: 1px;
+  background: currentColor;
+  vertical-align: middle;
+  opacity: 0.3;
+}
+.editorial-ornament::before { margin-right: 15px; }
+.editorial-ornament::after  { margin-left: 15px; }
+
+@keyframes spin-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+.animate-spin-slow { animation: spin-slow 35s linear infinite; }

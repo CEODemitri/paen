@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import { Article, Comment, ReadingTheme, TextSize } from "@/types";
-import { ArrowLeft, BookMarked, MessageSquare, CheckCircle2, Calendar, Clock, Share2, Award, Heart, Wind, Pause, ChevronsDown } from "lucide-react";
+import { ArrowLeft, BookMarked, MessageSquare, CheckCircle2, Calendar, Clock, Share2, Award, Heart, Wind, Pause, ChevronsDown, Zap, Twitter, Linkedin, Mail, Facebook } from "lucide-react";
 
 const FIELD_BRIEFS: Record<string, string[]> = {
   "art-1": [
@@ -182,6 +182,8 @@ interface ArticleDetailProps {
   readingTheme: ReadingTheme;
   textSize: TextSize;
   onLike?: () => void;
+  relatedArticles?: Article[];
+  onArticleSelect?: (article: Article) => void;
 }
 
 export default function ArticleDetail({
@@ -194,16 +196,51 @@ export default function ArticleDetail({
   readingTheme,
   textSize,
   onLike,
+  relatedArticles = [],
+  onArticleSelect,
 }: ArticleDetailProps) {
   const [commentText, setCommentText] = useState("");
   const [liked, setLiked] = useState(false);
-  const [likesCount, setLikesCount] = useState(article.likes || 128);
-
+  const [likesCount, setLikesCount] = useState(article.likes);
   const [rhythmActive, setRhythmActive] = useState(false);
-  const [breathPhase, setBreathPhase] = useState("Inhale");
   const [driftActive, setDriftActive] = useState(false);
   const [driftSpeed, setDriftSpeed] = useState<"slow" | "medium" | "fast">("medium");
+  const [breathPhase, setBreathPhase] = useState("Inhale");
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const [timeRemaining, setTimeRemaining] = useState(article.readTime);
+  const [shareMenuOpen, setShareMenuOpen] = useState(false);
   const [briefExpanded, setBriefExpanded] = useState(false);
+  const articleContentRef = useRef<HTMLDivElement>(null);
+  const shareMenuRef = useRef<HTMLDivElement>(null);
+
+  // Close share menu on click outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (shareMenuRef.current && !shareMenuRef.current.contains(event.target as Node)) {
+        setShareMenuOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // Track scroll progress and update remaining time
+  useEffect(() => {
+    const handleScroll = () => {
+      const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const scrolledHeight = window.scrollY;
+      const progress = totalHeight > 0 ? (scrolledHeight / totalHeight) * 100 : 0;
+      setScrollProgress(progress);
+      
+      // Calculate remaining read time based on scroll position
+      const readingTimeNum = parseInt(article.readTime) || 5;
+      const remaining = Math.max(0, Math.ceil((1 - progress / 100) * readingTimeNum));
+      setTimeRemaining(`${remaining} min`);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [article.readTime]);
 
   useEffect(() => {
     if (!rhythmActive) return;
@@ -292,10 +329,21 @@ export default function ArticleDetail({
     xl: "text-xl md:text-2xl leading-relaxed font-light",
   };
 
+  // Calculate word count
+  const wordCount = article.content.split(/\s+/).length;
+
   return (
     <div className={`min-h-screen transition-all duration-500 pb-16 ${themeClasses[readingTheme]}`} id="article-detail-container">
+      {/* Reading Progress Bar */}
+      <div className="fixed top-0 left-0 right-0 h-0.5 bg-zinc-200 dark:bg-zinc-800 z-50">
+        <div 
+          className="h-full bg-gradient-to-r from-emerald-500 to-emerald-600 transition-all duration-300"
+          style={{ width: `${scrollProgress}%` }}
+        />
+      </div>
+
       {/* Top action bar */}
-      <div className="sticky top-0 z-40 backdrop-blur-md bg-opacity-95 py-4 border-b border-inherit px-4 transition-colors">
+      <div className="sticky top-0 z-40 backdrop-blur-md bg-opacity-95 py-4 border-b border-inherit px-4 transition-colors pt-6">
         <div className="max-w-4xl mx-auto flex justify-between items-center">
           <button
             id="detail-back-button"
@@ -342,24 +390,75 @@ export default function ArticleDetail({
               <BookMarked className={`w-4 h-4 ${isBookmarked ? "fill-emerald-600 text-emerald-600" : ""}`} />
               <span className="hidden sm:inline">{isBookmarked ? "Saved" : "Save"}</span>
             </button>
-            <button
-              id="detail-share-button"
-              onClick={() => {
-                navigator.clipboard.writeText(window.location.href);
-                alert("Article Link copied to clipboard!");
-              }}
-              className="flex items-center gap-1.5 px-2 py-1 text-xs font-mono uppercase tracking-wider hover:text-emerald-600 dark:hover:text-emerald-400 transition-all"
-              title="Copy URL link"
-            >
-              <Share2 className="w-4 h-4" />
-              <span className="hidden sm:inline">Share</span>
-            </button>
+            <div ref={shareMenuRef} className="relative">
+              <button
+                id="detail-share-button"
+                onClick={() => setShareMenuOpen(!shareMenuOpen)}
+                className="flex items-center gap-1.5 px-2 py-1 text-xs font-mono uppercase tracking-wider hover:text-emerald-600 dark:hover:text-emerald-400 transition-all"
+                title="Share article"
+              >
+                <Share2 className="w-4 h-4" />
+                <span className="hidden sm:inline">Share</span>
+              </button>
+
+              {/* Share Menu Dropdown */}
+              {shareMenuOpen && (
+                <div className="absolute right-0 top-full mt-2 z-50 bg-[#faf9f5] dark:bg-[#0c140f] border border-emerald-600/30 dark:border-emerald-500/20 shadow-xl rounded-none min-w-48 animate-in fade-in slide-in-from-top-2 duration-150">
+                  <button
+                    onClick={() => {
+                      const text = `${article.title}\n${window.location.href}`;
+                      navigator.clipboard.writeText(text);
+                      setShareMenuOpen(false);
+                      alert("Link copied to clipboard!");
+                    }}
+                    className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-zinc-100 dark:hover:bg-zinc-900/50 transition-colors border-b border-zinc-200 dark:border-zinc-800 text-sm text-left"
+                  >
+                    <Share2 className="w-4 h-4 text-zinc-500" />
+                    <span>Copy Link</span>
+                  </button>
+                  <a
+                    href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(article.title)}&url=${encodeURIComponent(window.location.href)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-zinc-100 dark:hover:bg-zinc-900/50 transition-colors border-b border-zinc-200 dark:border-zinc-800 text-sm text-left"
+                  >
+                    <Twitter className="w-4 h-4 text-blue-500" />
+                    <span>Share on Twitter</span>
+                  </a>
+                  <a
+                    href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-zinc-100 dark:hover:bg-zinc-900/50 transition-colors border-b border-zinc-200 dark:border-zinc-800 text-sm text-left"
+                  >
+                    <Linkedin className="w-4 h-4 text-blue-700" />
+                    <span>Share on LinkedIn</span>
+                  </a>
+                  <a
+                    href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-zinc-100 dark:hover:bg-zinc-900/50 transition-colors border-b border-zinc-200 dark:border-zinc-800 text-sm text-left"
+                  >
+                    <Facebook className="w-4 h-4 text-blue-600" />
+                    <span>Share on Facebook</span>
+                  </a>
+                  <a
+                    href={`mailto:?subject=${encodeURIComponent(article.title)}&body=${encodeURIComponent(window.location.href)}`}
+                    className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-zinc-100 dark:hover:bg-zinc-900/50 transition-colors text-sm text-left"
+                  >
+                    <Mail className="w-4 h-4 text-red-500" />
+                    <span>Email Article</span>
+                  </a>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
 
       <article className="max-w-3xl mx-auto px-5 py-12 md:py-24">
-        {/* Category Label */}
+        {/* Category Label & Article Metadata */}
         <div className="flex flex-wrap items-center gap-4 mb-8">
           <span className="px-3 py-1 bg-emerald-600 text-white font-mono uppercase text-[10px] tracking-widest font-bold">
             {article.category}
@@ -369,6 +468,15 @@ export default function ArticleDetail({
           </span>
           <span className="text-xs font-mono text-zinc-500 dark:text-zinc-400 flex items-center gap-1">
             <Clock className="w-3.5 h-3.5" /> {article.readTime}
+          </span>
+          <span className="text-xs font-mono text-zinc-500 dark:text-zinc-400 border-l border-zinc-300 dark:border-zinc-700 pl-4 flex items-center gap-1">
+            {wordCount.toLocaleString()} words
+          </span>
+          <span className="text-xs font-mono text-zinc-400 dark:text-zinc-500 flex items-center gap-1">
+            <Zap className="w-3.5 h-3.5" /> {Math.round(scrollProgress)}%
+          </span>
+          <span className="text-xs font-mono text-zinc-500 dark:text-zinc-400">
+            {timeRemaining} remaining
           </span>
         </div>
 
@@ -472,6 +580,18 @@ export default function ArticleDetail({
               );
             }
 
+            // Render pull quotes (blockquotes prefixed with ">")
+            if (para.startsWith(">")) {
+              return (
+                <blockquote
+                  key={idx}
+                  className="my-10 pl-6 py-4 border-l-4 border-emerald-600 dark:border-emerald-500 italic text-xl md:text-2xl text-emerald-700 dark:text-emerald-300 font-serif font-light leading-relaxed"
+                >
+                  {renderTextWithJargon(para.replace(">", "").trim())}
+                </blockquote>
+              );
+            }
+
             return (
               <p key={idx} className="text-justify mb-8 leading-relaxed font-light">
                 {renderTextWithJargon(para)}
@@ -549,6 +669,42 @@ export default function ArticleDetail({
           </div>
         </div>
 
+        {/* Related Articles Section */}
+        {relatedArticles.length > 0 && (
+          <section className="mt-16 border-t border-zinc-200/80 dark:border-zinc-800/80 pt-12 mb-16">
+            <h3 className="text-2xl font-serif font-semibold text-foreground mb-10 flex items-center gap-2.5">
+              <span className="w-1.5 h-1.5 bg-emerald-600 rounded-full" />
+              Further Reading
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {relatedArticles.slice(0, 3).map((rel) => (
+                <button
+                  key={rel.id}
+                  onClick={() => onArticleSelect?.(rel)}
+                  className="text-left border border-zinc-200 dark:border-zinc-800 p-6 hover:border-emerald-600 dark:hover:border-emerald-500 hover:bg-zinc-50 dark:hover:bg-zinc-900/30 transition-all group"
+                >
+                  <div className="aspect-video w-full bg-zinc-200 dark:bg-zinc-800 mb-4 overflow-hidden">
+                    <img 
+                      src={rel.imageUrl} 
+                      alt={rel.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                  </div>
+                  <span className="text-[9px] font-mono uppercase tracking-widest text-emerald-600 dark:text-emerald-400 font-bold">
+                    {rel.category}
+                  </span>
+                  <h4 className="text-base font-serif font-semibold text-foreground mt-2 leading-tight group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                    {rel.title}
+                  </h4>
+                  <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-3 line-clamp-2">
+                    {rel.subtitle}
+                  </p>
+                </button>
+              ))}
+            </div>
+          </section>
+        )}
+
         {/* Readers Discussion (Comments) */}
         <section className="mt-16 border-t border-zinc-200/80 dark:border-zinc-800/80 pt-12" id="editorial-discussion">
           <h3 className="text-2xl font-serif font-semibold text-foreground mb-8 flex items-center gap-2.5">
@@ -575,19 +731,36 @@ export default function ArticleDetail({
           </form>
 
           {/* Comments List */}
-          <div className="flex flex-col gap-8">
+          <div className="flex flex-col gap-6">
             {comments.length === 0 ? (
-              <p className="text-zinc-400 font-serif text-sm italic">No commentary submitted yet. Start the discussion above.</p>
+              <div className="text-center py-12 border border-dashed border-zinc-300 dark:border-zinc-700 rounded-none">
+                <MessageSquare className="w-8 h-8 text-zinc-300 dark:text-zinc-700 mx-auto mb-3" />
+                <p className="text-zinc-400 dark:text-zinc-500 font-serif text-sm italic">No commentary submitted yet. Be the first to contribute to this discussion.</p>
+              </div>
             ) : (
-              comments.map((com) => (
-                <div key={com.id} className="border-b border-zinc-200/50 dark:border-zinc-800/40 pb-6 text-sm">
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="font-bold text-foreground font-serif text-base">{com.author}</span>
-                    <span className="text-[9px] font-mono text-zinc-400 tracking-wider">{com.date}</span>
+              comments.map((com, idx) => (
+                <div key={com.id} className="border border-zinc-200 dark:border-zinc-800 p-6 hover:border-emerald-500/30 dark:hover:border-emerald-500/20 transition-colors">
+                  <div className="flex items-start gap-4">
+                    {/* Author Initials Avatar */}
+                    <div className="w-10 h-10 rounded-full bg-emerald-600/10 dark:bg-emerald-500/10 border border-emerald-600/20 dark:border-emerald-500/20 flex items-center justify-center shrink-0">
+                      <span className="text-xs font-bold text-emerald-700 dark:text-emerald-400">
+                        {com.author.split(" ").map(n => n[0]).join("").toUpperCase()}
+                      </span>
+                    </div>
+
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="font-bold text-foreground font-serif">{com.author}</span>
+                        <span className="text-[9px] font-mono text-zinc-400 dark:text-zinc-500 tracking-wider flex items-center gap-1">
+                          <span className="w-1 h-1 bg-zinc-300 dark:bg-zinc-700 rounded-full" />
+                          {com.date}
+                        </span>
+                      </div>
+                      <p className="text-zinc-600 dark:text-zinc-300 leading-relaxed font-sans font-light text-sm">
+                        {com.text}
+                      </p>
+                    </div>
                   </div>
-                  <p className="text-zinc-600 dark:text-zinc-300 leading-relaxed font-sans text-justify font-light">
-                    {com.text}
-                  </p>
                 </div>
               ))
             )}

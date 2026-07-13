@@ -163,6 +163,8 @@ export default function FrontpageClient({
             readingTheme={readingTheme}
             textSize={textSize}
             onLike={() => handleLikeArticle(activeArticle.id)}
+            relatedArticles={articles.filter((a) => a.category === activeArticle.category && a.id !== activeArticle.id)}
+            onArticleSelect={(article) => setActiveArticle(article)}
           />
         </main>
       ) : currentCategory === "videos" ? (

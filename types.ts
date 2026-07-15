@@ -14,7 +14,7 @@ export interface Article {
   readTime: string;
   sources: string[];
   factChecked: boolean;
-  objectivityRating: number;
+  objectivityRating: number; // e.g., 98%
   likes: number;
 }
 

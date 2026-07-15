@@ -2,7 +2,7 @@
 
 import { db } from "@/lib/db";
 import { articles } from "@/lib/db/schema";
-import { eq, desc, sql } from "drizzle-orm";
+import { eq, desc, sql, or, ilike } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import type { Article } from "@/types";
 
@@ -57,6 +57,35 @@ export async function updateArticle(id: string, data: Partial<Omit<Article, "id"
 export async function deleteArticle(id: string): Promise<void> {
   await db.delete(articles).where(eq(articles.id, id));
   revalidatePath("/");
+}
+
+export async function searchArticles(query: string): Promise<Article[]> {
+  if (!query.trim()) return [];
+  const term = `%${query.trim()}%`;
+  const rows = await db
+    .select()
+    .from(articles)
+    .where(
+      or(
+        ilike(articles.title, term),
+        ilike(articles.subtitle, term),
+        ilike(articles.content, term),
+        ilike(articles.author, term),
+        ilike(articles.category, term)
+      )
+    )
+    .orderBy(desc(articles.likes))
+    .limit(8);
+  return rows.map(rowToArticle);
+}
+
+export async function getTrendingArticles(limit = 5): Promise<Article[]> {
+  const rows = await db
+    .select()
+    .from(articles)
+    .orderBy(desc(articles.likes))
+    .limit(limit);
+  return rows.map(rowToArticle);
 }
 
 export async function likeArticle(id: string): Promise<void> {

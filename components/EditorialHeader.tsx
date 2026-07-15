@@ -2,7 +2,7 @@
 
 import { useState, useRef } from "react";
 import { Category, ReadingTheme, TextSize } from "@/types";
-import { BookMarked, Flame, User } from "lucide-react";
+import { BookMarked, Flame, User, Search } from "lucide-react";
 import { GlobalHorizontalTicker } from "./MarketTicker";
 
 interface EditorialHeaderProps {
@@ -16,6 +16,7 @@ interface EditorialHeaderProps {
   onAdminToggle: () => void;
   isAdminMode: boolean;
   onAdminLoginRequest: () => void;
+  onSearchOpen?: () => void;
 }
 
 export default function EditorialHeader({
@@ -29,6 +30,7 @@ export default function EditorialHeader({
   onAdminToggle,
   isAdminMode,
   onAdminLoginRequest,
+  onSearchOpen,
 }: EditorialHeaderProps) {
   const [sealClicks, setSealClicks] = useState(0);
   const clickTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -167,6 +169,16 @@ export default function EditorialHeader({
           <span className="tracking-widest uppercase text-zinc-500 dark:text-zinc-400 text-center py-1 md:py-0 font-medium">No. 18,442 • Vol. CIV</span>
           <span className="hidden md:inline text-zinc-300 dark:text-zinc-800">✦</span>
           <div className="flex items-center gap-5 mt-2 md:mt-0">
+            {/* Search trigger */}
+            <button
+              id="btn-open-search"
+              onClick={() => onSearchOpen?.()}
+              className="flex items-center gap-1.5 transition-colors uppercase tracking-widest text-[10px] font-bold hover:text-emerald-600 text-zinc-500 dark:text-zinc-400"
+              title="Search (press /)"
+            >
+              <Search className="w-3.5 h-3.5" />
+              SEARCH
+            </button>
             <button
               id="btn-toggle-saved"
               onClick={() => setCategory("saved")}

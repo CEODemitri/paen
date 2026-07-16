@@ -62,13 +62,13 @@ export default function EditorialHeader({
   const formattedDate = today.toLocaleDateString("en-US", options);
 
   const categories: { label: string; value: Category | "all" | "videos" | "saved" }[] = [
-    { label: "All Field Reports", value: "all" },
-    { label: "Eco-Technology", value: "tech" },
-    { label: "Planetary Science", value: "science" },
-    { label: "Earth Polity", value: "politics" },
-    { label: "Ecological Culture", value: "culture" },
-    { label: "Green Finance", value: "finance" },
-    { label: "In Focus (Video)", value: "videos" },
+    { label: "All Stories", value: "all" },
+    { label: "Technology", value: "tech" },
+    { label: "Science", value: "science" },
+    { label: "Politics", value: "politics" },
+    { label: "Culture", value: "culture" },
+    { label: "Finance", value: "finance" },
+    { label: "Videos", value: "videos" },
   ];
 
   return (
@@ -77,7 +77,7 @@ export default function EditorialHeader({
       <div className="bg-[#121a15] text-[#cfc5b6] text-[10px] uppercase tracking-[0.2em] font-mono py-2 px-4 flex flex-col md:flex-row justify-between items-center gap-2 border-b border-[#1c2a21]">
         <div className="flex items-center gap-4 overflow-hidden w-full md:w-auto flex-1">
           <span className="text-amber-500 flex items-center gap-1 shrink-0 font-bold tracking-widest text-[9px]">
-            <Flame className="w-3.5 h-3.5 text-amber-500 animate-pulse" /> BIOSPHERE STREAM:
+            <Flame className="w-3.5 h-3.5 text-amber-500 animate-pulse" /> LIVE:
           </span>
           <GlobalHorizontalTicker />
         </div>

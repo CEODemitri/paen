@@ -255,7 +255,7 @@ export default function FrontpageClient({
                       </button>
                     );
                   })}
-                  {(activeCategoryFilter || (currentCategory !== "all" && currentCategory !== "saved" && currentCategory !== "videos")) && (
+                  {(activeCategoryFilter || !["all", "saved", "videos"].includes(currentCategory as string)) && (
                     <button
                       onClick={() => { setActiveCategoryFilter(null); setCategory("all"); }}
                       className="text-[9px] font-mono text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 underline underline-offset-2 ml-1"
@@ -267,7 +267,7 @@ export default function FrontpageClient({
               </div>
 
               {/* Results context bar */}
-              {(activeCategoryFilter || currentCategory !== "all") && currentCategory !== "videos" && (
+              {(activeCategoryFilter || currentCategory !== "all") && (currentCategory as string) !== "videos" && (
                 <div className="flex justify-between items-center bg-zinc-50 dark:bg-zinc-950/50 border border-zinc-200 dark:border-zinc-800 px-4 py-3 text-xs">
                   <span className="font-mono uppercase tracking-widest text-zinc-500">
                     {filteredArticles.length} article{filteredArticles.length !== 1 ? "s" : ""} in{" "}

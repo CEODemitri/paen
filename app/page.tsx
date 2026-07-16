@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { Suspense } from "react";
 import { seedIfEmpty } from "@/lib/actions/seed";
 import { getArticles } from "@/lib/actions/articles";

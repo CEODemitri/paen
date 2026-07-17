@@ -104,14 +104,14 @@ export default function EditorialHeader({
 
           {/* Reading Mode Theme Selector */}
           <div className="flex items-center gap-2">
-            <span className="text-[9px] text-zinc-500 font-semibold tracking-wider">PALETTE:</span>
+            <span className="text-[9px] text-zinc-500 font-semibold tracking-wider">THEME:</span>
             <button
               id="btn-theme-standard"
               onClick={() => setReadingTheme("standard")}
               className={`w-3.5 h-3.5 rounded-full border border-zinc-600 bg-[#f4f3ec] ${
                 readingTheme === "standard" ? "ring-2 ring-emerald-500" : ""
               }`}
-              title="Forest Vellum"
+              title="Light"
             />
             <button
               id="btn-theme-sepia"
@@ -119,7 +119,7 @@ export default function EditorialHeader({
               className={`w-3.5 h-3.5 rounded-full border border-zinc-600 bg-[#f5ebd6] ${
                 readingTheme === "editorial-sepia" ? "ring-2 ring-emerald-500" : ""
               }`}
-              title="Woodland Sienna"
+              title="Sepia"
             />
             <button
               id="btn-theme-dark"
@@ -127,7 +127,7 @@ export default function EditorialHeader({
               className={`w-3.5 h-3.5 rounded-full border border-zinc-600 bg-[#060d09] ${
                 readingTheme === "high-contrast" ? "ring-2 ring-emerald-500" : ""
               }`}
-              title="Midnight Moss"
+              title="Dark"
             />
           </div>
         </div>
@@ -136,7 +136,7 @@ export default function EditorialHeader({
       {/* Main Classical Masthead (Washington Post & National Geographic Heritage aesthetic) */}
       <div className="w-full px-6 md:px-10 xl:px-16 py-10 md:py-16 text-center flex flex-col items-center justify-between relative select-none">
         <div className="text-[10px] md:text-[11px] font-mono uppercase tracking-[0.45em] text-zinc-500 dark:text-zinc-400 mb-4 flex items-center gap-3">
-          <span>AMAZONIA</span> ✦ <span>GALAPAGOS</span> ✦ <span>MADAGASCAR</span> ✦ <span>SIBERIA</span>
+          <span>ENVIRONMENT</span> ✦ <span>SCIENCE</span> ✦ <span>CULTURE</span> ✦ <span>WORLD</span>
         </div>
 
         {/* Decorative thin floral/star flourish */}
@@ -159,14 +159,12 @@ export default function EditorialHeader({
         </h1>
 
         <div className="text-[10px] md:text-xs uppercase tracking-[0.35em] text-emerald-850 dark:text-emerald-400 font-sans font-medium mt-4 max-w-xl text-center leading-relaxed opacity-95">
-          The Botanical & Ecological Journal of Earth Systems & Planetary Preservation
+          Independent reporting on nature, science & the world
         </div>
 
         {/* Date and Portal Controls - High-end Double-Line Box layout */}
         <div className="w-full flex flex-col md:flex-row justify-between items-center border-t border-b border-zinc-300/60 dark:border-zinc-800/60 py-3 mt-10 text-xs text-zinc-600 dark:text-zinc-400 font-mono">
           <span className="tracking-wide text-center md:text-left font-light">{formattedDate}</span>
-          <span className="hidden md:inline text-zinc-300 dark:text-zinc-800">✦</span>
-          <span className="tracking-widest uppercase text-zinc-500 dark:text-zinc-400 text-center py-1 md:py-0 font-medium">No. 18,442 • Vol. CIV</span>
           <span className="hidden md:inline text-zinc-300 dark:text-zinc-800">✦</span>
           <div className="flex items-center gap-5 mt-2 md:mt-0">
             {/* Search trigger */}

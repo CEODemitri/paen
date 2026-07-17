@@ -1,7 +1,7 @@
 "use client";
 
 import { Article, Category } from "@/types";
-import { BookMarked, ArrowUpRight, Scale, CheckCircle2 } from "lucide-react";
+import { BookMarked, ArrowUpRight, CheckCircle2 } from "lucide-react";
 
 interface ArticleCardProps {
   article: Article;
@@ -92,19 +92,9 @@ export default function ArticleCard({
           </div>
 
           <div className="border-t border-zinc-200 dark:border-zinc-800 pt-6 mt-6 flex justify-between items-end">
-            <div>
-              <div className="text-[9px] font-mono text-zinc-400 tracking-widest">FIELD REPORT BY</div>
-              <div className="font-serif text-base font-bold text-foreground mt-0.5">{article.author}</div>
-            </div>
-
-            <div className="flex items-center gap-4 text-[10px] font-mono text-zinc-500">
-              <div className="flex items-center gap-1.5">
-                <Scale className="w-3.5 h-3.5 text-zinc-400" />
-                <span>Objectivity: <strong className="text-foreground font-bold">{article.objectivityRating}%</strong></span>
-              </div>
-              <div className="px-2 py-0.5 bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700/60 rounded-none text-[9px] tracking-wider uppercase font-semibold">
-                {article.readTime}
-              </div>
+            <div className="text-xs font-serif italic text-zinc-600 dark:text-zinc-400">By {article.author}</div>
+            <div className="px-2 py-0.5 bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700/60 rounded-none text-[9px] tracking-wider uppercase font-semibold text-zinc-500 dark:text-zinc-400">
+              {article.readTime}
             </div>
           </div>
         </div>

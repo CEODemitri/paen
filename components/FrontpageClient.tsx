@@ -327,20 +327,20 @@ export default function FrontpageClient({
             {/* Sidebar (4/12) */}
             <aside className="lg:col-span-4 flex flex-col gap-10 border-t border-zinc-200 dark:border-zinc-800 lg:border-t-0 lg:border-l lg:pl-10 pt-10 lg:pt-0">
 
-              {/* Editorial Quality Stamp */}
+              {/* About Paen */}
               <div className="border border-zinc-250 dark:border-zinc-800 p-6 relative bg-[#faf7f2] dark:bg-zinc-950/30">
                 <div className="absolute top-0 left-0 right-0 h-0.5 bg-emerald-600" />
                 <div className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-widest text-emerald-700 dark:text-emerald-400 font-bold mb-3">
-                  <Award className="w-4 h-4" /> Editorial Integrity Pledge
+                  <Award className="w-4 h-4" /> Our Standards
                 </div>
-                <h4 className="font-serif font-semibold text-base text-foreground mb-2">Objectivity & Peer Review</h4>
+                <h4 className="font-serif font-semibold text-base text-foreground mb-2">Accurate & Independent</h4>
                 <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed font-light">
-                  Every field log, botanical telemetry update, and climate model published under the Paen Natura banner is subjected to rigorous peer verification. Our environmental statistics are generated continuously on immutable records.
+                  Every story published by Paen Natura is independently reported and fact-checked before going live. We don&apos;t accept sponsored content or outside editorial influence.
                 </p>
                 <div className="flex items-center gap-4 text-[9px] font-mono text-zinc-400 mt-4 pt-3 border-t border-zinc-150 dark:border-zinc-900 font-semibold tracking-wider">
-                  <span>OK-STATUS</span>
+                  <span>FACT-CHECKED</span>
                   <span>•</span>
-                  <span>SHA-256 SECURED</span>
+                  <span>INDEPENDENT</span>
                 </div>
               </div>
 
@@ -357,7 +357,7 @@ export default function FrontpageClient({
               {/* Latest Wire Releases */}
               <div>
                 <h3 className="text-[10px] font-mono uppercase tracking-[0.25em] text-zinc-500 mb-5 border-b border-zinc-200 dark:border-zinc-800 pb-2 flex items-center justify-between font-bold">
-                  <span>Latest Wire Releases</span>
+                  <span>Latest Stories</span>
                   <Newspaper className="w-3.5 h-3.5 text-emerald-600" />
                 </h3>
                 <div className="flex flex-col">
@@ -375,22 +375,22 @@ export default function FrontpageClient({
                 </div>
               </div>
 
-              {/* Planetary Biosphere Telemetry */}
+              {/* Nature Data Panel */}
               <div className="border border-zinc-200 dark:border-zinc-800 p-5 font-mono text-[9px] text-zinc-500 flex flex-col gap-3 bg-[#faf7f2] dark:bg-zinc-950/20">
                 <span className="uppercase tracking-[0.18em] text-zinc-400 font-bold border-b border-zinc-200 dark:border-zinc-800 pb-2 block">
-                  Planetary Biosphere Telemetry
+                  Live Nature Data
                 </span>
                 <div className="flex justify-between items-center">
-                  <span>Canopy Transpiration Rate</span>
+                  <span>Forest Cover Rate</span>
                   <span className="text-emerald-500 font-bold">4.2 L/m²/d</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span>Juruá Soil Moisture</span>
-                  <span className="text-zinc-400 font-semibold">32.8% Nominal</span>
+                  <span>Soil Moisture Index</span>
+                  <span className="text-zinc-400 font-semibold">32.8%</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span>Conservation Patrols</span>
-                  <span className="text-emerald-600 dark:text-emerald-400 font-bold">14 Active Teams</span>
+                  <span>Active Field Teams</span>
+                  <span className="text-emerald-600 dark:text-emerald-400 font-bold">14 Teams</span>
                 </div>
               </div>
             </aside>

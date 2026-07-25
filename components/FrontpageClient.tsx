@@ -6,6 +6,8 @@ import AdminPortal from "./AdminPortal";
 import AdminLogin from "./AdminLogin";
 import ArticleCard from "./ArticleCard";
 import ArticleDetail from "./ArticleDetail";
+import UserProfile from "./UserProfile";
+import CorrespondentsHub from "./CorrespondentsHub";
 import VideoBroadcast from "./VideoBroadcast";
 import MarketTicker from "./MarketTicker";
 import Footer from "./ui/Footer";
@@ -48,8 +50,9 @@ export default function FrontpageClient({
   });
 
   // Navigation / UI State
-  const [currentCategory, setCategory] = useState<Category | "all" | "saved" | "videos">("all");
+  const [currentCategory, setCategory] = useState<Category | "all" | "saved" | "videos" | "correspondents">("all");
   const [activeArticle, setActiveArticle] = useState<Article | null>(null);
+  const [activeAuthor, setActiveAuthor] = useState<string | null>(null);
   const [isAdminMode, setIsAdminMode] = useState(false);
   const [isAdminLoginOpen, setIsAdminLoginOpen] = useState(false);
 
@@ -128,6 +131,16 @@ export default function FrontpageClient({
     setActiveCategoryFilter(cat);
     setCategory(cat);
     setActiveArticle(null);
+    setActiveAuthor(null);
+  };
+
+  // Navigate to author profile
+  const handleAuthorClick = (authorName: string, e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    setActiveAuthor(authorName);
+    setActiveArticle(null);
+    setCategory("correspondents");
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   // Filters — category pill overrides main nav category if set
@@ -163,6 +176,7 @@ export default function FrontpageClient({
           setCategory(cat);
           setActiveCategoryFilter(null);
           setActiveArticle(null);
+          setActiveAuthor(null);
         }}
         bookmarksCount={bookmarks.length}
         readingTheme={readingTheme}
@@ -183,6 +197,22 @@ export default function FrontpageClient({
         <main className="flex-grow">
           <AdminPortal articles={articles} setArticles={setArticlesState} videos={videos} setVideos={setVideosState} />
         </main>
+      ) : activeAuthor ? (
+        <main className="flex-grow">
+          <UserProfile
+            authorName={activeAuthor}
+            articles={articles}
+            onBack={() => {
+              setActiveAuthor(null);
+              setCategory("all");
+            }}
+            onSelectArticle={(article) => {
+              setActiveAuthor(null);
+              setActiveArticle(article);
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }}
+          />
+        </main>
       ) : activeArticle ? (
         <main className="flex-grow">
           <ArticleDetail
@@ -202,6 +232,10 @@ export default function FrontpageClient({
       ) : currentCategory === "videos" ? (
         <main className="flex-grow py-8 bg-zinc-950 text-white">
           <VideoBroadcast videos={videos} />
+        </main>
+      ) : currentCategory === "correspondents" ? (
+        <main className="flex-grow">
+          <CorrespondentsHub articles={articles} onSelectAuthor={handleAuthorClick} />
         </main>
       ) : (
         <main className="flex-grow w-full px-6 md:px-10 xl:px-16 py-12 md:py-16">
@@ -303,6 +337,7 @@ export default function FrontpageClient({
                       onBookmarkToggle={handleBookmarkToggle}
                       onSelect={() => handleSelectArticle(leadArticle)}
                       onLike={() => handleLikeArticle(leadArticle.id)}
+                      onAuthorClick={handleAuthorClick}
                     />
                   )}
                   {secondaryArticles.length > 0 && (
@@ -316,6 +351,7 @@ export default function FrontpageClient({
                           onBookmarkToggle={handleBookmarkToggle}
                           onSelect={() => handleSelectArticle(art)}
                           onLike={() => handleLikeArticle(art.id)}
+                          onAuthorClick={handleAuthorClick}
                         />
                       ))}
                     </div>
@@ -370,6 +406,7 @@ export default function FrontpageClient({
                       onBookmarkToggle={handleBookmarkToggle}
                       onSelect={() => handleSelectArticle(art)}
                       onLike={() => handleLikeArticle(art.id)}
+                      onAuthorClick={handleAuthorClick}
                     />
                   ))}
                 </div>

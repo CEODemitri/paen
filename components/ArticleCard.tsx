@@ -10,6 +10,7 @@ interface ArticleCardProps {
   onBookmarkToggle: (id: string, e: React.MouseEvent) => void;
   onSelect: () => void;
   onLike?: () => void;
+  onAuthorClick?: (name: string, e: React.MouseEvent) => void;
 }
 
 const CATEGORY_COLOR_SCHEMES: Record<Category, string> = {
@@ -27,6 +28,7 @@ export default function ArticleCard({
   onBookmarkToggle,
   onSelect,
   onLike,
+  onAuthorClick,
 }: ArticleCardProps) {
   const scheme = CATEGORY_COLOR_SCHEMES[article.category];
 
@@ -94,7 +96,12 @@ export default function ArticleCard({
           <div className="border-t border-zinc-200 dark:border-zinc-800 pt-6 mt-6 flex justify-between items-end">
             <div>
               <div className="text-[9px] font-mono text-zinc-400 tracking-widest">FIELD REPORT BY</div>
-              <div className="font-serif text-base font-bold text-foreground mt-0.5">{article.author}</div>
+              <button
+                onClick={(e) => onAuthorClick?.(article.author, e)}
+                className="font-serif text-base font-bold text-foreground mt-0.5 hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors text-left"
+              >
+                {article.author}
+              </button>
             </div>
 
             <div className="flex items-center gap-4 text-[10px] font-mono text-zinc-500">
@@ -188,7 +195,12 @@ export default function ArticleCard({
       </div>
 
       <div className="border-t border-zinc-150 dark:border-zinc-800/50 pt-4 mt-5 flex justify-between items-center">
-        <div className="text-xs font-serif italic text-zinc-600 dark:text-zinc-400">By {article.author}</div>
+        <button
+          onClick={(e) => onAuthorClick?.(article.author, e)}
+          className="text-xs font-serif italic text-zinc-600 dark:text-zinc-400 hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors text-left"
+        >
+          By {article.author}
+        </button>
         <div className="text-[9px] font-mono bg-zinc-100 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60 px-2 py-0.5 text-zinc-500 dark:text-zinc-400">
           {article.readTime}
         </div>

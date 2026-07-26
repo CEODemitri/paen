@@ -6,8 +6,8 @@ import { BookMarked, Flame, User, Search } from "lucide-react";
 import { GlobalHorizontalTicker } from "./MarketTicker";
 
 interface EditorialHeaderProps {
-  currentCategory: Category | "all" | "saved" | "videos";
-  setCategory: (cat: Category | "all" | "saved" | "videos") => void;
+  currentCategory: Category | "all" | "saved" | "videos" | "correspondents";
+  setCategory: (cat: Category | "all" | "saved" | "videos" | "correspondents") => void;
   bookmarksCount: number;
   readingTheme: ReadingTheme;
   setReadingTheme: (theme: ReadingTheme) => void;
@@ -61,7 +61,7 @@ export default function EditorialHeader({
   };
   const formattedDate = today.toLocaleDateString("en-US", options);
 
-  const categories: { label: string; value: Category | "all" | "videos" | "saved" }[] = [
+  const categories: { label: string; value: Category | "all" | "videos" | "saved" | "correspondents" }[] = [
     { label: "All Field Reports", value: "all" },
     { label: "Eco-Technology", value: "tech" },
     { label: "Planetary Science", value: "science" },
@@ -69,6 +69,7 @@ export default function EditorialHeader({
     { label: "Ecological Culture", value: "culture" },
     { label: "Green Finance", value: "finance" },
     { label: "In Focus (Video)", value: "videos" },
+    { label: "Correspondents", value: "correspondents" },
   ];
 
   return (

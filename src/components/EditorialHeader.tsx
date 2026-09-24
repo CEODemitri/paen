@@ -367,9 +367,9 @@ export default function EditorialHeader({
         </div>
 
         {/* Central Visual Art Overlay Canvas & Right Vertical Banner */}
-        <div className="relative z-10 flex-1 w-full mx-auto px-3 sm:px-8 md:px-12 py-1.5 sm:py-3 flex items-stretch justify-between gap-2.5 sm:gap-5 min-h-0">
-          {/* Main Visual Canvas Frame (original full-height structure) */}
-          <div className="relative w-36 sm:w-52 md:w-64 lg:w-1/4 h-full min-h-0 overflow-hidden border border-[#1b2a3a]/25 shadow-md bg-[#121e2a]/20 backdrop-blur-[2px] group shrink-0">
+        <div className="relative z-10 flex-1 w-full mx-auto px-3 sm:px-8 md:px-12 py-1.5 sm:py-3 flex items-end sm:items-stretch justify-between gap-2.5 sm:gap-5 min-h-0">
+          {/* Main Visual Canvas Frame (scaled to 95% height on mobile) */}
+          <div className="relative w-36 sm:w-52 md:w-64 lg:w-1/4 h-[95%] sm:h-full min-h-0 overflow-hidden border border-[#1b2a3a]/25 shadow-md bg-[#121e2a]/20 backdrop-blur-[2px] group shrink-0">
             {/* Glowing Sun / Moon in mountain mist */}
             <div className="absolute top-[8%] left-[46%] w-16 h-16 sm:w-28 sm:h-28 rounded-full bg-[#faecd0]/40 blur-xl pointer-events-none" />
 
@@ -437,21 +437,17 @@ export default function EditorialHeader({
               </a>
             </div>
 
-            {/* Right Deep Indigo Vertical Banner */}
+            {/* Right Deep Indigo Vertical Banner (scaled to 95% on mobile) */}
             <aside
-              className="w-14 sm:w-24 md:w-32 lg:w-40 h-full bg-[#122030]/95 backdrop-blur-md text-[#f4ecd9] p-1.5 sm:p-3 flex flex-col justify-between items-center relative border border-[#1d334c] shadow-2xl shrink-0 overflow-hidden group"
+              className="w-14 sm:w-24 md:w-32 lg:w-40 h-[95%] sm:h-full bg-[#122030]/95 backdrop-blur-md text-[#f4ecd9] p-1.5 sm:p-3 flex flex-col justify-between items-center relative border border-[#1d334c] shadow-2xl shrink-0 overflow-hidden group"
               id="kyoto-poster-side-banner"
             >
-              {/* Top Station Status Strip */}
-              <div className="w-full flex items-center justify-between pt-0.5 border-b border-white/15 pb-1 sm:pb-1.5 text-[6.5px] sm:text-[8px] font-mono tracking-[0.15em] sm:tracking-[0.2em] text-[#d9ab6a] uppercase">
-                <span className="font-bold flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse inline-block" />
-                  LIVE
-                </span>
+              {/* Top Station Status Strip (selector 1 removed) */}
+              <div className="w-full flex items-center justify-end pt-0.5 border-b border-white/15 pb-1 sm:pb-1.5 text-[6.5px] sm:text-[8px] font-mono tracking-[0.15em] sm:tracking-[0.2em] text-[#d9ab6a] uppercase">
                 <span className="text-[#f4ecd9]/70 font-semibold tracking-widest">VOL. 1</span>
               </div>
 
-              {/* Center Area: Soaring Eagle Celestial Glyph & Vertical Poetry */}
+              {/* Center Area: Soaring Eagle Celestial Glyph & Vertical Poetry (selector 2 removed) */}
               <div className="flex-1 flex flex-col items-center justify-center my-1 sm:my-2 gap-1.5 sm:gap-2.5 w-full">
                 {/* Bespoke PAEN Eagle & Celestial River Crest */}
                 <div className="w-6 h-6 sm:w-10 sm:h-10 text-[#d9ab6a] relative flex items-center justify-center">
@@ -496,18 +492,6 @@ export default function EditorialHeader({
                 <div className="text-[6px] sm:text-[7.5px] md:text-[8px] font-mono tracking-[0.16em] sm:tracking-[0.2em] text-[#d9ab6a] uppercase text-center leading-snug font-bold">
                   ELEVATING DISCOVERY <br />
                   TO COSMIC SCALE.
-                </div>
-
-                {/* Biosphere Audio Resonance Equalizer Wave */}
-                <div className="flex items-center justify-center gap-0.5 sm:gap-1 pt-0.5 opacity-80" title="Audio Soundscape Frequency">
-                  <span className="w-0.5 h-1.5 sm:h-2 bg-amber-400 animate-pulse" />
-                  <span className="w-0.5 h-3 sm:h-4 bg-amber-400 animate-pulse delay-75" />
-                  <span className="w-0.5 h-2 sm:h-3 bg-amber-400 animate-pulse delay-150" />
-                  <span className="w-0.5 h-3.5 sm:h-5 bg-amber-400 animate-pulse delay-300" />
-                  <span className="w-0.5 h-2 bg-amber-400 animate-pulse delay-100" />
-                  <span className="text-[5.5px] sm:text-[7px] font-mono tracking-widest text-emerald-300 font-bold ml-0.5 sm:ml-1">
-                    432 Hz
-                  </span>
                 </div>
               </div>
 

@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Category, User as UserType } from "../types";
 import { BookMarked, Flame, User, LogIn, LogOut, Feather, ShieldCheck, ShoppingBag } from "lucide-react";
 import { GlobalHorizontalTicker } from "./MarketTicker";
+import { loadSiteSettings, SiteSettings } from "../lib/db";
 
 interface EditorialHeaderProps {
   currentCategory: Category | "all" | "saved" | "videos";
@@ -53,8 +54,24 @@ export default function EditorialHeader({
   };
 
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [siteSettings, setSiteSettings] = useState<SiteSettings>(loadSiteSettings);
   const heroVideoRef = useRef<HTMLVideoElement | null>(null);
   const heroTrackRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const handleSync = (e: Event) => {
+      const custom = e as CustomEvent;
+      if (!custom.detail || custom.detail.entity === "siteSettings") {
+        setSiteSettings(loadSiteSettings());
+      }
+    };
+    window.addEventListener("paen_data_sync", handleSync);
+    window.addEventListener("storage", handleSync);
+    return () => {
+      window.removeEventListener("paen_data_sync", handleSync);
+      window.removeEventListener("storage", handleSync);
+    };
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -263,7 +280,7 @@ export default function EditorialHeader({
         <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none z-0">
           <video
             ref={heroVideoRef}
-            src="/assets/eagle-flying.mp4"
+            src={siteSettings.heroVideoUrl || "/assets/eagle-flying.mp4"}
             className="w-full h-full object-cover object-center"
             playsInline
             muted
@@ -286,7 +303,9 @@ export default function EditorialHeader({
               PAEN
             </span>
             <span className="hidden sm:inline text-zinc-400">/</span>
-            <span className="hidden sm:inline text-[#1a2b3c]/70 font-medium">SPECIAL FIELD EDITION</span>
+            <span className="hidden sm:inline text-[#1a2b3c]/70 font-medium">
+              {siteSettings.issueEdition || "SPECIAL FIELD EDITION"}
+            </span>
           </div>
 
           <div className="flex items-center justify-center gap-1.5 sm:gap-4 font-bold tracking-[0.25em] sm:tracking-[0.32em] text-[8.5px] sm:text-xs text-center text-[#1a2b3c] pointer-events-auto">
@@ -444,7 +463,9 @@ export default function EditorialHeader({
             >
               {/* Top Station Status Strip (selector 1 removed) */}
               <div className="w-full flex items-center justify-end pt-0.5 border-b border-white/15 pb-1 sm:pb-1.5 text-[6.5px] sm:text-[8px] font-mono tracking-[0.15em] sm:tracking-[0.2em] text-[#d9ab6a] uppercase">
-                <span className="text-[#f4ecd9]/70 font-semibold tracking-widest">VOL. 1</span>
+                <span className="text-[#f4ecd9]/70 font-semibold tracking-widest">
+                  {siteSettings.volumeNumber || "VOL. 1"}
+                </span>
               </div>
 
               {/* Center Area: Soaring Eagle Celestial Glyph & Vertical Poetry (selector 2 removed) */}

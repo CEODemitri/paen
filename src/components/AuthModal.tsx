@@ -168,11 +168,6 @@ export default function AuthModal({
     }
   };
 
-  const handleQuickLogin = (presetEmail: string, presetPass: string) => {
-    setEmail(presetEmail);
-    setPassword(presetPass);
-  };
-
   const handleSignOut = () => {
     saveCurrentUser(null);
     if (onUserChange) onUserChange(null);
@@ -304,15 +299,15 @@ export default function AuthModal({
             {/* Header branding */}
             <div className="text-center mb-6">
               <span className="text-[9px] font-mono uppercase tracking-[0.25em] text-emerald-700 dark:text-emerald-400 font-bold block mb-1">
-                PAEN NATURA IDENTITY REGISTRY
+                PAEN ACCOUNT
               </span>
               <h3 className="font-serif text-2xl font-semibold tracking-tight text-foreground">
-                {tab === "signin" ? "Sign In to Registry" : "Create Ecological Credential"}
+                {tab === "signin" ? "Sign In" : "Create Account"}
               </h3>
               <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1 font-light">
                 {tab === "signin"
-                  ? "Access your saved archives, field submissions, or editorial controls."
-                  : "Register as a journal Reader or apply for Field Author credentials."}
+                  ? "Sign in to access your account, saved articles, and editorial tools."
+                  : "Register as a reader or apply for author credentials."}
               </p>
             </div>
 
@@ -342,7 +337,7 @@ export default function AuthModal({
                     : "border-transparent text-zinc-400 hover:text-zinc-600"
                 }`}
               >
-                Register Account
+                Register
               </button>
             </div>
 
@@ -357,31 +352,28 @@ export default function AuthModal({
               <form onSubmit={handleSignIn} className="space-y-4">
                 <div className="flex flex-col gap-1">
                   <label className="text-[10px] font-mono uppercase tracking-widest text-zinc-500 font-bold">
-                    Email / Address
+                    Email or Username
                   </label>
                   <input
                     type="text"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="e.g. alastair@bioacoustic.org or admin"
+                    placeholder="Enter email or username"
                     className="px-3 py-2 bg-background text-foreground border border-zinc-300 dark:border-zinc-800 focus:border-emerald-600 focus:outline-none text-xs font-mono"
                     required
                   />
                 </div>
 
                 <div className="flex flex-col gap-1">
-                  <div className="flex justify-between items-center">
-                    <label className="text-[10px] font-mono uppercase tracking-widest text-zinc-500 font-bold">
-                      Password / Passcode
-                    </label>
-                    <span className="text-[9px] font-mono text-zinc-400">Admin default: paen123</span>
-                  </div>
+                  <label className="text-[10px] font-mono uppercase tracking-widest text-zinc-500 font-bold">
+                    Password
+                  </label>
                   <div className="relative">
                     <input
                       type={showPassword ? "text" : "password"}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      placeholder="Enter password..."
+                      placeholder="Enter password"
                       className="w-full px-3 py-2 bg-background text-foreground border border-zinc-300 dark:border-zinc-800 focus:border-emerald-600 focus:outline-none text-xs font-mono pr-10"
                       required
                     />
@@ -399,38 +391,8 @@ export default function AuthModal({
                   type="submit"
                   className="w-full bg-emerald-700 hover:bg-emerald-800 text-white py-2.5 font-mono uppercase text-xs tracking-widest font-bold mt-2"
                 >
-                  Authenticate Credential
+                  Sign In
                 </button>
-
-                {/* Preset Quick Login Buttons for Demo Convenience */}
-                <div className="pt-4 border-t border-zinc-200 dark:border-zinc-800">
-                  <span className="text-[9px] font-mono text-zinc-400 uppercase tracking-wider block mb-2 font-bold">
-                    PRESET DEMO ACCOUNTS:
-                  </span>
-                  <div className="grid grid-cols-3 gap-1.5 text-[10px] font-mono">
-                    <button
-                      type="button"
-                      onClick={() => handleQuickLogin("admin@paen.earth", getAdminPassword())}
-                      className="p-1.5 border border-amber-500/40 bg-amber-500/5 hover:bg-amber-500/15 text-amber-700 dark:text-amber-400 font-bold text-center"
-                    >
-                      🛡️ Admin
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleQuickLogin("alastair@bioacoustic.org", "author123")}
-                      className="p-1.5 border border-emerald-600/40 bg-emerald-500/5 hover:bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 font-bold text-center"
-                    >
-                      ✍️ Author
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleQuickLogin("eleanor@library.earth", "reader123")}
-                      className="p-1.5 border border-zinc-400/40 bg-zinc-500/5 hover:bg-zinc-500/15 text-zinc-700 dark:text-zinc-300 font-bold text-center"
-                    >
-                      📖 Reader
-                    </button>
-                  </div>
-                </div>
               </form>
             ) : (
               /* Sign Up Form */

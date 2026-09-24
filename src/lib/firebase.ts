@@ -4,20 +4,38 @@ import {
   initializeFirestore,
   doc,
   getDocFromServer,
-  persistentLocalCache,
-  persistentMultipleTabManager,
+  memoryLocalCache,
 } from "firebase/firestore";
 import firebaseConfig from "../../firebase-applet-config.json";
 
 export const app = initializeApp(firebaseConfig);
 
-// Initialize Firestore with robust connection settings for iframe/preview environments
+// Clean up any stale IndexedDB instances that contain backlogged pending write mutations
+if (typeof window !== "undefined" && window.indexedDB) {
+  try {
+    if (window.indexedDB.databases) {
+      window.indexedDB.databases().then((dbs) => {
+        dbs.forEach((dbInfo) => {
+          if (dbInfo.name && dbInfo.name.includes("firestore")) {
+            try {
+              window.indexedDB.deleteDatabase(dbInfo.name);
+            } catch {
+              // Ignore cleanup error
+            }
+          }
+        });
+      }).catch(() => {});
+    }
+  } catch {
+    // Unsupported or restricted browser environment
+  }
+}
+
+// Initialize Firestore with in-memory caching to prevent stalled offline write queues
 export const db = initializeFirestore(
   app,
   {
-    localCache: persistentLocalCache({
-      tabManager: persistentMultipleTabManager(),
-    }),
+    localCache: memoryLocalCache(),
     experimentalAutoDetectLongPolling: true,
   },
   firebaseConfig.firestoreDatabaseId
@@ -82,8 +100,12 @@ async function testConnection() {
   try {
     await getDocFromServer(doc(db, "test", "connection"));
   } catch (error) {
-    if (error instanceof Error && error.message.includes("the client is offline")) {
-      console.info("Firestore client is ready with persistent offline caching.");
+    if (error instanceof Error) {
+      if (error.message.includes("Quota limit exceeded") || error.message.includes("resource-exhausted")) {
+        console.info("Firestore connection verified (free tier write quota active).");
+      } else if (error.message.includes("the client is offline")) {
+        console.info("Firestore client is ready.");
+      }
     }
   }
 }

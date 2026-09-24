@@ -70,16 +70,39 @@ export function emitDataSync(entity: string) {
 }
 
 // ----------------------------------------------------
-// Real-Time Firestore Synchronization Engine
+// Real-Time Firestore Synchronization Engine with Quota Protection
 // ----------------------------------------------------
 let isFirestoreInitialized = false;
+let isQuotaExceeded = false;
+
+function checkQuotaExceeded(error: unknown): boolean {
+  if (error && typeof error === "object") {
+    const err = error as { code?: string; message?: string };
+    if (
+      err.code === "resource-exhausted" ||
+      (typeof err.message === "string" &&
+        (err.message.includes("Quota limit exceeded") ||
+          err.message.includes("quota metric") ||
+          err.message.includes("resource-exhausted")))
+    ) {
+      if (!isQuotaExceeded) {
+        isQuotaExceeded = true;
+        console.warn(
+          "Firestore write quota limit reached for project. Seamlessly falling back to local persistent storage."
+        );
+      }
+      return true;
+    }
+  }
+  return false;
+}
 
 export function initFirestoreRealtimeSync() {
   if (isFirestoreInitialized || typeof window === "undefined") return;
   isFirestoreInitialized = true;
 
   try {
-    // 1. Articles Sync Listener
+    // 1. Articles Sync Listener (Safe Read-Only)
     const articlesCol = collection(db, "articles");
     onSnapshot(
       articlesCol,
@@ -89,36 +112,27 @@ export function initFirestoreRealtimeSync() {
           snapshot.forEach((docSnap) => {
             remoteArticles.push(docSnap.data() as Article);
           });
-          // Ensure all 5 core category articles from INITIAL_ARTICLES are present
-          const remoteIds = new Set(remoteArticles.map((a) => a.id));
-          let hasMissing = false;
-          for (const initArt of INITIAL_ARTICLES) {
-            if (!remoteIds.has(initArt.id)) {
-              remoteArticles.push(initArt);
-              hasMissing = true;
-            }
-          }
-          // Filter to only the 5 official articles plus any author-created articles (removing extra test articles)
           const initialIds = new Set(INITIAL_ARTICLES.map((a) => a.id));
           const cleanedArticles = remoteArticles.filter(
             (a) => initialIds.has(a.id) || a.authorId
           );
-          if (hasMissing) {
-            seedInitialFirestoreArticles();
+          // Locally merge initial articles if not present in remote snapshot
+          const existingIds = new Set(cleanedArticles.map((a) => a.id));
+          for (const initArt of INITIAL_ARTICLES) {
+            if (!existingIds.has(initArt.id)) {
+              cleanedArticles.push(initArt);
+            }
           }
           localStorage.setItem(ARTICLES_KEY, JSON.stringify(cleanedArticles));
           emitDataSync("articles");
-        } else {
-          // If Firestore is empty, seed initial data to cloud
-          seedInitialFirestoreArticles();
         }
       },
       (error) => {
-        console.warn("Firestore articles listener status:", error.message);
+        checkQuotaExceeded(error);
       }
     );
 
-    // 2. Videos Sync Listener
+    // 2. Videos Sync Listener (Safe Read-Only)
     const videosCol = collection(db, "videos");
     onSnapshot(
       videosCol,
@@ -130,16 +144,14 @@ export function initFirestoreRealtimeSync() {
           });
           localStorage.setItem(VIDEOS_KEY, JSON.stringify(remoteVideos));
           emitDataSync("videos");
-        } else {
-          seedInitialFirestoreVideos();
         }
       },
       (error) => {
-        console.warn("Firestore videos listener status:", error.message);
+        checkQuotaExceeded(error);
       }
     );
 
-    // 3. Comments Sync Listener
+    // 3. Comments Sync Listener (Safe Read-Only)
     const commentsCol = collection(db, "comments");
     onSnapshot(
       commentsCol,
@@ -154,42 +166,11 @@ export function initFirestoreRealtimeSync() {
         }
       },
       (error) => {
-        console.warn("Firestore comments listener status:", error.message);
+        checkQuotaExceeded(error);
       }
     );
   } catch (err) {
-    console.warn("Firestore sync initialization warning: ", err);
-  }
-}
-
-async function seedInitialFirestoreArticles() {
-  try {
-    for (const art of INITIAL_ARTICLES) {
-      await setDoc(doc(db, "articles", art.id), art, { merge: true });
-    }
-    // Delete any of the extra test articles from Firestore if present
-    for (let i = 2; i <= 5; i++) {
-      for (const cat of ["science", "tech", "politics", "culture", "finance"]) {
-        const extraId = `art-${cat}-${i}`;
-        try {
-          await deleteDoc(doc(db, "articles", extraId));
-        } catch {
-          // Document may not exist in cloud
-        }
-      }
-    }
-  } catch (error) {
-    console.warn("Initial article seed note:", error);
-  }
-}
-
-async function seedInitialFirestoreVideos() {
-  try {
-    for (const vid of INITIAL_VIDEOS) {
-      await setDoc(doc(db, "videos", vid.id), vid);
-    }
-  } catch (error) {
-    console.warn("Initial video seed note:", error);
+    checkQuotaExceeded(err);
   }
 }
 
@@ -236,39 +217,45 @@ export function saveArticles(articles: Article[]) {
   localStorage.setItem(ARTICLES_KEY, JSON.stringify(articles));
   emitDataSync("articles");
 
-  // Sync mutations to Firestore in background
+  if (isQuotaExceeded) return;
+
+  // Sync mutations to Firestore only if quota permits
   (async () => {
     try {
-      // Find deleted articles
       const currentIds = new Set(articles.map((a) => a.id));
       for (const prev of previousArticles) {
         if (!currentIds.has(prev.id)) {
           await deleteDoc(doc(db, "articles", prev.id));
         }
       }
-      // Upsert new or modified articles
       for (const art of articles) {
         await setDoc(doc(db, "articles", art.id), art, { merge: true });
       }
     } catch (err) {
-      console.warn("Firestore article write note:", err);
+      checkQuotaExceeded(err);
     }
   })();
 }
 
 export async function saveSingleArticleToCloud(article: Article) {
+  if (isQuotaExceeded) return;
   try {
     await setDoc(doc(db, "articles", article.id), article, { merge: true });
   } catch (error) {
-    handleFirestoreError(error, OperationType.WRITE, `articles/${article.id}`);
+    if (!checkQuotaExceeded(error)) {
+      handleFirestoreError(error, OperationType.WRITE, `articles/${article.id}`);
+    }
   }
 }
 
 export async function deleteArticleFromCloud(articleId: string) {
+  if (isQuotaExceeded) return;
   try {
     await deleteDoc(doc(db, "articles", articleId));
   } catch (error) {
-    handleFirestoreError(error, OperationType.DELETE, `articles/${articleId}`);
+    if (!checkQuotaExceeded(error)) {
+      handleFirestoreError(error, OperationType.DELETE, `articles/${articleId}`);
+    }
   }
 }
 
@@ -293,7 +280,9 @@ export function saveVideos(videos: Video[]) {
   localStorage.setItem(VIDEOS_KEY, JSON.stringify(videos));
   emitDataSync("videos");
 
-  // Cloud sync
+  if (isQuotaExceeded) return;
+
+  // Cloud sync only if quota permits
   (async () => {
     try {
       const currentIds = new Set(videos.map((v) => v.id));
@@ -306,7 +295,7 @@ export function saveVideos(videos: Video[]) {
         await setDoc(doc(db, "videos", vid.id), vid, { merge: true });
       }
     } catch (err) {
-      console.warn("Firestore video write note:", err);
+      checkQuotaExceeded(err);
     }
   })();
 }
@@ -362,13 +351,15 @@ export function saveComments(comments: Comment[]) {
   localStorage.setItem(COMMENTS_KEY, JSON.stringify(comments));
   emitDataSync("comments");
 
+  if (isQuotaExceeded) return;
+
   (async () => {
     try {
       for (const com of comments) {
         await setDoc(doc(db, "comments", com.id), com, { merge: true });
       }
     } catch (err) {
-      console.warn("Firestore comment write note:", err);
+      checkQuotaExceeded(err);
     }
   })();
 }
@@ -455,6 +446,41 @@ export function setAdminPassword(newPass: string) {
     u.role === "admin" ? { ...u, password: newPass } : u
   );
   saveUsers(updatedUsers);
+}
+
+// ----------------------------------------------------
+// Site Operation Settings (Vol Number, Hero Video, Edition)
+// ----------------------------------------------------
+const SITE_SETTINGS_KEY = "paen_site_settings_v1";
+
+export interface SiteSettings {
+  volumeNumber: string;
+  issueEdition: string;
+  heroVideoUrl: string;
+}
+
+export const DEFAULT_SITE_SETTINGS: SiteSettings = {
+  volumeNumber: "VOL. 1",
+  issueEdition: "SPECIAL FIELD EDITION",
+  heroVideoUrl: "/assets/eagle-flying.mp4",
+};
+
+export function loadSiteSettings(): SiteSettings {
+  const data = localStorage.getItem(SITE_SETTINGS_KEY);
+  if (!data) {
+    localStorage.setItem(SITE_SETTINGS_KEY, JSON.stringify(DEFAULT_SITE_SETTINGS));
+    return DEFAULT_SITE_SETTINGS;
+  }
+  try {
+    return { ...DEFAULT_SITE_SETTINGS, ...JSON.parse(data) };
+  } catch {
+    return DEFAULT_SITE_SETTINGS;
+  }
+}
+
+export function saveSiteSettings(settings: SiteSettings) {
+  localStorage.setItem(SITE_SETTINGS_KEY, JSON.stringify(settings));
+  emitDataSync("siteSettings");
 }
 
 // ----------------------------------------------------

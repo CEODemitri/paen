@@ -1,152 +1,173 @@
-import React, { useState } from "react";
-import { Article, Video, Category } from "../types";
+import React, { useState, useEffect } from "react";
+import { User, UserRole } from "../types";
 import {
-  Trash2,
-  Plus,
-  FileText,
+  loadUsers,
+  saveUsers,
+  loadSiteSettings,
+  saveSiteSettings,
+  SiteSettings,
+  DEFAULT_SITE_SETTINGS,
+  setAdminPassword,
+} from "../lib/db";
+import {
+  Users,
   Video as VideoIcon,
-  CheckCircle,
+  BookOpen,
   KeyRound,
   Shield,
+  CheckCircle,
+  Clock,
+  Trash2,
+  RotateCcw,
   Search,
-  Database,
-  LogOut,
+  Save,
+  Play,
+  UserCheck,
+  ArrowLeft,
 } from "lucide-react";
-import { setAdminPassword } from "../lib/db";
 
 interface AdminPortalProps {
-  articles: Article[];
-  setArticles: (articles: Article[]) => void;
-  videos: Video[];
-  setVideos: (videos: Video[]) => void;
   onExit?: () => void;
+  articles?: unknown;
+  setArticles?: unknown;
+  videos?: unknown;
+  setVideos?: unknown;
 }
 
-export default function AdminPortal({
-  articles,
-  setArticles,
-  videos,
-  setVideos,
-  onExit,
-}: AdminPortalProps) {
-  const [activeTab, setActiveTab] = useState<"content" | "new_article" | "new_video" | "settings">("content");
-  const [contentType, setContentType] = useState<"articles" | "videos">("articles");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [successMsg, setSuccessMsg] = useState("");
+export default function AdminPortal({ onExit }: AdminPortalProps) {
+  const [activeTab, setActiveTab] = useState<"users" | "hero_video" | "vol_edition" | "security">("users");
+  const [users, setUsers] = useState<User[]>(loadUsers);
+  const [searchUser, setSearchUser] = useState("");
+  const [siteSettings, setSiteSettingsState] = useState<SiteSettings>(loadSiteSettings);
 
-  // New Article Form
-  const [artTitle, setArtTitle] = useState("");
-  const [artSubtitle, setArtSubtitle] = useState("");
-  const [artCategory, setArtCategory] = useState<Category>("tech");
-  const [artAuthor, setArtAuthor] = useState("Editorial Desk");
-  const [artContent, setArtContent] = useState("");
-  const [artImageUrl, setArtImageUrl] = useState("");
+  // Form states for settings
+  const [volumeNumber, setVolumeNumber] = useState(siteSettings.volumeNumber);
+  const [issueEdition, setIssueEdition] = useState(siteSettings.issueEdition);
+  const [heroVideoUrl, setHeroVideoUrl] = useState(siteSettings.heroVideoUrl);
 
-  // New Video Form
-  const [vidTitle, setVidTitle] = useState("");
-  const [vidDesc, setVidDesc] = useState("");
-  const [vidCategory, setVidCategory] = useState<Category>("science");
-  const [vidUrl, setVidUrl] = useState("");
-  const [vidThumb, setVidThumb] = useState("");
-  const [vidDuration, setVidDuration] = useState("12:00");
-  const [vidAuthor, setVidAuthor] = useState("Paen Field Broadcast");
-
-  // Settings
+  // Passcode form
   const [newPass, setNewPass] = useState("");
   const [passMsg, setPassMsg] = useState("");
+  const [successToast, setSuccessToast] = useState("");
 
-  const triggerSuccess = (msg: string) => {
-    setSuccessMsg(msg);
-    setTimeout(() => setSuccessMsg(""), 3500);
-  };
-
-  // Article Actions
-  const handleDeleteArticle = (id: string) => {
-    if (confirm("Are you sure you want to remove this dispatch?")) {
-      const updated = articles.filter((a) => a.id !== id);
-      setArticles(updated);
-      triggerSuccess("Dispatch removed successfully.");
-    }
-  };
-
-  const handleCreateArticle = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!artTitle.trim() || !artContent.trim()) {
-      alert("Please provide at least a title and content.");
-      return;
-    }
-
-    const newArt: Article = {
-      id: `art-${Date.now()}`,
-      title: artTitle,
-      subtitle: artSubtitle || "Special field dispatch",
-      content: artContent,
-      category: artCategory,
-      author: artAuthor || "Editorial Desk",
-      authorImage: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=200&auto=format&fit=crop",
-      authorBio: "Paen Field Research Correspondent",
-      imageUrl:
-        artImageUrl ||
-        "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1200&auto=format&fit=crop",
-      date: new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }),
-      readTime: "5 min read",
-      sources: ["Paen Field Station 04"],
-      factChecked: true,
-      objectivityRating: 98,
-      likes: 0,
-      status: "published",
+  useEffect(() => {
+    const handleSync = () => {
+      setUsers(loadUsers());
+      const updated = loadSiteSettings();
+      setSiteSettingsState(updated);
+      setVolumeNumber(updated.volumeNumber);
+      setIssueEdition(updated.issueEdition);
+      setHeroVideoUrl(updated.heroVideoUrl);
     };
 
-    setArticles([newArt, ...articles]);
-    setArtTitle("");
-    setArtSubtitle("");
-    setArtContent("");
-    setArtImageUrl("");
-    setActiveTab("content");
-    triggerSuccess("New article published directly to site!");
-  };
-
-  // Video Actions
-  const handleDeleteVideo = (id: string) => {
-    if (confirm("Delete this broadcast video?")) {
-      const updated = videos.filter((v) => v.id !== id);
-      setVideos(updated);
-      triggerSuccess("Broadcast video removed.");
-    }
-  };
-
-  const handleCreateVideo = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!vidTitle.trim() || !vidUrl.trim()) {
-      alert("Please provide video title and URL.");
-      return;
-    }
-
-    const newVid: Video = {
-      id: `vid-${Date.now()}`,
-      title: vidTitle,
-      description: vidDesc || vidTitle,
-      category: vidCategory,
-      videoUrl: vidUrl,
-      thumbnailUrl:
-        vidThumb ||
-        "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1200&auto=format&fit=crop",
-      duration: vidDuration || "10:00",
-      date: new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }),
-      author: vidAuthor || "Paen Field Broadcast",
+    window.addEventListener("paen_data_sync", handleSync);
+    window.addEventListener("storage", handleSync);
+    return () => {
+      window.removeEventListener("paen_data_sync", handleSync);
+      window.removeEventListener("storage", handleSync);
     };
+  }, []);
 
-    setVideos([newVid, ...videos]);
-    setVidTitle("");
-    setVidDesc("");
-    setVidUrl("");
-    setVidThumb("");
-    setActiveTab("content");
-    setContentType("videos");
-    triggerSuccess("Video broadcast added!");
+  const showToast = (msg: string) => {
+    setSuccessToast(msg);
+    setTimeout(() => setSuccessToast(""), 3500);
   };
 
-  const handleSavePassword = (e: React.FormEvent) => {
+  // User Actions
+  const handleRoleChange = (userId: string, newRole: UserRole) => {
+    const updated = users.map((u) => {
+      if (u.id === userId) {
+        return {
+          ...u,
+          role: newRole,
+          status: "approved" as const,
+        };
+      }
+      return u;
+    });
+    setUsers(updated);
+    saveUsers(updated);
+    showToast(`User role updated to ${newRole.toUpperCase()}`);
+  };
+
+  const handleApproveAuthor = (userId: string) => {
+    const updated = users.map((u) => {
+      if (u.id === userId) {
+        return {
+          ...u,
+          role: "author" as UserRole,
+          status: "approved" as const,
+        };
+      }
+      return u;
+    });
+    setUsers(updated);
+    saveUsers(updated);
+    showToast("Author application approved!");
+  };
+
+  const handleRejectAuthor = (userId: string) => {
+    const updated = users.map((u) => {
+      if (u.id === userId) {
+        return {
+          ...u,
+          role: "user" as UserRole,
+          status: "approved" as const,
+          requestedRole: undefined,
+        };
+      }
+      return u;
+    });
+    setUsers(updated);
+    saveUsers(updated);
+    showToast("Author request declined. User retained as reader.");
+  };
+
+  const handleDeleteUser = (userId: string, userName: string) => {
+    if (confirm(`Remove user "${userName}" from the registry?`)) {
+      const updated = users.filter((u) => u.id !== userId);
+      setUsers(updated);
+      saveUsers(updated);
+      showToast(`User ${userName} removed.`);
+    }
+  };
+
+  // Site Settings Actions
+  const handleSaveVideoSettings = (e: React.FormEvent) => {
+    e.preventDefault();
+    const updated: SiteSettings = {
+      ...siteSettings,
+      heroVideoUrl: heroVideoUrl.trim() || DEFAULT_SITE_SETTINGS.heroVideoUrl,
+    };
+    setSiteSettingsState(updated);
+    saveSiteSettings(updated);
+    showToast("Hero background video updated!");
+  };
+
+  const handleResetVideo = () => {
+    const updated: SiteSettings = {
+      ...siteSettings,
+      heroVideoUrl: DEFAULT_SITE_SETTINGS.heroVideoUrl,
+    };
+    setHeroVideoUrl(DEFAULT_SITE_SETTINGS.heroVideoUrl);
+    setSiteSettingsState(updated);
+    saveSiteSettings(updated);
+    showToast("Reset to default lifetime background video.");
+  };
+
+  const handleSaveVolEdition = (e: React.FormEvent) => {
+    e.preventDefault();
+    const updated: SiteSettings = {
+      ...siteSettings,
+      volumeNumber: volumeNumber.trim() || DEFAULT_SITE_SETTINGS.volumeNumber,
+      issueEdition: issueEdition.trim() || DEFAULT_SITE_SETTINGS.issueEdition,
+    };
+    setSiteSettingsState(updated);
+    saveSiteSettings(updated);
+    showToast("Publication Volume and Edition updated!");
+  };
+
+  const handleUpdatePassword = (e: React.FormEvent) => {
     e.preventDefault();
     if (newPass.length < 4) {
       setPassMsg("Password must be at least 4 characters.");
@@ -154,25 +175,25 @@ export default function AdminPortal({
     }
     setAdminPassword(newPass);
     setNewPass("");
-    setPassMsg("Admin password updated successfully.");
-    setTimeout(() => setPassMsg(""), 4000);
+    setPassMsg("Admin password successfully updated.");
+    setTimeout(() => setPassMsg(""), 3500);
   };
 
-  const filteredArticles = articles.filter(
-    (a) =>
-      a.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      a.author.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      a.category.toLowerCase().includes(searchQuery.toLowerCase())
+  // Filter users
+  const filteredUsers = users.filter(
+    (u) =>
+      u.name.toLowerCase().includes(searchUser.toLowerCase()) ||
+      u.email.toLowerCase().includes(searchUser.toLowerCase()) ||
+      u.role.toLowerCase().includes(searchUser.toLowerCase()) ||
+      (u.institution && u.institution.toLowerCase().includes(searchUser.toLowerCase()))
   );
 
-  const filteredVideos = videos.filter(
-    (v) =>
-      v.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      v.category.toLowerCase().includes(searchQuery.toLowerCase())
+  const pendingAuthors = users.filter(
+    (u) => u.requestedRole === "author" && u.status === "pending_approval"
   );
 
   return (
-    <div className="w-full bg-[#f4ecd9] dark:bg-[#0a100d] min-h-screen text-zinc-900 dark:text-zinc-100 font-sans pb-24">
+    <div className="w-full bg-[#fafaf8] dark:bg-[#0c0d10] min-h-screen text-zinc-900 dark:text-zinc-100 font-sans pb-24">
       {/* Top Banner */}
       <div className="bg-[#121a15] text-[#cfc5b6] px-6 py-4 border-b border-[#1c2a21] flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div className="flex items-center gap-3">
@@ -185,521 +206,453 @@ export default function AdminPortal({
                 PAEN SITE MANAGEMENT
               </h1>
               <span className="px-2 py-0.5 text-[8.5px] font-mono uppercase tracking-widest bg-emerald-950 text-emerald-300 border border-emerald-500/30 font-bold">
-                ADMIN
+                OPERATIONAL DESK
               </span>
             </div>
             <p className="text-[10.5px] font-mono text-zinc-400">
-              Simple content management & access control
+              Users • Hero Video • Volume & Edition Controls
             </p>
           </div>
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1.5 px-3 py-1 bg-emerald-950/60 border border-emerald-500/30 text-[9.5px] font-mono text-emerald-300">
-            <Database className="w-3 h-3 text-emerald-400 animate-pulse" />
-            <span>CLOUD FIRESTORE ACTIVE</span>
-          </div>
           {onExit && (
             <button
               onClick={onExit}
-              className="flex items-center gap-1.5 px-3 py-1 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 border border-zinc-700 text-[10px] font-mono uppercase tracking-wider font-bold transition-all"
+              className="flex items-center gap-2 px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 border border-zinc-700 text-[10.5px] font-mono uppercase tracking-wider font-bold transition-all shadow-sm rounded-sm"
             >
-              <LogOut className="w-3.5 h-3.5" />
-              <span>Exit Desk</span>
+              <ArrowLeft className="w-3.5 h-3.5 text-amber-400" />
+              <span>← Return to Journal</span>
             </button>
           )}
         </div>
       </div>
 
       {/* Success Notification */}
-      {successMsg && (
-        <div className="max-w-6xl mx-auto px-4 mt-4">
-          <div className="p-3 bg-emerald-900/80 border border-emerald-500 text-emerald-100 text-xs font-mono font-bold flex items-center gap-2 shadow-md">
+      {successToast && (
+        <div className="max-w-5xl mx-auto px-4 mt-4 animate-in fade-in">
+          <div className="p-3 bg-emerald-900/90 border border-emerald-500 text-emerald-100 text-xs font-mono font-bold flex items-center gap-2 shadow-md">
             <CheckCircle className="w-4 h-4 text-emerald-400" />
-            <span>{successMsg}</span>
+            <span>{successToast}</span>
           </div>
         </div>
       )}
 
       {/* Main Container */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
-        {/* Navigation Tabs */}
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+        {/* Navigation Tabs - Focused on the 3 core tasks */}
         <div className="flex flex-wrap items-center gap-2 border-b border-zinc-300 dark:border-zinc-800 pb-4 mb-6">
           <button
-            onClick={() => setActiveTab("content")}
+            onClick={() => setActiveTab("users")}
             className={`px-4 py-2 font-mono text-xs uppercase tracking-wider font-bold flex items-center gap-2 transition-all ${
-              activeTab === "content"
+              activeTab === "users"
                 ? "bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 shadow-sm"
                 : "bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 border border-zinc-250 dark:border-zinc-800"
             }`}
           >
-            <FileText className="w-3.5 h-3.5" />
-            <span>Published Content ({articles.length + videos.length})</span>
+            <Users className="w-3.5 h-3.5 text-emerald-500" />
+            <span>User Management ({users.length})</span>
+            {pendingAuthors.length > 0 && (
+              <span className="w-4 h-4 bg-amber-500 text-black text-[9px] font-bold rounded-full flex items-center justify-center">
+                {pendingAuthors.length}
+              </span>
+            )}
           </button>
 
           <button
-            onClick={() => setActiveTab("new_article")}
+            onClick={() => setActiveTab("hero_video")}
             className={`px-4 py-2 font-mono text-xs uppercase tracking-wider font-bold flex items-center gap-2 transition-all ${
-              activeTab === "new_article"
-                ? "bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 shadow-sm"
-                : "bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 border border-zinc-250 dark:border-zinc-800"
-            }`}
-          >
-            <Plus className="w-3.5 h-3.5 text-emerald-500" />
-            <span>+ New Dispatch</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab("new_video")}
-            className={`px-4 py-2 font-mono text-xs uppercase tracking-wider font-bold flex items-center gap-2 transition-all ${
-              activeTab === "new_video"
+              activeTab === "hero_video"
                 ? "bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 shadow-sm"
                 : "bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 border border-zinc-250 dark:border-zinc-800"
             }`}
           >
             <VideoIcon className="w-3.5 h-3.5 text-blue-500" />
-            <span>+ New Video</span>
+            <span>Hero Background Video</span>
           </button>
 
           <button
-            onClick={() => setActiveTab("settings")}
+            onClick={() => setActiveTab("vol_edition")}
             className={`px-4 py-2 font-mono text-xs uppercase tracking-wider font-bold flex items-center gap-2 transition-all ${
-              activeTab === "settings"
+              activeTab === "vol_edition"
                 ? "bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 shadow-sm"
                 : "bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 border border-zinc-250 dark:border-zinc-800"
             }`}
           >
-            <KeyRound className="w-3.5 h-3.5 text-amber-500" />
-            <span>Security & Passcode</span>
+            <BookOpen className="w-3.5 h-3.5 text-amber-500" />
+            <span>Volume & Edition</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab("security")}
+            className={`px-4 py-2 font-mono text-xs uppercase tracking-wider font-bold flex items-center gap-2 transition-all ${
+              activeTab === "security"
+                ? "bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 shadow-sm"
+                : "bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 border border-zinc-250 dark:border-zinc-800"
+            }`}
+          >
+            <KeyRound className="w-3.5 h-3.5 text-zinc-500" />
+            <span>Admin Passcode</span>
           </button>
         </div>
 
-        {/* TAB 1: CONTENT MANAGEMENT */}
-        {activeTab === "content" && (
-          <div>
-            {/* Quick Filter & Search Bar */}
-            <div className="p-4 bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 mb-6 flex flex-col sm:flex-row justify-between items-center gap-4">
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => setContentType("articles")}
-                  className={`px-3 py-1.5 text-xs font-mono uppercase tracking-wider font-bold ${
-                    contentType === "articles"
-                      ? "bg-emerald-700 text-white"
-                      : "bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400"
-                  }`}
-                >
-                  Articles ({articles.length})
-                </button>
-                <button
-                  onClick={() => setContentType("videos")}
-                  className={`px-3 py-1.5 text-xs font-mono uppercase tracking-wider font-bold ${
-                    contentType === "videos"
-                      ? "bg-blue-700 text-white"
-                      : "bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400"
-                  }`}
-                >
-                  Videos ({videos.length})
-                </button>
-              </div>
-
-              <div className="relative w-full sm:w-72">
-                <Search className="w-3.5 h-3.5 text-zinc-400 absolute left-3 top-2.5 pointer-events-none" />
-                <input
-                  type="text"
-                  placeholder="Filter content..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-9 pr-3 py-1.5 bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-700 text-xs font-sans text-foreground focus:outline-none focus:border-emerald-600"
-                />
-              </div>
-            </div>
-
-            {/* Articles Table/List */}
-            {contentType === "articles" && (
-              <div className="space-y-3">
-                {filteredArticles.length === 0 ? (
-                  <div className="p-12 text-center text-zinc-500 bg-white dark:bg-zinc-900 border border-zinc-250 dark:border-zinc-800">
-                    No articles found.
-                  </div>
-                ) : (
-                  filteredArticles.map((art) => (
+        {/* ==================================================== */}
+        {/* TAB 1: USER MANAGEMENT                               */}
+        {/* ==================================================== */}
+        {activeTab === "users" && (
+          <div className="space-y-6">
+            {/* Pending Author Approval Banner */}
+            {pendingAuthors.length > 0 && (
+              <div className="p-4 bg-amber-500/10 border border-amber-500/40">
+                <div className="flex items-center gap-2 text-amber-800 dark:text-amber-300 font-mono text-xs uppercase font-bold tracking-wider mb-2">
+                  <Clock className="w-4 h-4 text-amber-600" />
+                  <span>Pending Author Approvals ({pendingAuthors.length})</span>
+                </div>
+                <div className="space-y-2">
+                  {pendingAuthors.map((u) => (
                     <div
-                      key={art.id}
-                      className="p-4 bg-white dark:bg-zinc-900 border border-zinc-250 dark:border-zinc-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 hover:border-zinc-400 transition-all shadow-sm"
+                      key={u.id}
+                      className="p-3 bg-white dark:bg-zinc-900 border border-amber-500/30 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3"
                     >
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 text-[9px] font-mono uppercase tracking-wider text-zinc-500 mb-1">
-                          <span className="px-2 py-0.5 bg-zinc-100 dark:bg-zinc-800 font-bold text-foreground">
-                            {art.category}
-                          </span>
-                          <span>•</span>
-                          <span>{art.author}</span>
-                          <span>•</span>
-                          <span>{art.date}</span>
-                        </div>
-                        <h3 className="font-serif font-bold text-base text-foreground leading-snug">
-                          {art.title}
-                        </h3>
-                        {art.subtitle && (
-                          <p className="text-xs text-zinc-500 dark:text-zinc-400 line-clamp-1 mt-0.5">
-                            {art.subtitle}
+                      <div>
+                        <div className="font-serif font-bold text-sm text-foreground">{u.name}</div>
+                        <div className="text-xs font-mono text-zinc-500">{u.email}</div>
+                        {u.institution && (
+                          <div className="text-[11px] text-emerald-700 dark:text-emerald-400 mt-0.5">
+                            {u.institution}
+                          </div>
+                        )}
+                        {u.bio && (
+                          <p className="text-xs text-zinc-600 dark:text-zinc-400 mt-1 italic font-light">
+                            "{u.bio}"
                           </p>
                         )}
                       </div>
-
-                      <div className="flex items-center gap-2 shrink-0">
+                      <div className="flex items-center gap-2">
                         <button
-                          onClick={() => handleDeleteArticle(art.id)}
-                          className="p-2 text-zinc-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 rounded transition-colors"
-                          title="Delete dispatch"
+                          onClick={() => handleApproveAuthor(u.id)}
+                          className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-mono text-xs uppercase tracking-wider font-bold flex items-center gap-1.5"
                         >
-                          <Trash2 className="w-4 h-4" />
+                          <UserCheck className="w-3.5 h-3.5" /> Approve Author
+                        </button>
+                        <button
+                          onClick={() => handleRejectAuthor(u.id)}
+                          className="px-2.5 py-1.5 border border-zinc-300 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-400 font-mono text-xs uppercase"
+                        >
+                          Keep as Reader
                         </button>
                       </div>
                     </div>
-                  ))
-                )}
+                  ))}
+                </div>
               </div>
             )}
 
-            {/* Videos List */}
-            {contentType === "videos" && (
-              <div className="space-y-3">
-                {filteredVideos.length === 0 ? (
-                  <div className="p-12 text-center text-zinc-500 bg-white dark:bg-zinc-900 border border-zinc-250 dark:border-zinc-800">
-                    No videos found.
+            {/* User Search & Stats Filter */}
+            <div className="p-4 bg-white dark:bg-zinc-900 border border-zinc-250 dark:border-zinc-800 flex flex-col sm:flex-row justify-between items-center gap-4">
+              <div className="relative w-full sm:w-80">
+                <Search className="w-3.5 h-3.5 text-zinc-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  placeholder="Filter users by name, email, or role..."
+                  value={searchUser}
+                  onChange={(e) => setSearchUser(e.target.value)}
+                  className="w-full pl-9 pr-3 py-1.5 bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-700 text-xs font-mono text-foreground focus:outline-none focus:border-emerald-600"
+                />
+              </div>
+
+              <div className="flex items-center gap-3 text-xs font-mono text-zinc-500">
+                <span>
+                  Admins: <strong>{users.filter((u) => u.role === "admin").length}</strong>
+                </span>
+                <span>•</span>
+                <span>
+                  Authors: <strong>{users.filter((u) => u.role === "author").length}</strong>
+                </span>
+                <span>•</span>
+                <span>
+                  Readers: <strong>{users.filter((u) => u.role === "user").length}</strong>
+                </span>
+              </div>
+            </div>
+
+            {/* Users Roster Table */}
+            <div className="bg-white dark:bg-zinc-900 border border-zinc-250 dark:border-zinc-800 overflow-x-auto shadow-sm">
+              <table className="w-full text-left text-xs border-collapse">
+                <thead>
+                  <tr className="bg-zinc-100 dark:bg-zinc-800/80 border-b border-zinc-250 dark:border-zinc-800 text-[10px] font-mono uppercase tracking-wider text-zinc-500">
+                    <th className="py-2.5 px-4 font-bold">User Identity</th>
+                    <th className="py-2.5 px-4 font-bold">Correspondence</th>
+                    <th className="py-2.5 px-4 font-bold">Role</th>
+                    <th className="py-2.5 px-4 font-bold">Status</th>
+                    <th className="py-2.5 px-4 font-bold text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-zinc-200 dark:divide-zinc-800 font-sans">
+                  {filteredUsers.map((u) => (
+                    <tr key={u.id} className="hover:bg-zinc-50 dark:hover:bg-zinc-850/50 transition-colors">
+                      <td className="py-3 px-4">
+                        <div className="font-serif font-bold text-sm text-foreground">{u.name}</div>
+                        {u.institution && (
+                          <div className="text-[10px] font-mono text-zinc-500 mt-0.5">{u.institution}</div>
+                        )}
+                      </td>
+                      <td className="py-3 px-4 font-mono text-zinc-600 dark:text-zinc-400">
+                        {u.email}
+                      </td>
+                      <td className="py-3 px-4">
+                        <select
+                          value={u.role}
+                          onChange={(e) => handleRoleChange(u.id, e.target.value as UserRole)}
+                          className={`px-2 py-1 text-[10px] font-mono uppercase font-bold border focus:outline-none ${
+                            u.role === "admin"
+                              ? "bg-amber-100 dark:bg-amber-950/60 border-amber-400 text-amber-800 dark:text-amber-300"
+                              : u.role === "author"
+                              ? "bg-emerald-100 dark:bg-emerald-950/60 border-emerald-400 text-emerald-800 dark:text-emerald-300"
+                              : "bg-zinc-100 dark:bg-zinc-800 border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300"
+                          }`}
+                        >
+                          <option value="user">Reader</option>
+                          <option value="author">Author</option>
+                          <option value="admin">Admin</option>
+                        </select>
+                      </td>
+                      <td className="py-3 px-4">
+                        <span
+                          className={`inline-block px-2 py-0.5 text-[9px] font-mono uppercase tracking-wider font-bold ${
+                            u.status === "approved"
+                              ? "bg-emerald-100 dark:bg-emerald-900/40 text-emerald-800 dark:text-emerald-300"
+                              : "bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-300"
+                          }`}
+                        >
+                          {u.status}
+                        </span>
+                      </td>
+                      <td className="py-3 px-4 text-right">
+                        <button
+                          onClick={() => handleDeleteUser(u.id, u.name)}
+                          className="p-1 text-zinc-400 hover:text-rose-600 transition-colors"
+                          title="Delete user"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                  {filteredUsers.length === 0 && (
+                    <tr>
+                      <td colSpan={5} className="py-8 text-center text-xs font-mono text-zinc-500">
+                        No registered users match your query.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {/* ==================================================== */}
+        {/* TAB 2: HERO BACKGROUND VIDEO                         */}
+        {/* ==================================================== */}
+        {activeTab === "hero_video" && (
+          <div className="space-y-6">
+            <div className="p-6 bg-white dark:bg-zinc-900 border border-zinc-250 dark:border-zinc-800 space-y-4">
+              <div className="border-b border-zinc-200 dark:border-zinc-800 pb-3">
+                <span className="text-[10px] font-mono uppercase tracking-widest text-emerald-600 dark:text-emerald-400 font-bold">
+                  MASTHEAD MEDIA CONFIGURATION
+                </span>
+                <h3 className="font-serif text-xl font-bold text-foreground">Hero Background Video</h3>
+                <p className="text-xs text-zinc-600 dark:text-zinc-400 mt-1">
+                  The primary background video that loops across the NATURUA masthead hero section.
+                </p>
+              </div>
+
+              {/* Video Preview Box */}
+              <div className="space-y-2">
+                <div className="text-[10px] font-mono uppercase tracking-wider text-zinc-500 font-bold">
+                  Active Video Feed Preview:
+                </div>
+                <div className="relative w-full h-56 sm:h-72 bg-black overflow-hidden border border-zinc-300 dark:border-zinc-700 shadow-inner flex items-center justify-center">
+                  <video
+                    key={heroVideoUrl}
+                    src={heroVideoUrl}
+                    className="w-full h-full object-cover"
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                  />
+                  <div className="absolute bottom-2 left-2 px-2 py-0.5 bg-black/70 text-emerald-400 font-mono text-[9px] uppercase tracking-wider flex items-center gap-1.5">
+                    <Play className="w-2.5 h-2.5 fill-current" />
+                    <span>CURRENT FEED ACTIVE</span>
                   </div>
-                ) : (
-                  filteredVideos.map((vid) => (
-                    <div
-                      key={vid.id}
-                      className="p-4 bg-white dark:bg-zinc-900 border border-zinc-250 dark:border-zinc-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 hover:border-zinc-400 transition-all shadow-sm"
+                </div>
+              </div>
+
+              {/* Video URL Form */}
+              <form onSubmit={handleSaveVideoSettings} className="space-y-4 pt-2">
+                <div>
+                  <label className="block text-[10px] font-mono uppercase tracking-widest text-zinc-500 font-bold mb-1">
+                    Video Source URL / Local Asset Path
+                  </label>
+                  <input
+                    type="text"
+                    value={heroVideoUrl}
+                    onChange={(e) => setHeroVideoUrl(e.target.value)}
+                    placeholder="/assets/eagle-flying.mp4"
+                    className="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-700 font-mono text-xs text-foreground focus:outline-none focus:border-emerald-600"
+                    required
+                  />
+                  <div className="mt-1 flex items-center justify-between text-[10px] font-mono text-zinc-500">
+                    <span>Default Lifetime Video: <code>/assets/eagle-flying.mp4</code></span>
+                    <button
+                      type="button"
+                      onClick={handleResetVideo}
+                      className="text-amber-700 dark:text-amber-400 hover:underline flex items-center gap-1 font-bold"
                     >
-                      <div className="flex items-center gap-4 flex-1">
-                        <img
-                          src={vid.thumbnailUrl}
-                          alt={vid.title}
-                          className="w-20 h-12 object-cover bg-black rounded shrink-0 border border-zinc-250 dark:border-zinc-800"
-                        />
-                        <div>
-                          <div className="flex items-center gap-2 text-[9px] font-mono uppercase tracking-wider text-zinc-500 mb-0.5">
-                            <span className="text-blue-600 dark:text-blue-400 font-bold">{vid.category}</span>
-                            <span>•</span>
-                            <span>{vid.duration}</span>
-                          </div>
-                          <h3 className="font-serif font-bold text-sm text-foreground leading-snug">
-                            {vid.title}
-                          </h3>
-                        </div>
-                      </div>
+                      <RotateCcw className="w-3 h-3" /> Reset to Default
+                    </button>
+                  </div>
+                </div>
 
-                      <div className="flex items-center gap-2 shrink-0">
-                        <button
-                          onClick={() => handleDeleteVideo(vid.id)}
-                          className="p-2 text-zinc-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 rounded transition-colors"
-                          title="Delete video"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* TAB 2: SIMPLE NEW ARTICLE FORM */}
-        {activeTab === "new_article" && (
-          <div className="bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 p-6 sm:p-8 shadow-sm">
-            <h2 className="font-serif font-bold text-xl text-foreground mb-1">
-              Publish New Field Dispatch
-            </h2>
-            <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-6 font-mono">
-              Fill in the essential fields to publish directly to the live journal.
-            </p>
-
-            <form onSubmit={handleCreateArticle} className="space-y-4">
-              <div>
-                <label className="block text-[10px] font-mono uppercase tracking-wider text-zinc-500 mb-1 font-bold">
-                  Dispatch Title *
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. Bio-Acoustic Monitoring of Canopy Biomes"
-                  value={artTitle}
-                  onChange={(e) => setArtTitle(e.target.value)}
-                  className="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-700 text-sm font-sans focus:outline-none focus:border-emerald-600 text-foreground"
-                />
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-[10px] font-mono uppercase tracking-wider text-zinc-500 mb-1 font-bold">
-                    Category *
-                  </label>
-                  <select
-                    value={artCategory}
-                    onChange={(e) => setArtCategory(e.target.value as Category)}
-                    className="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-700 text-xs font-mono focus:outline-none focus:border-emerald-600 text-foreground"
+                <div className="flex items-center justify-end gap-3 pt-2 border-t border-zinc-200 dark:border-zinc-800">
+                  <button
+                    type="submit"
+                    className="px-5 py-2 bg-emerald-700 hover:bg-emerald-800 text-white font-mono text-xs uppercase tracking-wider font-bold flex items-center gap-1.5 shadow-sm"
                   >
-                    <option value="science">Planetary Science</option>
-                    <option value="tech">Eco-Technology</option>
-                    <option value="politics">Earth Polity</option>
-                    <option value="culture">Ecological Culture</option>
-                    <option value="finance">Green Finance</option>
-                  </select>
+                    <Save className="w-3.5 h-3.5" />
+                    <span>Save Video Settings</span>
+                  </button>
                 </div>
-
-                <div>
-                  <label className="block text-[10px] font-mono uppercase tracking-wider text-zinc-500 mb-1 font-bold">
-                    Author Byline
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="e.g. Eleanor Wright"
-                    value={artAuthor}
-                    onChange={(e) => setArtAuthor(e.target.value)}
-                    className="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-700 text-xs font-sans focus:outline-none focus:border-emerald-600 text-foreground"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-[10px] font-mono uppercase tracking-wider text-zinc-500 mb-1 font-bold">
-                  Subtitle / Summary
-                </label>
-                <input
-                  type="text"
-                  placeholder="Short one-line synopsis"
-                  value={artSubtitle}
-                  onChange={(e) => setArtSubtitle(e.target.value)}
-                  className="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-700 text-xs font-sans focus:outline-none focus:border-emerald-600 text-foreground"
-                />
-              </div>
-
-              <div>
-                <label className="block text-[10px] font-mono uppercase tracking-wider text-zinc-500 mb-1 font-bold">
-                  Hero Image URL
-                </label>
-                <input
-                  type="url"
-                  placeholder="https://images.unsplash.com/photo-..."
-                  value={artImageUrl}
-                  onChange={(e) => setArtImageUrl(e.target.value)}
-                  className="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-700 text-xs font-sans focus:outline-none focus:border-emerald-600 text-foreground"
-                />
-              </div>
-
-              <div>
-                <label className="block text-[10px] font-mono uppercase tracking-wider text-zinc-500 mb-1 font-bold">
-                  Full Article Body *
-                </label>
-                <textarea
-                  required
-                  rows={8}
-                  placeholder="Write the article copy here..."
-                  value={artContent}
-                  onChange={(e) => setArtContent(e.target.value)}
-                  className="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-700 text-sm font-sans focus:outline-none focus:border-emerald-600 text-foreground leading-relaxed"
-                />
-              </div>
-
-              <div className="pt-4 border-t border-zinc-200 dark:border-zinc-800 flex justify-end gap-3">
-                <button
-                  type="button"
-                  onClick={() => setActiveTab("content")}
-                  className="px-4 py-2 border border-zinc-300 dark:border-zinc-700 text-xs font-mono uppercase tracking-wider text-zinc-600 dark:text-zinc-300"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-6 py-2 bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-mono uppercase tracking-widest font-bold shadow-md transition-all"
-                >
-                  Publish Dispatch
-                </button>
-              </div>
-            </form>
+              </form>
+            </div>
           </div>
         )}
 
-        {/* TAB 3: SIMPLE NEW VIDEO FORM */}
-        {activeTab === "new_video" && (
-          <div className="bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 p-6 sm:p-8 shadow-sm">
-            <h2 className="font-serif font-bold text-xl text-foreground mb-1">
-              Add Video Broadcast
-            </h2>
-            <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-6 font-mono">
-              Provide video link and thumbnail for the In Focus broadcast section.
-            </p>
-
-            <form onSubmit={handleCreateVideo} className="space-y-4">
-              <div>
-                <label className="block text-[10px] font-mono uppercase tracking-wider text-zinc-500 mb-1 font-bold">
-                  Video Title *
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. Deep Ocean Geothermal Probes"
-                  value={vidTitle}
-                  onChange={(e) => setVidTitle(e.target.value)}
-                  className="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-700 text-sm font-sans focus:outline-none focus:border-blue-600 text-foreground"
-                />
+        {/* ==================================================== */}
+        {/* TAB 3: VOLUME NUMBER & EDITION                       */}
+        {/* ==================================================== */}
+        {activeTab === "vol_edition" && (
+          <div className="space-y-6">
+            <div className="p-6 bg-white dark:bg-zinc-900 border border-zinc-250 dark:border-zinc-800 space-y-4">
+              <div className="border-b border-zinc-200 dark:border-zinc-800 pb-3">
+                <span className="text-[10px] font-mono uppercase tracking-widest text-amber-600 dark:text-amber-400 font-bold">
+                  PUBLICATION METADATA
+                </span>
+                <h3 className="font-serif text-xl font-bold text-foreground">Volume & Edition Header</h3>
+                <p className="text-xs text-zinc-600 dark:text-zinc-400 mt-1">
+                  Adjust the masthead volume number and edition subtitle printed across the front page.
+                </p>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-[10px] font-mono uppercase tracking-wider text-zinc-500 mb-1 font-bold">
-                    Category *
-                  </label>
-                  <select
-                    value={vidCategory}
-                    onChange={(e) => setVidCategory(e.target.value as Category)}
-                    className="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-700 text-xs font-mono focus:outline-none focus:border-blue-600 text-foreground"
+              {/* Live Preview Card */}
+              <div className="p-4 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 space-y-2">
+                <div className="text-[9px] font-mono uppercase tracking-wider text-zinc-400 font-bold">
+                  Live Masthead Display Preview:
+                </div>
+                <div className="flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 pb-2 text-[10px] font-mono">
+                  <span className="font-bold text-zinc-700 dark:text-zinc-300">
+                    PAEN / <span className="text-amber-600 dark:text-amber-400">{issueEdition || "SPECIAL FIELD EDITION"}</span>
+                  </span>
+                  <span className="px-2 py-0.5 bg-zinc-200 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 font-bold">
+                    {volumeNumber || "VOL. 1"}
+                  </span>
+                </div>
+              </div>
+
+              {/* Form */}
+              <form onSubmit={handleSaveVolEdition} className="space-y-4 pt-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-[10px] font-mono uppercase tracking-widest text-zinc-500 font-bold mb-1">
+                      Volume Identifier
+                    </label>
+                    <input
+                      type="text"
+                      value={volumeNumber}
+                      onChange={(e) => setVolumeNumber(e.target.value)}
+                      placeholder="e.g. VOL. 1 or VOL. XXIV"
+                      className="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-700 font-mono text-xs text-foreground focus:outline-none focus:border-amber-600"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[10px] font-mono uppercase tracking-widest text-zinc-500 font-bold mb-1">
+                      Edition Tagline
+                    </label>
+                    <input
+                      type="text"
+                      value={issueEdition}
+                      onChange={(e) => setIssueEdition(e.target.value)}
+                      placeholder="e.g. SPECIAL FIELD EDITION"
+                      className="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-700 font-mono text-xs text-foreground focus:outline-none focus:border-amber-600"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-end gap-3 pt-2 border-t border-zinc-200 dark:border-zinc-800">
+                  <button
+                    type="submit"
+                    className="px-5 py-2 bg-amber-600 hover:bg-amber-700 text-white font-mono text-xs uppercase tracking-wider font-bold flex items-center gap-1.5 shadow-sm"
                   >
-                    <option value="science">Planetary Science</option>
-                    <option value="tech">Eco-Technology</option>
-                    <option value="politics">Earth Polity</option>
-                    <option value="culture">Ecological Culture</option>
-                    <option value="finance">Green Finance</option>
-                  </select>
+                    <Save className="w-3.5 h-3.5" />
+                    <span>Apply Publication Changes</span>
+                  </button>
                 </div>
-
-                <div>
-                  <label className="block text-[10px] font-mono uppercase tracking-wider text-zinc-500 mb-1 font-bold">
-                    Presenter / Correspondent
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Paen Field Broadcast"
-                    value={vidAuthor}
-                    onChange={(e) => setVidAuthor(e.target.value)}
-                    className="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-700 text-xs font-sans focus:outline-none focus:border-blue-600 text-foreground"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-[10px] font-mono uppercase tracking-wider text-zinc-500 mb-1 font-bold">
-                  Duration (e.g. 14:20)
-                </label>
-                <input
-                  type="text"
-                  placeholder="14:20"
-                  value={vidDuration}
-                  onChange={(e) => setVidDuration(e.target.value)}
-                  className="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-700 text-xs font-sans focus:outline-none focus:border-blue-600 text-foreground"
-                />
-              </div>
-
-              <div>
-                <label className="block text-[10px] font-mono uppercase tracking-wider text-zinc-500 mb-1 font-bold">
-                  Description / Synopsis
-                </label>
-                <input
-                  type="text"
-                  placeholder="Short description of the broadcast..."
-                  value={vidDesc}
-                  onChange={(e) => setVidDesc(e.target.value)}
-                  className="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-700 text-xs font-sans focus:outline-none focus:border-blue-600 text-foreground"
-                />
-              </div>
-
-              <div>
-                <label className="block text-[10px] font-mono uppercase tracking-wider text-zinc-500 mb-1 font-bold">
-                  Video Stream URL (MP4 / WebM / HLS) *
-                </label>
-                <input
-                  type="url"
-                  required
-                  placeholder="https://assets.mixkit.co/videos/preview/..."
-                  value={vidUrl}
-                  onChange={(e) => setVidUrl(e.target.value)}
-                  className="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-700 text-xs font-sans focus:outline-none focus:border-blue-600 text-foreground"
-                />
-              </div>
-
-              <div>
-                <label className="block text-[10px] font-mono uppercase tracking-wider text-zinc-500 mb-1 font-bold">
-                  Thumbnail Image URL
-                </label>
-                <input
-                  type="url"
-                  placeholder="https://images.unsplash.com/photo-..."
-                  value={vidThumb}
-                  onChange={(e) => setVidThumb(e.target.value)}
-                  className="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-700 text-xs font-sans focus:outline-none focus:border-blue-600 text-foreground"
-                />
-              </div>
-
-              <div className="pt-4 border-t border-zinc-200 dark:border-zinc-800 flex justify-end gap-3">
-                <button
-                  type="button"
-                  onClick={() => setActiveTab("content")}
-                  className="px-4 py-2 border border-zinc-300 dark:border-zinc-700 text-xs font-mono uppercase tracking-wider text-zinc-600 dark:text-zinc-300"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-6 py-2 bg-blue-700 hover:bg-blue-600 text-white text-xs font-mono uppercase tracking-widest font-bold shadow-md transition-all"
-                >
-                  Add Video
-                </button>
-              </div>
-            </form>
+              </form>
+            </div>
           </div>
         )}
 
-        {/* TAB 4: SECURITY & PASSCODE */}
-        {activeTab === "settings" && (
-          <div className="bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 p-6 sm:p-8 shadow-sm max-w-xl">
-            <h2 className="font-serif font-bold text-xl text-foreground mb-1">
-              Admin Access Passcode
-            </h2>
-            <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-6 font-mono">
-              Update the master passcode used to access the administrator panel.
-            </p>
-
-            <form onSubmit={handleSavePassword} className="space-y-4">
-              <div>
-                <label className="block text-[10px] font-mono uppercase tracking-wider text-zinc-500 mb-1 font-bold">
-                  New Admin Password
-                </label>
-                <input
-                  type="password"
-                  placeholder="Enter new password (min 4 characters)"
-                  value={newPass}
-                  onChange={(e) => setNewPass(e.target.value)}
-                  className="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-700 text-sm font-sans focus:outline-none focus:border-amber-600 text-foreground"
-                />
+        {/* ==================================================== */}
+        {/* TAB 4: ADMIN PASSCODE                                */}
+        {/* ==================================================== */}
+        {activeTab === "security" && (
+          <div className="space-y-6">
+            <div className="p-6 bg-white dark:bg-zinc-900 border border-zinc-250 dark:border-zinc-800 space-y-4">
+              <div className="border-b border-zinc-200 dark:border-zinc-800 pb-3">
+                <span className="text-[10px] font-mono uppercase tracking-widest text-zinc-500 font-bold">
+                  ADMIN PASSCODE & CREDENTIALS
+                </span>
+                <h3 className="font-serif text-xl font-bold text-foreground">Update Admin Passcode</h3>
+                <p className="text-xs text-zinc-600 dark:text-zinc-400 mt-1">
+                  Change the root administrative access code for the on-site desk.
+                </p>
               </div>
 
               {passMsg && (
-                <div
-                  className={`text-xs font-mono p-2.5 rounded ${
-                    passMsg.includes("success")
-                      ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300"
-                      : "bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-300"
-                  }`}
-                >
+                <div className="p-3 bg-emerald-100 dark:bg-emerald-950/60 border border-emerald-400 text-emerald-800 dark:text-emerald-300 text-xs font-mono">
                   {passMsg}
                 </div>
               )}
 
-              <div className="pt-2">
+              <form onSubmit={handleUpdatePassword} className="space-y-4 max-w-md">
+                <div>
+                  <label className="block text-[10px] font-mono uppercase tracking-widest text-zinc-500 font-bold mb-1">
+                    New Admin Passcode
+                  </label>
+                  <input
+                    type="password"
+                    value={newPass}
+                    onChange={(e) => setNewPass(e.target.value)}
+                    placeholder="Enter at least 4 characters..."
+                    className="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-700 font-mono text-xs text-foreground focus:outline-none focus:border-amber-600"
+                    required
+                  />
+                  <p className="text-[10px] font-mono text-zinc-400 mt-1">Current default passcode: <code>paen123</code></p>
+                </div>
+
                 <button
                   type="submit"
-                  className="px-6 py-2 bg-amber-600 hover:bg-amber-500 text-white text-xs font-mono uppercase tracking-widest font-bold shadow-md transition-all"
+                  className="px-5 py-2 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 font-mono text-xs uppercase tracking-wider font-bold"
                 >
                   Update Passcode
                 </button>
-              </div>
-            </form>
+              </form>
+            </div>
           </div>
         )}
       </div>

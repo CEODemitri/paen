@@ -20,7 +20,6 @@ import {
   loadArticles,
   saveArticles,
   loadVideos,
-  saveVideos,
   loadComments,
   saveComments,
   loadBookmarks,
@@ -114,12 +113,6 @@ function App() {
     setIsAuthorMode(false);
   };
 
-  // Sync state helpers
-  const handleSetArticles = (newArticles: Article[]) => {
-    setArticlesState(newArticles);
-    saveArticles(newArticles);
-  };
-
   const handleAuthorSaveArticle = (article: Article) => {
     const existingIndex = articles.findIndex((a) => a.id === article.id);
     let updated: Article[];
@@ -136,11 +129,6 @@ function App() {
     const updated = articles.filter((a) => a.id !== id);
     setArticlesState(updated);
     saveArticles(updated);
-  };
-
-  const handleSetVideos = (newVideos: Video[]) => {
-    setVideosState(newVideos);
-    saveVideos(newVideos);
   };
 
   const handleBookmarkToggle = (id: string, e?: MouseEvent) => {
@@ -223,8 +211,18 @@ function App() {
       className={`min-h-screen w-full flex flex-col font-sans transition-colors duration-300 ${themeStyles[readingTheme]}`}
       id="root-app-container"
     >
-      {/* If in Shop Mode, Render Dedicated Standalone Shop Page */}
-      {isShopOpen ? (
+      {/* Dedicated Standalone Admin Portal Page */}
+      {isAdminMode ? (
+        <main className="flex-grow">
+          <AdminPortal
+            onExit={() => {
+              setIsAdminMode(false);
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }}
+          />
+        </main>
+      ) : isShopOpen ? (
+        /* Dedicated Standalone Shop Page */
         <main className="flex-grow">
           <ShopView
             onBack={() => {
@@ -247,10 +245,11 @@ function App() {
             }}
             bookmarksCount={bookmarks.length}
             onAdminToggle={() => {
-              setIsAdminMode(!isAdminMode);
+              setIsAdminMode(true);
               setIsAuthorMode(false);
               setActiveArticle(null);
               setIsShopOpen(false);
+              window.scrollTo({ top: 0, behavior: "smooth" });
             }}
             isAdminMode={isAdminMode}
             onOpenAuth={() => setIsAuthModalOpen(true)}
@@ -273,18 +272,7 @@ function App() {
             isShopMode={isShopOpen}
           />
 
-          {/* Admin Interface Panel */}
-          {isAdminMode ? (
-            <main className="flex-grow">
-              <AdminPortal
-                articles={articles}
-                setArticles={handleSetArticles}
-                videos={videos}
-                setVideos={handleSetVideos}
-                onExit={() => setIsAdminMode(false)}
-              />
-            </main>
-          ) : isAuthorMode && currentUser && currentUser.role === "author" ? (
+          {isAuthorMode && currentUser && currentUser.role === "author" ? (
             /* Author Field Desk */
             <main className="flex-grow">
               <AuthorPortal

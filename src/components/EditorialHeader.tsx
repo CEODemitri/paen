@@ -461,13 +461,14 @@ export default function EditorialHeader({
             </div>
           </div>
 
-          {/* Right Group: Action Button just to the left of the aside banner */}
+          {/* Right Group: Red Action Button & Vertical Banner */}
           <div className="flex items-end gap-3 sm:gap-4 shrink-0 h-full">
-            {/* Free-Floating "READ DISPATCHES" Action Button positioned just to the left of the aside */}
+            {/* Free-Standing Red "READ DISPATCHES" Action Button */}
             <div className="z-30 pointer-events-auto pb-1 sm:pb-2">
               <a
                 href="#editorial-lead-section"
                 className="px-3.5 sm:px-4 py-2 bg-[#d9483b] hover:bg-[#c23d30] text-white text-[8.5px] sm:text-[9.5px] md:text-[10px] font-mono uppercase tracking-widest font-bold flex items-center gap-2 transition-all shadow-xl rounded-sm hover:scale-105 border border-white/20 whitespace-nowrap"
+                id="hero-read-dispatches-btn"
               >
                 <span>READ DISPATCHES</span>
                 <span className="animate-bounce">↓</span>
@@ -476,68 +477,93 @@ export default function EditorialHeader({
 
             {/* Right Deep Indigo Vertical Banner */}
             <aside
-              className="w-16 sm:w-24 md:w-32 lg:w-40 h-full bg-[#162738]/95 backdrop-blur-sm text-[#f4ecd9] p-2 sm:p-3 flex flex-col justify-between items-center relative border border-[#162738] shadow-md shrink-0"
+              className="w-16 sm:w-24 md:w-32 lg:w-40 h-full bg-[#122030]/95 backdrop-blur-md text-[#f4ecd9] p-2 sm:p-3 flex flex-col justify-between items-center relative border border-[#1d334c] shadow-2xl shrink-0 overflow-hidden group"
               id="kyoto-poster-side-banner"
             >
-              <div className="w-full flex flex-col items-center pt-0.5 border-b border-white/10 pb-1.5">
-                <span className="text-[7.5px] sm:text-[8.5px] font-mono tracking-[0.25em] text-[#d9ab6a] uppercase text-center font-bold">
-                  KANSAI
+              {/* Top Station Status Strip */}
+              <div className="w-full flex items-center justify-between pt-0.5 border-b border-white/15 pb-1.5 text-[7px] sm:text-[8px] font-mono tracking-[0.2em] text-[#d9ab6a] uppercase">
+                <span className="font-bold flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse inline-block" />
+                  LIVE
                 </span>
+                <span className="text-[#f4ecd9]/70 font-semibold tracking-widest">VOL. CIV</span>
               </div>
 
-              {/* Vertical Japanese Calligraphy Text */}
-              <div className="flex-1 flex flex-col items-center justify-center my-2 gap-2">
+              {/* Center Area: Soaring Eagle Celestial Glyph & Vertical Poetry */}
+              <div className="flex-1 flex flex-col items-center justify-center my-1.5 sm:my-2 gap-2 sm:gap-2.5 w-full">
+                {/* Bespoke PAEN Eagle & Celestial River Crest */}
+                <div className="w-8 h-8 sm:w-10 sm:h-10 text-[#d9ab6a] relative flex items-center justify-center">
+                  <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" className="w-full h-full" strokeWidth="1.4">
+                    {/* Orbit & Meridian Rings */}
+                    <circle cx="32" cy="32" r="28" stroke="currentColor" strokeWidth="0.8" strokeDasharray="3 3" opacity="0.5" />
+                    <ellipse cx="32" cy="32" rx="26" ry="10" stroke="currentColor" strokeWidth="1" transform="rotate(-25 32 32)" opacity="0.75" />
+                    
+                    {/* Soaring Eagle Silhouette in Cosmic Crest */}
+                    <path
+                      d="M 14,30 Q 24,18 32,24 Q 40,18 50,30 Q 38,27 32,36 Q 26,27 14,30 Z"
+                      fill="currentColor"
+                      opacity="0.9"
+                    />
+                    {/* Tail & Head feathers */}
+                    <polygon points="32,22 34,25 30,25" fill="#f8f5ed" />
+                    <polygon points="32,36 34,42 30,42" fill="currentColor" />
+
+                    {/* River Flow Currents */}
+                    <path d="M 18,48 Q 32,44 46,48" stroke="#d9ab6a" strokeWidth="1.2" opacity="0.8" />
+                    <path d="M 22,53 Q 32,49 42,53" stroke="#d9ab6a" strokeWidth="0.8" opacity="0.6" />
+
+                    {/* Northern Guiding Star */}
+                    <circle cx="32" cy="10" r="2" fill="#d9ab6a" className="animate-pulse" />
+                  </svg>
+                </div>
+
+                {/* Vertical Japanese Calligraphy: "蒼穹を翔る、生命の鼓動。" */}
                 <div
-                  className="text-base sm:text-xl md:text-2xl font-serif font-bold text-[#f8f5ed] tracking-[0.25em] select-none"
+                  className="text-sm sm:text-lg md:text-xl font-serif font-bold text-[#f8f5ed] tracking-[0.25em] select-none drop-shadow-sm leading-tight"
                   style={{
                     writingMode: "vertical-rl",
                     textOrientation: "upright",
                     letterSpacing: "0.26em",
                   }}
+                  title="蒼穹を翔る、生命の鼓動。(Soaring the azure skies, the heartbeat of life.)"
                 >
-                  千年の都、心に残る旅。
+                  蒼穹を翔る、生命の鼓動。
                 </div>
 
-                <div className="text-[7px] sm:text-[8px] md:text-[8.5px] font-mono tracking-[0.18em] text-[#d9ab6a] uppercase text-center mt-1 leading-tight">
-                  A JOURNEY <br />
-                  THAT STAYS <br />
-                  WITH YOU.
+                {/* Subtitle in Warm Gold Typography */}
+                <div className="text-[6.5px] sm:text-[7.5px] md:text-[8px] font-mono tracking-[0.2em] text-[#d9ab6a] uppercase text-center leading-snug font-bold">
+                  ELEVATING DISCOVERY <br />
+                  TO COSMIC SCALE.
                 </div>
 
-                {/* Pagoda Silhouette */}
-                <div className="w-6 h-8 text-[#d9ab6a]">
-                  <svg viewBox="0 0 40 50" fill="currentColor" className="w-full h-full">
-                    <line x1="20" y1="2" x2="20" y2="12" stroke="currentColor" strokeWidth="1.5" />
-                    <circle cx="20" cy="3" r="1.5" />
-                    <path d="M 12,12 L 28,12 L 25,16 L 15,16 Z" />
-                    <path d="M 10,18 L 30,18 L 27,22 L 13,22 Z" />
-                    <path d="M 8,24 L 32,24 L 29,28 L 11,28 Z" />
-                    <path d="M 6,30 L 34,30 L 31,35 L 9,35 Z" />
-                    <path d="M 4,37 L 36,37 L 33,44 L 7,44 Z" />
-                    <rect x="14" y="44" width="12" height="5" />
-                  </svg>
+                {/* Biosphere Audio Resonance Equalizer Wave */}
+                <div className="flex items-center justify-center gap-1 pt-0.5 opacity-80" title="Audio Soundscape Frequency">
+                  <span className="w-0.5 h-2 bg-amber-400 animate-pulse" />
+                  <span className="w-0.5 h-4 bg-amber-400 animate-pulse delay-75" />
+                  <span className="w-0.5 h-3 bg-amber-400 animate-pulse delay-150" />
+                  <span className="w-0.5 h-5 bg-amber-400 animate-pulse delay-300" />
+                  <span className="w-0.5 h-2.5 bg-amber-400 animate-pulse delay-100" />
+                  <span className="text-[6.5px] sm:text-[7px] font-mono tracking-widest text-emerald-300 font-bold ml-1">
+                    432 Hz
+                  </span>
                 </div>
               </div>
 
-              {/* Bottom: Japan Map Pinpoint & Coordinates */}
-              <div className="w-full border-t border-white/10 pt-1.5 flex flex-col items-center gap-1">
-                <div className="relative w-10 sm:w-14 h-9 flex items-center justify-center">
-                  <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" className="w-full h-full text-zinc-400">
-                    <path d="M 75,12 C 82,14 88,22 84,28 C 76,28 72,20 75,12 Z" fill="currentColor" opacity="0.6" />
-                    <path
-                      d="M 70,32 C 75,40 68,55 52,68 C 42,75 32,82 20,86 C 18,84 25,76 38,70 C 48,64 58,50 62,35 Z"
-                      fill="currentColor"
-                      opacity="0.75"
-                    />
-                    <circle cx="34" cy="78" r="3.5" fill="currentColor" opacity="0.6" />
-                    <path d="M 16,84 C 18,92 24,94 20,98 C 14,94 12,88 16,84 Z" fill="currentColor" opacity="0.6" />
-                    <circle cx="48" cy="65" r="3.5" fill="#d9483b" />
-                    <circle cx="48" cy="65" r="6" stroke="#d9483b" strokeWidth="1" opacity="0.75" className="animate-ping" />
+              {/* Bottom: Coordinates & Radar */}
+              <div className="w-full border-t border-white/15 pt-1.5 flex flex-col items-center gap-1">
+                <div className="relative w-8 sm:w-10 h-7 flex items-center justify-center">
+                  <svg viewBox="0 0 80 60" fill="none" stroke="currentColor" className="w-full h-full text-zinc-400">
+                    <line x1="10" y1="30" x2="70" y2="30" stroke="currentColor" strokeWidth="0.8" strokeDasharray="2 2" opacity="0.6" />
+                    <line x1="40" y1="5" x2="40" y2="55" stroke="currentColor" strokeWidth="0.8" strokeDasharray="2 2" opacity="0.6" />
+                    <circle cx="40" cy="30" r="18" stroke="currentColor" strokeWidth="0.8" opacity="0.4" />
+                    <circle cx="40" cy="30" r="8" stroke="currentColor" strokeWidth="1" opacity="0.7" />
+                    <circle cx="40" cy="30" r="3" fill="#d9483b" />
+                    <circle cx="40" cy="30" r="5.5" stroke="#d9483b" strokeWidth="0.8" opacity="0.75" className="animate-ping" />
                   </svg>
                 </div>
 
-                <div className="text-[7px] sm:text-[8px] font-mono text-zinc-300 tracking-wider text-center leading-tight">
-                  <div>35.0116° N</div>
+                <div className="text-[6px] sm:text-[7px] font-mono text-zinc-300/80 tracking-wider text-center leading-tight">
+                  <div className="text-[#d9ab6a]/90 font-bold">HORIZON 35°N</div>
                   <div>135.7681° E</div>
                 </div>
               </div>

@@ -279,174 +279,184 @@ function App() {
         </main>
       ) : (
         /* Main Newspaper Frontpage layout */
-        <main className="flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
-          {/* Editorial Search & Filter Console */}
-          <div className="border border-zinc-300/80 dark:border-zinc-800 bg-[#faf7f2] dark:bg-zinc-950/60 p-4 mb-10 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
-            <div className="flex items-center gap-3 flex-1">
-              <Search className="w-4 h-4 text-emerald-700 dark:text-emerald-400 shrink-0" />
-              <input
-                type="text"
-                placeholder="SEARCH DOSSIERS: keywords, fellows, topics, coordinates..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-transparent text-foreground text-xs font-mono uppercase tracking-wider focus:outline-none placeholder-zinc-400"
-                id="frontpage-search-input"
-              />
-            </div>
+        <main className="flex-grow w-full">
+          {/* Top Lead Section in deep emerald canvas matching hero bottom */}
+          <div className="w-full bg-[#0a1812] text-[#ede8de] border-b border-emerald-900/60 shadow-inner">
+            <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-10">
+              {/* Editorial Search & Filter Console */}
+              <div className="border border-emerald-800/40 bg-[#0f241c]/90 backdrop-blur-md p-4 mb-8 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 shadow-lg shadow-black/20">
+                <div className="flex items-center gap-3 flex-1">
+                  <Search className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <input
+                    type="text"
+                    placeholder="SEARCH DOSSIERS: keywords, fellows, topics, coordinates..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full bg-transparent text-[#f5ebd6] text-xs font-mono uppercase tracking-wider focus:outline-none placeholder-emerald-200/40"
+                    id="frontpage-search-input"
+                  />
+                </div>
 
-            <div className="flex items-center gap-3 shrink-0 text-[10px] font-mono text-zinc-500 justify-between sm:justify-end border-t sm:border-t-0 border-zinc-250 dark:border-zinc-800 pt-2 sm:pt-0">
-              <span className="uppercase tracking-widest font-semibold">
-                INDEX: <strong className="text-foreground">{filteredArticles.length} DOSSIERS</strong>
-              </span>
-              {(currentCategory !== "all" || searchQuery) && (
-                <button
-                  onClick={() => {
-                    setCategory("all");
-                    setSearchQuery("");
-                  }}
-                  className="flex items-center gap-1 text-amber-700 dark:text-amber-400 hover:underline uppercase tracking-wider font-bold"
-                >
-                  <RotateCcw className="w-3 h-3" /> Reset
-                </button>
+                <div className="flex items-center gap-3 shrink-0 text-[10px] font-mono text-emerald-200/60 justify-between sm:justify-end border-t sm:border-t-0 border-emerald-800/40 pt-2 sm:pt-0">
+                  <span className="uppercase tracking-widest font-semibold">
+                    INDEX: <strong className="text-[#f5ebd6]">{filteredArticles.length} DOSSIERS</strong>
+                  </span>
+                  {(currentCategory !== "all" || searchQuery) && (
+                    <button
+                      onClick={() => {
+                        setCategory("all");
+                        setSearchQuery("");
+                      }}
+                      className="flex items-center gap-1 text-amber-400 hover:text-amber-300 hover:underline uppercase tracking-wider font-bold"
+                    >
+                      <RotateCcw className="w-3 h-3" /> Reset
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {filteredArticles.length === 0 ? (
+                /* Empty State */
+                <div className="text-center py-20 border border-dashed border-emerald-800/40 bg-[#0f241c]/40 my-6">
+                  <Globe className="w-12 h-12 text-emerald-400/50 mx-auto mb-4 animate-spin-slow" />
+                  <h3 className="font-serif font-semibold text-2xl text-[#f5ebd6]">No Research Dossiers Matched</h3>
+                  <p className="text-xs text-emerald-200/60 mt-2 max-w-md mx-auto font-sans font-light">
+                    No articles matching your current filter criteria were found. Please check spelling or reset filters.
+                  </p>
+                  <button
+                    onClick={() => {
+                      setCategory("all");
+                      setSearchQuery("");
+                    }}
+                    className="mt-6 px-4 py-2 bg-emerald-600 text-white text-xs font-mono uppercase tracking-widest hover:bg-emerald-500 transition-colors shadow-md"
+                  >
+                    Reset Dossier Grid
+                  </button>
+                </div>
+              ) : (
+                /* Section I: Lead Investigation & Dispatch Ledger */
+                leadArticle && (
+                  <EditorialHero
+                    leadArticle={leadArticle}
+                    sideArticles={sideArticles}
+                    bookmarks={bookmarks}
+                    onBookmarkToggle={handleBookmarkToggle}
+                    onSelectArticle={handleSelectArticle}
+                  />
+                )
               )}
             </div>
           </div>
 
-          {filteredArticles.length === 0 ? (
-            /* Empty State */
-            <div className="text-center py-24 border border-dashed border-zinc-300 dark:border-zinc-800 bg-[#faf7f2]/40 dark:bg-zinc-950/20 my-10">
-              <Globe className="w-12 h-12 text-zinc-400 dark:text-zinc-600 mx-auto mb-4 animate-spin-slow" />
-              <h3 className="font-serif font-semibold text-2xl text-foreground">No Research Dossiers Matched</h3>
-              <p className="text-xs text-zinc-500 mt-2 max-w-md mx-auto font-sans font-light">
-                No articles matching your current filter criteria were found. Please check spelling or reset filters.
-              </p>
-              <button
-                onClick={() => {
-                  setCategory("all");
-                  setSearchQuery("");
-                }}
-                className="mt-6 px-4 py-2 bg-emerald-700 text-white text-xs font-mono uppercase tracking-widest hover:bg-emerald-800 transition-colors"
-              >
-                Reset Dossier Grid
-              </button>
-            </div>
-          ) : (
-            <div className="flex flex-col">
-              {/* Section I: Lead Investigation & Dispatch Ledger */}
-              {leadArticle && (
-                <EditorialHero
-                  leadArticle={leadArticle}
-                  sideArticles={sideArticles}
-                  bookmarks={bookmarks}
-                  onBookmarkToggle={handleBookmarkToggle}
-                  onSelectArticle={handleSelectArticle}
-                />
-              )}
+          {/* Rest of the page in its original background & aesthetic */}
+          {filteredArticles.length > 0 && (
+            <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-14">
+              <div className="flex flex-col">
+                {/* Section II: Curated Bento Grid (Deep Inquiries & Longreads) */}
+                {sideArticles.length > 0 && (
+                  <CuratedBentoGrid
+                    articles={sideArticles}
+                    bookmarks={bookmarks}
+                    onBookmarkToggle={handleBookmarkToggle}
+                    onSelectArticle={handleSelectArticle}
+                  />
+                )}
 
-              {/* Section II: Curated Bento Grid (Deep Inquiries & Longreads) */}
-              {sideArticles.length > 0 && (
-                <CuratedBentoGrid
-                  articles={sideArticles}
-                  bookmarks={bookmarks}
-                  onBookmarkToggle={handleBookmarkToggle}
-                  onSelectArticle={handleSelectArticle}
-                />
-              )}
-
-              {/* Section III: Principal Fellows & Field Researchers Directory */}
-              <CorrespondentsGrid
-                onSearchAuthor={(name) => {
-                  setSearchQuery(name);
-                  window.scrollTo({ top: 120, behavior: "smooth" });
-                }}
-              />
-
-              {/* Section IV: Research Taxonomy & Topic Index */}
-              <ArchivalIndex
-                onSelectCategory={(cat) => {
-                  setCategory(cat);
-                  window.scrollTo({ top: 120, behavior: "smooth" });
-                }}
-                onSearchQuery={(query) => {
-                  setSearchQuery(query);
-                  window.scrollTo({ top: 120, behavior: "smooth" });
-                }}
-              />
-
-              {/* Section V: Biosphere Telemetry & Live Sensor Matrix */}
-              <section className="w-full border-b-2 border-double border-zinc-300 dark:border-zinc-800 pb-14 mb-14" id="planetary-telemetry-section">
-                <div className="flex justify-between items-center border-b border-zinc-250 dark:border-zinc-850 pb-2.5 mb-8 text-[9.5px] font-mono tracking-[0.25em] uppercase text-zinc-500">
-                  <div className="flex items-center gap-2">
-                    <span className="w-2 h-2 bg-teal-600 dark:bg-teal-400 rounded-none inline-block animate-pulse" />
-                    <span className="font-bold text-foreground">SECTION V • EMPIRICAL BIOSPHERE SENSORY MATRIX</span>
-                  </div>
-                  <div className="hidden sm:flex items-center gap-3 text-zinc-400">
-                    <span>STATION TELEMETRY</span>
-                    <span>✦</span>
-                    <span>SYNCHRONIZED FEED</span>
-                  </div>
-                </div>
-
-                {/* Geospatial Observation Grid */}
-                <PlanetaryMap
-                  onSelectStationDispatch={(title) => {
-                    const match = articles.find((a) => a.title.toLowerCase().includes(title.toLowerCase()) || title.toLowerCase().includes(a.title.toLowerCase()));
-                    if (match) {
-                      handleSelectArticle(match);
-                    } else {
-                      setSearchQuery(title.split(" ")[0]);
-                      window.scrollTo({ top: 120, behavior: "smooth" });
-                    }
+                {/* Section III: Principal Fellows & Field Researchers Directory */}
+                <CorrespondentsGrid
+                  onSearchAuthor={(name) => {
+                    setSearchQuery(name);
+                    window.scrollTo({ top: 120, behavior: "smooth" });
                   }}
                 />
 
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mt-8">
-                  {/* Left Column: Planetary Telemetry Terminal (8 cols) */}
-                  <div className="lg:col-span-8 flex flex-col gap-6">
-                    <MarketTicker />
-                  </div>
+                {/* Section IV: Research Taxonomy & Topic Index */}
+                <ArchivalIndex
+                  onSelectCategory={(cat) => {
+                    setCategory(cat);
+                    window.scrollTo({ top: 120, behavior: "smooth" });
+                  }}
+                  onSearchQuery={(query) => {
+                    setSearchQuery(query);
+                    window.scrollTo({ top: 120, behavior: "smooth" });
+                  }}
+                />
 
-                  {/* Right Column: Sensor Matrix Overview & Quality Pledge (4 cols) */}
-                  <div className="lg:col-span-4 flex flex-col gap-6">
-                    <BiosphereTelemetryWidget />
-
-                    {/* Editorial Integrity Capsule */}
-                    <div className="border border-zinc-250 dark:border-zinc-800 p-5 bg-[#faf7f2] dark:bg-zinc-950/40 relative">
-                      <div className="absolute top-0 left-0 right-0 h-0.5 bg-emerald-600" />
-                      <div className="flex items-center gap-2 text-[9.5px] font-mono uppercase tracking-widest text-emerald-700 dark:text-emerald-400 font-bold mb-2">
-                        <Award className="w-4 h-4" /> Peer-Verification Accord
-                      </div>
-                      <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed font-sans font-light text-justify">
-                        All botanical data streams, chemical vapor deposition specifications, and polar acoustic metrics are verified in accordance with the International Planetary Press Charter.
-                      </p>
+                {/* Section V: Biosphere Telemetry & Live Sensor Matrix */}
+                <section className="w-full border-b-2 border-double border-zinc-300 dark:border-zinc-800 pb-14 mb-14" id="planetary-telemetry-section">
+                  <div className="flex justify-between items-center border-b border-zinc-250 dark:border-zinc-850 pb-2.5 mb-8 text-[9.5px] font-mono tracking-[0.25em] uppercase text-zinc-500">
+                    <div className="flex items-center gap-2">
+                      <span className="w-2 h-2 bg-teal-600 dark:bg-teal-400 rounded-none inline-block animate-pulse" />
+                      <span className="font-bold text-foreground">SECTION V • EMPIRICAL BIOSPHERE SENSORY MATRIX</span>
+                    </div>
+                    <div className="hidden sm:flex items-center gap-3 text-zinc-400">
+                      <span>STATION TELEMETRY</span>
+                      <span>✦</span>
+                      <span>SYNCHRONIZED FEED</span>
                     </div>
                   </div>
-                </div>
-              </section>
 
-              {/* Section VI: Wire Feed Index */}
-              <section className="w-full pb-6" id="wire-releases-section">
-                <div className="flex justify-between items-center border-b border-zinc-250 dark:border-zinc-850 pb-2.5 mb-8 text-[9.5px] font-mono tracking-[0.25em] uppercase text-zinc-500">
-                  <div className="flex items-center gap-2">
-                    <Newspaper className="w-3.5 h-3.5 text-emerald-600" />
-                    <span className="font-bold text-foreground">SECTION VI • COMPLETE WIRE ARCHIVES</span>
+                  {/* Geospatial Observation Grid */}
+                  <PlanetaryMap
+                    onSelectStationDispatch={(title) => {
+                      const match = articles.find((a) => a.title.toLowerCase().includes(title.toLowerCase()) || title.toLowerCase().includes(a.title.toLowerCase()));
+                      if (match) {
+                        handleSelectArticle(match);
+                      } else {
+                        setSearchQuery(title.split(" ")[0]);
+                        window.scrollTo({ top: 120, behavior: "smooth" });
+                      }
+                    }}
+                  />
+
+                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mt-8">
+                    {/* Left Column: Planetary Telemetry Terminal (8 cols) */}
+                    <div className="lg:col-span-8 flex flex-col gap-6">
+                      <MarketTicker />
+                    </div>
+
+                    {/* Right Column: Sensor Matrix Overview & Quality Pledge (4 cols) */}
+                    <div className="lg:col-span-4 flex flex-col gap-6">
+                      <BiosphereTelemetryWidget />
+
+                      {/* Editorial Integrity Capsule */}
+                      <div className="border border-zinc-250 dark:border-zinc-800 p-5 bg-[#faf7f2] dark:bg-zinc-950/40 relative">
+                        <div className="absolute top-0 left-0 right-0 h-0.5 bg-emerald-600" />
+                        <div className="flex items-center gap-2 text-[9.5px] font-mono uppercase tracking-widest text-emerald-700 dark:text-emerald-400 font-bold mb-2">
+                          <Award className="w-4 h-4" /> Peer-Verification Accord
+                        </div>
+                        <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed font-sans font-light text-justify">
+                          All botanical data streams, chemical vapor deposition specifications, and polar acoustic metrics are verified in accordance with the International Planetary Press Charter.
+                        </p>
+                      </div>
+                    </div>
                   </div>
-                  <span className="text-[9px] font-mono text-zinc-400">CHRONOLOGICAL DISPATCHES</span>
-                </div>
+                </section>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                  {liveArticles.map((art) => (
-                    <ArticleCard
-                      key={art.id}
-                      article={art}
-                      density="grid"
-                      isBookmarked={bookmarks.includes(art.id)}
-                      onBookmarkToggle={handleBookmarkToggle}
-                      onSelect={() => handleSelectArticle(art)}
-                    />
-                  ))}
-                </div>
-              </section>
+                {/* Section VI: Wire Feed Index */}
+                <section className="w-full pb-6" id="wire-releases-section">
+                  <div className="flex justify-between items-center border-b border-zinc-250 dark:border-zinc-850 pb-2.5 mb-8 text-[9.5px] font-mono tracking-[0.25em] uppercase text-zinc-500">
+                    <div className="flex items-center gap-2">
+                      <Newspaper className="w-3.5 h-3.5 text-emerald-600" />
+                      <span className="font-bold text-foreground">SECTION VI • COMPLETE WIRE ARCHIVES</span>
+                    </div>
+                    <span className="text-[9px] font-mono text-zinc-400">CHRONOLOGICAL DISPATCHES</span>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {liveArticles.map((art) => (
+                      <ArticleCard
+                        key={art.id}
+                        article={art}
+                        density="grid"
+                        isBookmarked={bookmarks.includes(art.id)}
+                        onBookmarkToggle={handleBookmarkToggle}
+                        onSelect={() => handleSelectArticle(art)}
+                      />
+                    ))}
+                  </div>
+                </section>
+              </div>
             </div>
           )}
         </main>

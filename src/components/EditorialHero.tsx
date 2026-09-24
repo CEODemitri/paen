@@ -1,6 +1,6 @@
 import { MouseEvent } from "react";
 import { Article } from "../types";
-import { BookMarked, ArrowUpRight, Scale, CheckCircle2, Headphones, Radio, Sparkles } from "lucide-react";
+import { BookMarked, ArrowUpRight, Scale, CheckCircle2, Headphones, Sparkles } from "lucide-react";
 
 interface EditorialHeroProps {
   leadArticle: Article;
@@ -25,12 +25,12 @@ export default function EditorialHero({
       <div className="flex justify-between items-center border-b border-emerald-800/40 pb-2.5 mb-8 text-[9.5px] font-mono tracking-[0.25em] uppercase text-emerald-300/70">
         <div className="flex items-center gap-2">
           <span className="w-2 h-2 bg-emerald-400 rounded-none inline-block animate-pulse" />
-          <span className="font-bold text-[#f5ebd6]">SECTION I • LEAD INVESTIGATION & WIRE DISPATCHES</span>
+          <span className="font-bold text-[#f5ebd6]">FEATURED INVESTIGATION & LATEST STORIES</span>
         </div>
         <div className="hidden sm:flex items-center gap-3 text-emerald-200/50">
-          <span>PEER-REVIEWED EDITION</span>
+          <span>HEAD EDITORIAL</span>
           <span>✦</span>
-          <span>SPECIAL FIELD DOSSIER</span>
+          <span>ORIGINAL ESSAY</span>
         </div>
       </div>
 
@@ -56,7 +56,7 @@ export default function EditorialHero({
                 {leadArticle.factChecked && (
                   <span className="px-2.5 py-1 text-[8.5px] font-mono uppercase tracking-widest font-bold bg-[#0a1812]/90 text-emerald-100 border border-emerald-700/60 backdrop-blur-md flex items-center gap-1.5">
                     <CheckCircle2 className="w-3 h-3 text-emerald-400" />
-                    CERTIFIED ACCORD
+                    FACT CHECKED
                   </span>
                 )}
               </div>
@@ -64,7 +64,7 @@ export default function EditorialHero({
               <div className="absolute bottom-4 right-4 flex items-center gap-2">
                 <span className="px-2.5 py-1 text-[9px] font-mono tracking-wider bg-black/80 text-emerald-100 border border-emerald-500/20 backdrop-blur-md flex items-center gap-1.5">
                   <Headphones className="w-3 h-3 text-amber-400" />
-                  AUDIO BRIEF ATTACHED
+                  AUDIO ESSAY INCLUDED
                 </span>
               </div>
             </div>
@@ -75,7 +75,7 @@ export default function EditorialHero({
             <div className="flex justify-between items-center text-[10px] font-mono text-emerald-200/60 border-b border-emerald-800/40 pb-2">
               <div className="flex items-center gap-2">
                 <span className="text-emerald-400 font-bold uppercase tracking-widest">
-                  SPECIAL INVESTIGATIVE REPORT
+                  FEATURE STORY
                 </span>
                 <span>•</span>
                 <span>{leadArticle.date}</span>
@@ -85,7 +85,7 @@ export default function EditorialHero({
                   id={`btn-bookmark-lead-${leadArticle.id}`}
                   onClick={(e) => onBookmarkToggle(leadArticle.id, e)}
                   className="flex items-center gap-1 text-emerald-300/70 hover:text-emerald-300 transition-colors"
-                  title={isLeadBookmarked ? "Remove from dossier" : "Save report"}
+                  title={isLeadBookmarked ? "Remove from bookmarks" : "Save article"}
                 >
                   <BookMarked className={`w-3.5 h-3.5 ${isLeadBookmarked ? "fill-emerald-400 text-emerald-400" : ""}`} />
                   <span className="text-[9px] uppercase tracking-wider">{isLeadBookmarked ? "Saved" : "Save"}</span>
@@ -115,7 +115,7 @@ export default function EditorialHero({
                   />
                 )}
                 <div>
-                  <div className="text-[9px] font-mono uppercase tracking-widest text-emerald-300/60">DISPATCH BY</div>
+                  <div className="text-[9px] font-mono uppercase tracking-widest text-emerald-300/60">WRITTEN BY</div>
                   <div className="font-serif font-bold text-sm text-[#f5ebd6]">{leadArticle.author}</div>
                 </div>
               </div>
@@ -123,7 +123,7 @@ export default function EditorialHero({
               <div className="flex items-center gap-5 text-[10px] font-mono text-emerald-200/60">
                 <div className="flex items-center gap-1.5 bg-[#0f241c] px-2.5 py-1 border border-emerald-800/40">
                   <Scale className="w-3.5 h-3.5 text-emerald-400" />
-                  <span>OBJECTIVITY: <strong className="text-[#f5ebd6] font-bold">{leadArticle.objectivityRating}%</strong></span>
+                  <span>ACCURACY: <strong className="text-[#f5ebd6] font-bold">{leadArticle.objectivityRating}%</strong></span>
                 </div>
                 <div className="px-2.5 py-1 bg-[#0f241c] border border-emerald-800/40 uppercase tracking-wider font-semibold text-emerald-200">
                   {leadArticle.readTime}
@@ -133,19 +133,21 @@ export default function EditorialHero({
           </div>
         </div>
 
-        {/* Side Wire Dispatches Column (4 cols) */}
+        {/* Side Latest Stories Column (4 cols) */}
         <div className="lg:col-span-4 flex flex-col gap-6 lg:border-l lg:border-emerald-800/40 lg:pl-8">
-          <div className="flex items-center justify-between border-b border-emerald-800/40 pb-2">
-            <span className="text-[10px] font-mono uppercase tracking-[0.2em] font-bold text-[#f5ebd6] flex items-center gap-1.5">
-              <Radio className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
-              THE DISPATCH LEDGER
+          {/* Header Strip */}
+          <div className="flex items-center justify-between border-b border-emerald-800/40 pb-2.5">
+            <span className="text-[10px] font-mono uppercase tracking-[0.22em] font-bold text-[#f5ebd6] flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-400 inline-block" />
+              LATEST STORIES
             </span>
-            <span className="text-[9px] font-mono text-emerald-300/60">EXPEDITIONS</span>
+            <span className="text-[8.5px] font-mono text-emerald-300/60 tracking-widest uppercase">RECENT ESSAYS</span>
           </div>
 
           <div className="flex flex-col divide-y divide-emerald-800/30">
             {sideArticles.slice(0, 3).map((art, idx) => {
               const isBookmarked = bookmarks.includes(art.id);
+              const romanNumerals = ["I", "II", "III", "IV"];
               return (
                 <article
                   key={art.id}
@@ -154,8 +156,8 @@ export default function EditorialHero({
                   id={`side-dispatch-${art.id}`}
                 >
                   <div className="flex justify-between items-center text-[9px] font-mono text-emerald-300/60">
-                    <span className="text-emerald-400 font-bold uppercase tracking-wider">
-                      DISPATCH 0{idx + 1} • {art.category}
+                    <span className="text-amber-400 font-bold uppercase tracking-widest">
+                      STORY {romanNumerals[idx] || idx + 1} • {art.category}
                     </span>
                     <div className="flex items-center gap-2">
                       <span>{art.readTime}</span>
@@ -182,8 +184,8 @@ export default function EditorialHero({
 
                   <div className="flex items-center justify-between text-[8.5px] font-mono text-emerald-300/60 pt-1">
                     <span className="italic font-serif text-emerald-200/90 font-medium">By {art.author}</span>
-                    <span className="flex items-center gap-1 text-emerald-400 group-hover:translate-x-0.5 transition-transform">
-                      Read dossier <ArrowUpRight className="w-2.5 h-2.5" />
+                    <span className="flex items-center gap-1 text-emerald-400 group-hover:translate-x-0.5 transition-transform font-mono uppercase text-[8px] tracking-wider">
+                      Read full article <ArrowUpRight className="w-2.5 h-2.5" />
                     </span>
                   </div>
                 </article>
@@ -195,13 +197,13 @@ export default function EditorialHero({
           <div className="bg-[#0f241c]/90 border border-emerald-800/50 py-7 sm:py-8 px-6 sm:px-7 mt-3 relative shadow-md flex flex-col justify-between">
             <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-amber-400 to-emerald-400" />
             <div className="text-[8.5px] sm:text-[9px] font-mono text-emerald-300/70 uppercase tracking-widest flex items-center gap-1.5 mb-3">
-              <Sparkles className="w-3.5 h-3.5 text-amber-400" /> EDITOR’S OBSERVATION
+              <Sparkles className="w-3.5 h-3.5 text-amber-400" /> EDITOR’S NOTE
             </div>
             <p className="font-serif italic text-sm sm:text-[15px] text-[#f5ebd6] leading-relaxed my-1">
-              “When an ecosystem degrades, its sonic partition collapses long before the trees fall. Acoustics is the planetary stethoscope.”
+              “Organic vitality, inherent individual sovereignty, and the present moment are the true bedrock of existence. Everything else is consensual abstraction.”
             </p>
             <div className="text-[9px] sm:text-[9.5px] font-mono text-emerald-400 mt-3.5 pt-2.5 border-t border-emerald-800/40 font-semibold tracking-wide">
-              — Paen Botanical Board, Field Directive IV
+              — ceoDemitri, Head Editor
             </div>
           </div>
         </div>

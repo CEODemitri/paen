@@ -289,7 +289,7 @@ function App() {
                   <Search className="w-4 h-4 text-emerald-400 shrink-0" />
                   <input
                     type="text"
-                    placeholder="SEARCH DOSSIERS: keywords, fellows, topics, coordinates..."
+                    placeholder="SEARCH ARTICLES: keywords, topics, author, categories..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="w-full bg-transparent text-[#f5ebd6] text-xs font-mono uppercase tracking-wider focus:outline-none placeholder-emerald-200/40"
@@ -299,7 +299,7 @@ function App() {
 
                 <div className="flex items-center gap-3 shrink-0 text-[10px] font-mono text-emerald-200/60 justify-between sm:justify-end border-t sm:border-t-0 border-emerald-800/40 pt-2 sm:pt-0">
                   <span className="uppercase tracking-widest font-semibold">
-                    INDEX: <strong className="text-[#f5ebd6]">{filteredArticles.length} DOSSIERS</strong>
+                    INDEX: <strong className="text-[#f5ebd6]">{filteredArticles.length} ARTICLES</strong>
                   </span>
                   {(currentCategory !== "all" || searchQuery) && (
                     <button
@@ -319,9 +319,9 @@ function App() {
                 /* Empty State */
                 <div className="text-center py-20 border border-dashed border-emerald-800/40 bg-[#0f241c]/40 my-6">
                   <Globe className="w-12 h-12 text-emerald-400/50 mx-auto mb-4 animate-spin-slow" />
-                  <h3 className="font-serif font-semibold text-2xl text-[#f5ebd6]">No Research Dossiers Matched</h3>
+                  <h3 className="font-serif font-semibold text-2xl text-[#f5ebd6]">No Articles Found</h3>
                   <p className="text-xs text-emerald-200/60 mt-2 max-w-md mx-auto font-sans font-light">
-                    No articles matching your current filter criteria were found. Please check spelling or reset filters.
+                    No articles matching your current search criteria were found. Please check your spelling or clear filters.
                   </p>
                   <button
                     onClick={() => {
@@ -330,7 +330,7 @@ function App() {
                     }}
                     className="mt-6 px-4 py-2 bg-emerald-600 text-white text-xs font-mono uppercase tracking-widest hover:bg-emerald-500 transition-colors shadow-md"
                   >
-                    Reset Dossier Grid
+                    Reset Filters
                   </button>
                 </div>
               ) : (
@@ -387,12 +387,12 @@ function App() {
                   <div className="flex justify-between items-center border-b border-zinc-250 dark:border-zinc-850 pb-2.5 mb-8 text-[9.5px] font-mono tracking-[0.25em] uppercase text-zinc-500">
                     <div className="flex items-center gap-2">
                       <span className="w-2 h-2 bg-teal-600 dark:bg-teal-400 rounded-none inline-block animate-pulse" />
-                      <span className="font-bold text-foreground">SECTION V • EMPIRICAL BIOSPHERE SENSORY MATRIX</span>
+                      <span className="font-bold text-foreground">SECTION V • PLANETARY SENSORS & TELEMETRY</span>
                     </div>
                     <div className="hidden sm:flex items-center gap-3 text-zinc-400">
-                      <span>STATION TELEMETRY</span>
+                      <span>LIVE TELEMETRY</span>
                       <span>✦</span>
-                      <span>SYNCHRONIZED FEED</span>
+                      <span>ENVIRONMENT FEED</span>
                     </div>
                   </div>
 
@@ -423,10 +423,10 @@ function App() {
                       <div className="border border-zinc-250 dark:border-zinc-800 p-5 bg-[#faf7f2] dark:bg-zinc-950/40 relative">
                         <div className="absolute top-0 left-0 right-0 h-0.5 bg-emerald-600" />
                         <div className="flex items-center gap-2 text-[9.5px] font-mono uppercase tracking-widest text-emerald-700 dark:text-emerald-400 font-bold mb-2">
-                          <Award className="w-4 h-4" /> Peer-Verification Accord
+                          <Award className="w-4 h-4" /> Editorial Standards
                         </div>
                         <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed font-sans font-light text-justify">
-                          All botanical data streams, chemical vapor deposition specifications, and polar acoustic metrics are verified in accordance with the International Planetary Press Charter.
+                          All articles, scientific data, and telemetry are independently fact-checked and verified by the head editor.
                         </p>
                       </div>
                     </div>
@@ -438,9 +438,9 @@ function App() {
                   <div className="flex justify-between items-center border-b border-zinc-250 dark:border-zinc-850 pb-2.5 mb-8 text-[9.5px] font-mono tracking-[0.25em] uppercase text-zinc-500">
                     <div className="flex items-center gap-2">
                       <Newspaper className="w-3.5 h-3.5 text-emerald-600" />
-                      <span className="font-bold text-foreground">SECTION VI • COMPLETE WIRE ARCHIVES</span>
+                      <span className="font-bold text-foreground">SECTION VI • ALL PUBLISHED ARTICLES</span>
                     </div>
-                    <span className="text-[9px] font-mono text-zinc-400">CHRONOLOGICAL DISPATCHES</span>
+                    <span className="text-[9px] font-mono text-zinc-400">CHRONOLOGICAL ARCHIVE</span>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

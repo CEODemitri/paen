@@ -29,12 +29,12 @@ export default function CuratedBentoGrid({
       <div className="flex justify-between items-center border-b border-zinc-250 dark:border-zinc-850 pb-2.5 mb-8 text-[9.5px] font-mono tracking-[0.25em] uppercase text-zinc-500">
         <div className="flex items-center gap-2">
           <span className="w-2 h-2 bg-amber-600 dark:bg-amber-500 rounded-none inline-block" />
-          <span className="font-bold text-foreground">SECTION II • DEEP FIELD INQUIRIES & LONGREADS</span>
+          <span className="font-bold text-foreground">SECTION II • CURATED ESSAYS & IN-DEPTH READS</span>
         </div>
         <div className="hidden sm:flex items-center gap-3 text-zinc-400">
-          <span>PEER-INDEXED</span>
+          <span>ESSENTIAL READS</span>
           <span>✦</span>
-          <span>EMPIRICAL ESSAYS</span>
+          <span>ORIGINAL ESSAYS</span>
         </div>
       </div>
 
@@ -57,13 +57,13 @@ export default function CuratedBentoGrid({
               
               <div className="absolute top-4 left-4 flex gap-2">
                 <span className="px-2.5 py-1 text-[8.5px] font-mono uppercase tracking-widest font-bold bg-amber-950/90 text-amber-300 border border-amber-500/30 backdrop-blur-md">
-                  {panoramic.category} • PANORAMIC DOSSIER
+                  {panoramic.category} • FEATURE ARTICLE
                 </span>
               </div>
 
               <div className="absolute bottom-4 left-4 right-4 text-white">
                 <div className="text-[9px] font-mono uppercase tracking-widest text-amber-400 mb-1">
-                  FIELD INVESTIGATION
+                  FEATURE ESSAY
                 </div>
                 <h3 className="font-serif text-xl sm:text-2xl font-bold leading-tight line-clamp-2">
                   {panoramic.title}
@@ -93,7 +93,7 @@ export default function CuratedBentoGrid({
                     <BookMarked className={`w-3.5 h-3.5 ${bookmarks.includes(panoramic.id) ? "fill-amber-600 text-amber-600" : ""}`} />
                   </button>
                   <span className="flex items-center gap-1 text-amber-700 dark:text-amber-400 font-bold group-hover:translate-x-0.5 transition-transform">
-                    Examine <ArrowUpRight className="w-3 h-3" />
+                    Read full article <ArrowUpRight className="w-3 h-3" />
                   </span>
                 </div>
               </div>
@@ -129,7 +129,7 @@ export default function CuratedBentoGrid({
               <div className="border-t border-zinc-200 dark:border-zinc-800/80 pt-3 mt-4 flex justify-between items-center text-[9px] font-mono text-zinc-400">
                 <span className="italic font-serif text-xs text-zinc-700 dark:text-zinc-300">By {essay1.author}</span>
                 <span className="flex items-center gap-1 text-emerald-700 dark:text-emerald-400 font-bold">
-                  Read Essay <ArrowUpRight className="w-3 h-3" />
+                  Read full article <ArrowUpRight className="w-3 h-3" />
                 </span>
               </div>
             </div>
@@ -144,7 +144,7 @@ export default function CuratedBentoGrid({
               <div>
                 <div className="flex justify-between items-center text-[9px] font-mono text-zinc-400 mb-2">
                   <span className="text-emerald-700 dark:text-emerald-400 font-bold uppercase tracking-wider">
-                    {essay2.category} • CRITIQUE
+                    {essay2.category} • ARTICLE
                   </span>
                   <span>{essay2.readTime}</span>
                 </div>
@@ -161,7 +161,7 @@ export default function CuratedBentoGrid({
               <div className="border-t border-zinc-200 dark:border-zinc-800/80 pt-3 mt-4 flex justify-between items-center text-[9px] font-mono text-zinc-400">
                 <span className="italic font-serif text-xs text-zinc-700 dark:text-zinc-300">By {essay2.author}</span>
                 <span className="flex items-center gap-1 text-emerald-700 dark:text-emerald-400 font-bold">
-                  Read Critique <ArrowUpRight className="w-3 h-3" />
+                  Read full article <ArrowUpRight className="w-3 h-3" />
                 </span>
               </div>
             </div>
@@ -178,7 +178,7 @@ export default function CuratedBentoGrid({
         >
           <div className="flex items-center gap-3">
             <span className="px-2 py-0.5 text-[8.5px] font-mono uppercase tracking-widest font-bold bg-zinc-900 text-zinc-100 border border-zinc-700 shrink-0">
-              DISPATCH
+              ARTICLE
             </span>
             <div>
               <h4 className="font-serif text-base sm:text-lg font-bold text-foreground group-hover:text-emerald-700 dark:group-hover:text-emerald-400 transition-colors">
@@ -189,7 +189,7 @@ export default function CuratedBentoGrid({
           </div>
 
           <button className="text-[9px] font-mono uppercase tracking-widest font-bold text-emerald-700 dark:text-emerald-400 flex items-center gap-1 shrink-0 group-hover:translate-x-1 transition-transform">
-            Open File <ArrowUpRight className="w-3 h-3" />
+            Read full article <ArrowUpRight className="w-3 h-3" />
           </button>
         </div>
       )}

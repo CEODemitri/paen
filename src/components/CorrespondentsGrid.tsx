@@ -13,37 +13,37 @@ interface Correspondent {
 const CORRESPONDENTS: Correspondent[] = [
   {
     name: "ceoDemitri",
-    role: "Organic Energy & Archeological Physics Fellow",
-    station: "Kyoto Field Station & Andean Resonance Array",
-    affiliation: "Paen Archeological Physics Division",
-    focus: "Piezoelectric megaliths, biofield harmonics, cellular resonance, forgotten organic physics",
+    role: "Head Editor & Science Writer",
+    station: "Kyoto Field Station & Global Labs",
+    affiliation: "Paen Editorial Board",
+    focus: "Organic energy, piezoelectric crystals, biofield harmonics, forgotten natural science",
     image: "https://github.com/ceoDemitri.png",
     recentReport: "Organic Resonance: Ancient Bio-Energetics & Sacred Material Science",
   },
   {
     name: "ceoDemitri",
-    role: "Human-Centric Systems & Autonomous Tech Architect",
-    station: "San Francisco & Planetary Open Hardware Labs",
-    affiliation: "Paen Engineering & Decentralized Utilities",
+    role: "Head Editor & Technology Writer",
+    station: "San Francisco & Open Hardware Labs",
+    affiliation: "Paen Engineering & Systems",
     focus: "Atmospheric water harvesting, solid-state micro-grids, open diagnostic hardware",
     image: "https://github.com/ceoDemitri.png",
     recentReport: "Engineered for Humanity: Solving Fundamental Human Needs with Tech",
   },
   {
     name: "ceoDemitri",
-    role: "Sovereign Autonomy & Community Resilience Lead",
+    role: "Head Editor & Political Writer",
     station: "Global Decentralized Networks",
-    affiliation: "Center for Inherent Human Sovereignty",
-    focus: "Parallel mutual aid cooperatives, self-governance, individual self-trust & independence",
+    affiliation: "Paen Sovereign Studies",
+    focus: "Community resilience, self-reliance, local governance, personal independence",
     image: "https://github.com/ceoDemitri.png",
     recentReport: "The Sovereign Awakening: Inherent Strength Beyond Institutional Dysfunction",
   },
   {
     name: "ceoDemitri",
-    role: "Global Anthropology & Consciousness Explorer",
-    station: "Kyoto, West Africa & Sacred Global Corridors",
-    affiliation: "Planetary Cultural Commons Archive",
-    focus: "Cross-cultural archetypes, ancestral memory, living rituals, universal human experience",
+    role: "Head Editor & Cultural Writer",
+    station: "Kyoto & Worldwide Cultural Corridors",
+    affiliation: "Paen Cultural Commons",
+    focus: "Comparative world traditions, ancient storytelling, universal human experience",
     image: "https://github.com/ceoDemitri.png",
     recentReport: "The Global Tapestry: The Planetary Experiment in Consciousness",
   },
@@ -60,12 +60,12 @@ export default function CorrespondentsGrid({ onSearchAuthor }: CorrespondentsGri
       <div className="flex justify-between items-center border-b border-zinc-250 dark:border-zinc-850 pb-2.5 mb-8 text-[9.5px] font-mono tracking-[0.25em] uppercase text-zinc-500">
         <div className="flex items-center gap-2">
           <span className="w-2 h-2 bg-emerald-600 dark:bg-emerald-500 rounded-none inline-block" />
-          <span className="font-bold text-foreground">SECTION III • CORRESPONDENTS & PRINCIPAL INVESTIGATORS</span>
+          <span className="font-bold text-foreground">SECTION III • AUTHORS & EDITORS</span>
         </div>
         <div className="hidden sm:flex items-center gap-3 text-zinc-400">
-          <span>PEER ACCREDITATION</span>
+          <span>EDITORIAL TEAM</span>
           <span>✦</span>
-          <span>GLOBAL STATIONS</span>
+          <span>WRITERS</span>
         </div>
       </div>
 
@@ -88,7 +88,7 @@ export default function CorrespondentsGrid({ onSearchAuthor }: CorrespondentsGri
                   <span className="absolute -bottom-1 -right-1 w-3 h-3 bg-emerald-500 border-2 border-white dark:border-black rounded-full" title="Active in Field" />
                 </div>
                 <span className="px-2 py-0.5 text-[8px] font-mono uppercase tracking-widest font-bold bg-zinc-200 dark:bg-zinc-850 text-zinc-600 dark:text-zinc-400">
-                  FELLOW 0{idx + 1}
+                  EDITOR 0{idx + 1}
                 </span>
               </div>
 
@@ -116,7 +116,7 @@ export default function CorrespondentsGrid({ onSearchAuthor }: CorrespondentsGri
                 className="w-full py-1.5 px-2 text-[9px] font-mono uppercase tracking-wider text-zinc-600 dark:text-zinc-300 hover:text-emerald-700 dark:hover:text-emerald-400 bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-emerald-600/40 transition-colors flex items-center justify-center gap-1.5 font-bold"
               >
                 <BookOpen className="w-3 h-3 text-emerald-600" />
-                View Field Dossiers
+                View Articles by Author
               </button>
             </div>
           </div>

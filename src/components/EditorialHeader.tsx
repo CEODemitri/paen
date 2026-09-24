@@ -463,14 +463,14 @@ export default function EditorialHeader({
 
           {/* Right Group: Red Action Button & Vertical Banner */}
           <div className="flex items-end gap-3 sm:gap-4 shrink-0 h-full">
-            {/* Free-Standing Red "READ DISPATCHES" Action Button */}
+            {/* Free-Standing Red Action Button */}
             <div className="z-30 pointer-events-auto pb-1 sm:pb-2">
               <a
                 href="#editorial-lead-section"
                 className="px-3.5 sm:px-4 py-2 bg-[#d9483b] hover:bg-[#c23d30] text-white text-[8.5px] sm:text-[9.5px] md:text-[10px] font-mono uppercase tracking-widest font-bold flex items-center gap-2 transition-all shadow-xl rounded-sm hover:scale-105 border border-white/20 whitespace-nowrap"
                 id="hero-read-dispatches-btn"
               >
-                <span>READ DISPATCHES</span>
+                <span>READ ARTICLES</span>
                 <span className="animate-bounce">↓</span>
               </a>
             </div>
@@ -576,7 +576,7 @@ export default function EditorialHeader({
           <div className="flex items-center gap-2 tracking-wide font-medium">
             <span>{formattedDate}</span>
             <span className="text-[#1b2a3a]/40">•</span>
-            <span className="text-[#d9483b] font-bold">VOL. CIV • KYOTO FIELD STATION</span>
+            <span className="text-[#d9483b] font-bold">PAEN JOURNAL • HEADQUARTERS</span>
           </div>
 
           <div className="flex items-center gap-4 mt-1 sm:mt-0">

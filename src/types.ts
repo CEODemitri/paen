@@ -63,3 +63,52 @@ export interface Comment {
 
 export type ReadingTheme = "standard" | "high-contrast" | "editorial-sepia";
 export type TextSize = "sm" | "base" | "lg" | "xl";
+
+export type ShopCategory = "live-books" | "ebooks" | "merch" | "events";
+
+export interface ShopItem {
+  id: string;
+  category: "live-books" | "ebooks" | "merch";
+  title: string;
+  subtitle: string;
+  description: string;
+  price: number;
+  originalPrice?: number;
+  imageUrl: string;
+  authorOrCreator?: string;
+  format?: string;
+  stockCount?: number;
+  featured?: boolean;
+  pagesOrSpecs?: string;
+  tags: string[];
+}
+
+export interface ShopEvent {
+  id: string;
+  title: string;
+  subtitle: string;
+  description: string;
+  date: string;
+  time: string;
+  address: string;
+  city: string;
+  venueName: string;
+  price: number;
+  ticketsLeft: number;
+  totalTickets: number;
+  imageUrl: string;
+  attractions: string[];
+  speakers: { name: string; role: string; avatarUrl?: string }[];
+  tags: string[];
+}
+
+export interface CartItem {
+  id: string;
+  type: "item" | "event";
+  title: string;
+  price: number;
+  quantity: number;
+  imageUrl: string;
+  variant?: string;
+}
+

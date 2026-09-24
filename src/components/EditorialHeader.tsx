@@ -1,16 +1,12 @@
 import { useState, useRef, useEffect } from "react";
-import { Category, ReadingTheme, TextSize, User as UserType } from "../types";
-import { BookMarked, Flame, User, LogIn, LogOut, Feather, ShieldCheck } from "lucide-react";
+import { Category, User as UserType } from "../types";
+import { BookMarked, Flame, User, LogIn, LogOut, Feather, ShieldCheck, ShoppingBag } from "lucide-react";
 import { GlobalHorizontalTicker } from "./MarketTicker";
 
 interface EditorialHeaderProps {
   currentCategory: Category | "all" | "saved" | "videos";
   setCategory: (cat: Category | "all" | "saved" | "videos") => void;
   bookmarksCount: number;
-  readingTheme: ReadingTheme;
-  setReadingTheme: (theme: ReadingTheme) => void;
-  textSize: TextSize;
-  setTextSize: (size: TextSize) => void;
   onAdminToggle: () => void;
   isAdminMode: boolean;
   onOpenAuth: () => void;
@@ -18,16 +14,14 @@ interface EditorialHeaderProps {
   onLogout: () => void;
   onOpenAuthorDesk: () => void;
   isAuthorMode: boolean;
+  onNavigateToShop: () => void;
+  isShopMode?: boolean;
 }
 
 export default function EditorialHeader({
   currentCategory,
   setCategory,
   bookmarksCount,
-  readingTheme,
-  setReadingTheme,
-  textSize,
-  setTextSize,
   onAdminToggle,
   isAdminMode,
   onOpenAuth,
@@ -35,6 +29,8 @@ export default function EditorialHeader({
   onLogout,
   onOpenAuthorDesk,
   isAuthorMode,
+  onNavigateToShop,
+  isShopMode,
 }: EditorialHeaderProps) {
   const [sealClicks, setSealClicks] = useState(0);
   const clickTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -128,53 +124,20 @@ export default function EditorialHeader({
           <GlobalHorizontalTicker />
         </div>
 
-        <div className="flex items-center gap-4 shrink-0 mt-1 md:mt-0 flex-wrap">
-          {/* Typography Sizes */}
-          <div className="flex items-center gap-1.5 border-r border-[#1c2a21]/50 pr-3">
-            <span className="text-[9px] text-zinc-500 font-semibold tracking-wider">TYPO:</span>
-            {(["sm", "base", "lg", "xl"] as TextSize[]).map((size) => (
-              <button
-                key={size}
-                id={`btn-text-${size}`}
-                onClick={() => setTextSize(size)}
-                className={`px-1.5 py-0.5 text-[9px] transition-all font-sans font-bold ${
-                  textSize === size
-                    ? "bg-amber-500 text-black font-extrabold"
-                    : "hover:bg-[#1c2a21] text-[#b3a898]"
-                }`}
-              >
-                {size.toUpperCase()}
-              </button>
-            ))}
-          </div>
-
-          {/* Reading Palette */}
-          <div className="flex items-center gap-1.5 border-r border-[#1c2a21]/50 pr-3">
-            <button
-              id="btn-theme-standard"
-              onClick={() => setReadingTheme("standard")}
-              className={`w-3.5 h-3.5 rounded-full border border-zinc-600 bg-[#f4f3ec] ${
-                readingTheme === "standard" ? "ring-2 ring-emerald-500" : ""
-              }`}
-              title="Forest Vellum"
-            />
-            <button
-              id="btn-theme-sepia"
-              onClick={() => setReadingTheme("editorial-sepia")}
-              className={`w-3.5 h-3.5 rounded-full border border-zinc-600 bg-[#f5ebd6] ${
-                readingTheme === "editorial-sepia" ? "ring-2 ring-emerald-500" : ""
-              }`}
-              title="Woodland Sienna"
-            />
-            <button
-              id="btn-theme-dark"
-              onClick={() => setReadingTheme("high-contrast")}
-              className={`w-3.5 h-3.5 rounded-full border border-zinc-600 bg-[#060d09] ${
-                readingTheme === "high-contrast" ? "ring-2 ring-emerald-500" : ""
-              }`}
-              title="Midnight Moss"
-            />
-          </div>
+        <div className="flex items-center gap-3 shrink-0 mt-1 md:mt-0 flex-wrap">
+          {/* Shop Link Button (Navigates to dedicated Shop Page) */}
+          <button
+            id="top-nav-shop-link-btn"
+            onClick={onNavigateToShop}
+            className={`px-3 py-1 text-[9.5px] font-mono uppercase tracking-[0.2em] font-bold flex items-center gap-1.5 transition-all shadow-sm rounded-sm ${
+              isShopMode
+                ? "bg-amber-500 text-black font-extrabold"
+                : "bg-emerald-900/60 hover:bg-emerald-800 text-emerald-200 border border-emerald-500/40 hover:scale-105"
+            }`}
+          >
+            <ShoppingBag className="w-3 h-3 text-amber-400" />
+            <span>SHOP</span>
+          </button>
 
           {/* User Account Capsule */}
           <div className="flex items-center gap-2">

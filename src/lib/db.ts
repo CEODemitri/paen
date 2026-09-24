@@ -1,5 +1,6 @@
-import { Article, Video, Comment, User } from "../types";
+import { Article, Video, Comment, User, ShopItem, ShopEvent, CartItem } from "../types";
 import { INITIAL_ARTICLES, INITIAL_VIDEOS } from "../data/initialData";
+import { INITIAL_SHOP_ITEMS, INITIAL_SHOP_EVENTS } from "../data/shopData";
 
 const ARTICLES_KEY = "paen_articles_v4";
 const VIDEOS_KEY = "paen_videos_v4";
@@ -8,6 +9,9 @@ const BOOKMARKS_KEY = "paen_bookmarks_v4";
 const USERS_KEY = "paen_users_v4";
 const CURRENT_USER_KEY = "paen_current_user_v4";
 const ADMIN_PASSWORD_KEY = "paen_admin_password_v4";
+const SHOP_ITEMS_KEY = "paen_shop_items_v1";
+const SHOP_EVENTS_KEY = "paen_shop_events_v1";
+const CART_KEY = "paen_cart_v1";
 
 export const DEFAULT_ADMIN_PASS = "paen123";
 
@@ -221,3 +225,55 @@ export function saveBookmarks(bookmarks: string[]) {
   localStorage.setItem(BOOKMARKS_KEY, JSON.stringify(bookmarks));
   emitDataSync("bookmarks");
 }
+
+export function loadShopItems(): ShopItem[] {
+  const data = localStorage.getItem(SHOP_ITEMS_KEY);
+  if (!data) {
+    localStorage.setItem(SHOP_ITEMS_KEY, JSON.stringify(INITIAL_SHOP_ITEMS));
+    return INITIAL_SHOP_ITEMS;
+  }
+  try {
+    return JSON.parse(data);
+  } catch {
+    return INITIAL_SHOP_ITEMS;
+  }
+}
+
+export function saveShopItems(items: ShopItem[]) {
+  localStorage.setItem(SHOP_ITEMS_KEY, JSON.stringify(items));
+  emitDataSync("shop_items");
+}
+
+export function loadShopEvents(): ShopEvent[] {
+  const data = localStorage.getItem(SHOP_EVENTS_KEY);
+  if (!data) {
+    localStorage.setItem(SHOP_EVENTS_KEY, JSON.stringify(INITIAL_SHOP_EVENTS));
+    return INITIAL_SHOP_EVENTS;
+  }
+  try {
+    return JSON.parse(data);
+  } catch {
+    return INITIAL_SHOP_EVENTS;
+  }
+}
+
+export function saveShopEvents(events: ShopEvent[]) {
+  localStorage.setItem(SHOP_EVENTS_KEY, JSON.stringify(events));
+  emitDataSync("shop_events");
+}
+
+export function loadCart(): CartItem[] {
+  const data = localStorage.getItem(CART_KEY);
+  if (!data) return [];
+  try {
+    return JSON.parse(data);
+  } catch {
+    return [];
+  }
+}
+
+export function saveCart(cart: CartItem[]) {
+  localStorage.setItem(CART_KEY, JSON.stringify(cart));
+  emitDataSync("cart");
+}
+

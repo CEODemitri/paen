@@ -181,6 +181,8 @@ interface ArticleDetailProps {
   onBack: () => void;
   readingTheme: ReadingTheme;
   textSize: TextSize;
+  onSetReadingTheme?: (theme: ReadingTheme) => void;
+  onSetTextSize?: (size: TextSize) => void;
 }
 
 export default function ArticleDetail({
@@ -190,9 +192,26 @@ export default function ArticleDetail({
   isBookmarked,
   onBookmarkToggle,
   onBack,
-  readingTheme,
-  textSize,
+  readingTheme: initialTheme,
+  textSize: initialSize,
+  onSetReadingTheme,
+  onSetTextSize,
 }: ArticleDetailProps) {
+  const [localTheme, setLocalTheme] = useState<ReadingTheme>(initialTheme);
+  const [localSize, setLocalSize] = useState<TextSize>(initialSize);
+
+  const readingTheme = onSetReadingTheme ? initialTheme : localTheme;
+  const textSize = onSetTextSize ? initialSize : localSize;
+
+  const handleThemeChange = (theme: ReadingTheme) => {
+    if (onSetReadingTheme) onSetReadingTheme(theme);
+    else setLocalTheme(theme);
+  };
+
+  const handleSizeChange = (size: TextSize) => {
+    if (onSetTextSize) onSetTextSize(size);
+    else setLocalSize(size);
+  };
   const [commentText, setCommentText] = useState("");
   const [liked, setLiked] = useState(false);
   const [likesCount, setLikesCount] = useState(article.likes || 128);
@@ -305,6 +324,48 @@ export default function ArticleDetail({
           </button>
 
           <div className="flex items-center gap-4 md:gap-5">
+            {/* In-Article Typography Size Controls */}
+            <div className="hidden md:flex items-center gap-1 border-r border-inherit pr-3">
+              {(["sm", "base", "lg", "xl"] as TextSize[]).map((size) => (
+                <button
+                  key={size}
+                  onClick={() => handleSizeChange(size)}
+                  className={`px-1.5 py-0.5 text-[9px] font-mono font-bold transition-all ${
+                    textSize === size
+                      ? "bg-amber-500 text-black font-extrabold"
+                      : "opacity-60 hover:opacity-100 hover:bg-zinc-200 dark:hover:bg-zinc-800"
+                  }`}
+                >
+                  {size.toUpperCase()}
+                </button>
+              ))}
+            </div>
+
+            {/* In-Article Reading Palette Controls */}
+            <div className="hidden sm:flex items-center gap-1.5 border-r border-inherit pr-3">
+              <button
+                onClick={() => handleThemeChange("standard")}
+                className={`w-3.5 h-3.5 rounded-full border border-zinc-500 bg-[#f4f3ec] ${
+                  readingTheme === "standard" ? "ring-2 ring-emerald-500" : ""
+                }`}
+                title="Forest Vellum"
+              />
+              <button
+                onClick={() => handleThemeChange("editorial-sepia")}
+                className={`w-3.5 h-3.5 rounded-full border border-zinc-500 bg-[#f5ebd6] ${
+                  readingTheme === "editorial-sepia" ? "ring-2 ring-emerald-500" : ""
+                }`}
+                title="Woodland Sienna"
+              />
+              <button
+                onClick={() => handleThemeChange("high-contrast")}
+                className={`w-3.5 h-3.5 rounded-full border border-zinc-500 bg-[#060d09] ${
+                  readingTheme === "high-contrast" ? "ring-2 ring-emerald-500" : ""
+                }`}
+                title="Midnight Moss"
+              />
+            </div>
+
             <button
               id="detail-rhythm-button"
               onClick={() => setRhythmActive(!rhythmActive)}

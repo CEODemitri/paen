@@ -10,11 +10,12 @@ import AuthModal from "./components/AuthModal";
 import ArticleCard from "./components/ArticleCard";
 import ArticleDetail from "./components/ArticleDetail";
 import VideoBroadcast from "./components/VideoBroadcast";
+import ShopView from "./components/ShopView";
 import MarketTicker from "./components/MarketTicker";
 import BiosphereTelemetryWidget from "./components/BiosphereTelemetryWidget";
 import PlanetaryMap from "./components/PlanetaryMap";
 import Footer from "./components/ui/Footer";
-import { Article, Video, Comment, ReadingTheme, TextSize, Category, User } from "./types";
+import { Article, Video, Comment, ReadingTheme, TextSize, Category, User, ShopItem, ShopEvent, CartItem } from "./types";
 import {
   loadArticles,
   saveArticles,
@@ -24,6 +25,10 @@ import {
   saveComments,
   loadBookmarks,
   saveBookmarks,
+  loadShopItems,
+  loadShopEvents,
+  loadCart,
+  saveCart,
   getCurrentUser,
   setCurrentUser as persistCurrentUser,
   logoutUser as persistLogoutUser,
@@ -36,10 +41,14 @@ function App() {
   const [videos, setVideosState] = useState<Video[]>([]);
   const [comments, setCommentsState] = useState<Comment[]>([]);
   const [bookmarks, setBookmarksState] = useState<string[]>([]);
+  const [shopItems, setShopItemsState] = useState<ShopItem[]>([]);
+  const [shopEvents, setShopEventsState] = useState<ShopEvent[]>([]);
+  const [cart, setCartState] = useState<CartItem[]>([]);
   const [currentUser, setCurrentUserState] = useState<User | null>(null);
 
   // Navigation / UI State
   const [currentCategory, setCategory] = useState<Category | "all" | "saved" | "videos">("all");
+  const [isShopOpen, setIsShopOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeArticle, setActiveArticle] = useState<Article | null>(null);
   const [isAdminMode, setIsAdminMode] = useState(false);
@@ -61,6 +70,9 @@ function App() {
       setVideosState(loadVideos());
       setCommentsState(loadComments());
       setBookmarksState(loadBookmarks());
+      setShopItemsState(loadShopItems());
+      setShopEventsState(loadShopEvents());
+      setCartState(loadCart());
       setCurrentUserState(getCurrentUser());
     };
 
@@ -70,14 +82,68 @@ function App() {
       refreshAllData();
     };
 
+    const handleCustomNavigate = (e: Event) => {
+      const customEvt = e as CustomEvent<string>;
+      if (customEvt.detail === "shop") {
+        setIsShopOpen(true);
+        setActiveArticle(null);
+        setIsAdminMode(false);
+        setIsAuthorMode(false);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    };
+
     window.addEventListener("paen_data_sync", handleSync);
     window.addEventListener("storage", handleSync);
+    window.addEventListener("paen_navigate", handleCustomNavigate);
 
     return () => {
       window.removeEventListener("paen_data_sync", handleSync);
       window.removeEventListener("storage", handleSync);
+      window.removeEventListener("paen_navigate", handleCustomNavigate);
     };
   }, []);
+
+  // Cart Handlers
+  const handleAddToCart = (item: ShopItem | ShopEvent, type: "item" | "event", variant?: string) => {
+    const existing = cart.find((c) => c.id === item.id);
+    let updatedCart: CartItem[];
+    if (existing) {
+      updatedCart = cart.map((c) => (c.id === item.id ? { ...c, quantity: c.quantity + 1 } : c));
+    } else {
+      updatedCart = [
+        ...cart,
+        {
+          id: item.id,
+          type,
+          title: item.title,
+          price: item.price,
+          quantity: 1,
+          imageUrl: item.imageUrl,
+          variant,
+        },
+      ];
+    }
+    setCartState(updatedCart);
+    saveCart(updatedCart);
+  };
+
+  const handleUpdateCartQty = (id: string, qty: number) => {
+    const updatedCart = cart.map((c) => (c.id === id ? { ...c, quantity: qty } : c));
+    setCartState(updatedCart);
+    saveCart(updatedCart);
+  };
+
+  const handleRemoveFromCart = (id: string) => {
+    const updatedCart = cart.filter((c) => c.id !== id);
+    setCartState(updatedCart);
+    saveCart(updatedCart);
+  };
+
+  const handleClearCart = () => {
+    setCartState([]);
+    saveCart([]);
+  };
 
   // Auth Handlers
   const handleLoginSuccess = (user: User) => {
@@ -208,81 +274,109 @@ function App() {
       className={`min-h-screen w-full flex flex-col font-sans transition-colors duration-300 ${themeStyles[readingTheme]}`}
       id="root-app-container"
     >
-      {/* Top Masthead */}
-      <EditorialHeader
-        currentCategory={currentCategory}
-        setCategory={(cat) => {
-          setCategory(cat);
-          setActiveArticle(null);
-          setIsAdminMode(false);
-          setIsAuthorMode(false);
-        }}
-        bookmarksCount={bookmarks.length}
-        readingTheme={readingTheme}
-        setReadingTheme={setReadingTheme}
-        textSize={textSize}
-        setTextSize={setTextSize}
-        onAdminToggle={() => {
-          setIsAdminMode(!isAdminMode);
-          setIsAuthorMode(false);
-          setActiveArticle(null);
-        }}
-        isAdminMode={isAdminMode}
-        onOpenAuth={() => setIsAuthModalOpen(true)}
-        currentUser={currentUser}
-        onLogout={handleLogout}
-        onOpenAuthorDesk={() => {
-          setIsAuthorMode(!isAuthorMode);
-          setIsAdminMode(false);
-          setActiveArticle(null);
-        }}
-        isAuthorMode={isAuthorMode}
-      />
-
-      {/* Admin Interface Panel */}
-      {isAdminMode ? (
+      {/* If in Shop Mode, Render Dedicated Standalone Shop Page */}
+      {isShopOpen ? (
         <main className="flex-grow">
-          <AdminPortal
-            articles={articles}
-            setArticles={handleSetArticles}
-            videos={videos}
-            setVideos={handleSetVideos}
-            onExit={() => setIsAdminMode(false)}
+          <ShopView
+            items={shopItems}
+            events={shopEvents}
+            cart={cart}
+            onAddToCart={handleAddToCart}
+            onUpdateCartQty={handleUpdateCartQty}
+            onRemoveFromCart={handleRemoveFromCart}
+            onClearCart={handleClearCart}
+            onBack={() => {
+              setIsShopOpen(false);
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }}
           />
-        </main>
-      ) : isAuthorMode && currentUser && currentUser.role === "author" ? (
-        /* Author Field Desk */
-        <main className="flex-grow">
-          <AuthorPortal
-            currentUser={currentUser}
-            articles={articles}
-            onSaveArticle={handleAuthorSaveArticle}
-            onDeleteArticle={handleAuthorDeleteArticle}
-            onExit={() => setIsAuthorMode(false)}
-          />
-        </main>
-      ) : activeArticle ? (
-        /* Full Article Detail View */
-        <main className="flex-grow">
-          <ArticleDetail
-            article={activeArticle}
-            comments={comments.filter((c) => c.articleId === activeArticle.id)}
-            onAddComment={(text) => handleAddComment(activeArticle.id, text)}
-            isBookmarked={bookmarks.includes(activeArticle.id)}
-            onBookmarkToggle={() => handleBookmarkToggle(activeArticle.id)}
-            onBack={() => setActiveArticle(null)}
-            readingTheme={readingTheme}
-            textSize={textSize}
-          />
-        </main>
-      ) : currentCategory === "videos" ? (
-        /* Native Video Broadcast Hub */
-        <main className="flex-grow py-8 bg-zinc-950 text-white">
-          <VideoBroadcast videos={videos} />
         </main>
       ) : (
-        /* Main Newspaper Frontpage layout */
-        <main className="flex-grow w-full">
+        <>
+          {/* Top Masthead & Pinned Hero (Only on Journal / Frontpage) */}
+          <EditorialHeader
+            currentCategory={currentCategory}
+            setCategory={(cat) => {
+              setCategory(cat);
+              setActiveArticle(null);
+              setIsAdminMode(false);
+              setIsAuthorMode(false);
+              setIsShopOpen(false);
+            }}
+            bookmarksCount={bookmarks.length}
+            onAdminToggle={() => {
+              setIsAdminMode(!isAdminMode);
+              setIsAuthorMode(false);
+              setActiveArticle(null);
+              setIsShopOpen(false);
+            }}
+            isAdminMode={isAdminMode}
+            onOpenAuth={() => setIsAuthModalOpen(true)}
+            currentUser={currentUser}
+            onLogout={handleLogout}
+            onOpenAuthorDesk={() => {
+              setIsAuthorMode(!isAuthorMode);
+              setIsAdminMode(false);
+              setActiveArticle(null);
+              setIsShopOpen(false);
+            }}
+            isAuthorMode={isAuthorMode}
+            onNavigateToShop={() => {
+              setIsShopOpen(true);
+              setActiveArticle(null);
+              setIsAdminMode(false);
+              setIsAuthorMode(false);
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }}
+            isShopMode={isShopOpen}
+          />
+
+          {/* Admin Interface Panel */}
+          {isAdminMode ? (
+            <main className="flex-grow">
+              <AdminPortal
+                articles={articles}
+                setArticles={handleSetArticles}
+                videos={videos}
+                setVideos={handleSetVideos}
+                onExit={() => setIsAdminMode(false)}
+              />
+            </main>
+          ) : isAuthorMode && currentUser && currentUser.role === "author" ? (
+            /* Author Field Desk */
+            <main className="flex-grow">
+              <AuthorPortal
+                currentUser={currentUser}
+                articles={articles}
+                onSaveArticle={handleAuthorSaveArticle}
+                onDeleteArticle={handleAuthorDeleteArticle}
+                onExit={() => setIsAuthorMode(false)}
+              />
+            </main>
+          ) : activeArticle ? (
+            /* Full Article Detail View */
+            <main className="flex-grow">
+              <ArticleDetail
+                article={activeArticle}
+                comments={comments.filter((c) => c.articleId === activeArticle.id)}
+                onAddComment={(text) => handleAddComment(activeArticle.id, text)}
+                isBookmarked={bookmarks.includes(activeArticle.id)}
+                onBookmarkToggle={() => handleBookmarkToggle(activeArticle.id)}
+                onBack={() => setActiveArticle(null)}
+                readingTheme={readingTheme}
+                textSize={textSize}
+                onSetReadingTheme={setReadingTheme}
+                onSetTextSize={setTextSize}
+              />
+            </main>
+          ) : currentCategory === "videos" ? (
+            /* Native Video Broadcast Hub */
+            <main className="flex-grow py-8 bg-zinc-950 text-white">
+              <VideoBroadcast videos={videos} />
+            </main>
+          ) : (
+            /* Main Newspaper Frontpage layout */
+            <main className="flex-grow w-full">
           {/* Top Lead Section in deep emerald canvas matching hero bottom */}
           <div className="w-full bg-[#0a1812] text-[#ede8de] border-b border-emerald-900/60 shadow-inner">
             <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-10">
@@ -531,6 +625,8 @@ function App() {
             </div>
           )}
         </main>
+      )}
+      </>
       )}
 
       {/* Footer Area */}

@@ -72,6 +72,16 @@ export default function Footer() {
             <a href="#" className="hover:text-emerald-500 transition-colors text-zinc-500 text-xs font-light">Earth Polity</a>
             <a href="#" className="hover:text-emerald-500 transition-colors text-zinc-500 text-xs font-light">Ecological Culture</a>
             <a href="#" className="hover:text-emerald-500 transition-colors text-zinc-500 text-xs font-light">Green Finance</a>
+            <a
+              href="#shop-section"
+              onClick={(e) => {
+                e.preventDefault();
+                window.dispatchEvent(new CustomEvent("paen_navigate", { detail: "shop" }));
+              }}
+              className="text-amber-400 hover:text-amber-300 font-mono font-bold text-xs uppercase tracking-wider transition-colors pt-1 flex items-center gap-1"
+            >
+              ✦ SHOP (BOOKS & EVENTS)
+            </a>
           </div>
           <div className="flex flex-col gap-2.5">
             <span className="font-mono text-[9px] text-zinc-600 uppercase tracking-widest font-bold">RESOURCES</span>
@@ -80,6 +90,16 @@ export default function Footer() {
             <a href="#" className="hover:text-emerald-500 transition-colors text-zinc-500 text-xs font-light">Satellite Maps</a>
             <a href="#" className="hover:text-emerald-500 transition-colors text-zinc-500 text-xs font-light">Source Crypt</a>
             <a href="#" className="hover:text-emerald-500 transition-colors text-zinc-500 text-xs font-light">Privacy Charter</a>
+            <a
+              href="#shop-section"
+              onClick={(e) => {
+                e.preventDefault();
+                window.dispatchEvent(new CustomEvent("paen_navigate", { detail: "shop" }));
+              }}
+              className="hover:text-amber-400 transition-colors text-zinc-400 text-xs font-medium"
+            >
+              Box Office & Passes
+            </a>
           </div>
         </div>
       </div>

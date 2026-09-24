@@ -4,7 +4,6 @@ import EditorialHeader from "./components/EditorialHeader";
 import EditorialHero from "./components/EditorialHero";
 import CuratedBentoGrid from "./components/CuratedBentoGrid";
 import CorrespondentsGrid from "./components/CorrespondentsGrid";
-import ArchivalIndex from "./components/ArchivalIndex";
 import AdminPortal from "./components/AdminPortal";
 import AuthorPortal from "./components/AuthorPortal";
 import AuthModal from "./components/AuthModal";
@@ -50,6 +49,10 @@ function App() {
   // Reader Settings
   const [readingTheme, setReadingTheme] = useState<ReadingTheme>("standard");
   const [textSize, setTextSize] = useState<TextSize>("base");
+
+  // All Articles Section Dedicated Filter & Search
+  const [allArticlesSearch, setAllArticlesSearch] = useState("");
+  const [allArticlesCategory, setAllArticlesCategory] = useState<Category | "all">("all");
 
   // Load Initial Data & set up reactive sync listeners
   useEffect(() => {
@@ -370,24 +373,12 @@ function App() {
                   }}
                 />
 
-                {/* Section IV: Research Taxonomy & Topic Index */}
-                <ArchivalIndex
-                  onSelectCategory={(cat) => {
-                    setCategory(cat);
-                    window.scrollTo({ top: 120, behavior: "smooth" });
-                  }}
-                  onSearchQuery={(query) => {
-                    setSearchQuery(query);
-                    window.scrollTo({ top: 120, behavior: "smooth" });
-                  }}
-                />
-
-                {/* Section V: Biosphere Telemetry & Live Sensor Matrix */}
+                {/* Section IV: Biosphere Telemetry & Live Sensor Matrix */}
                 <section className="w-full border-b-2 border-double border-zinc-300 dark:border-zinc-800 pb-14 mb-14" id="planetary-telemetry-section">
                   <div className="flex justify-between items-center border-b border-zinc-250 dark:border-zinc-850 pb-2.5 mb-8 text-[9.5px] font-mono tracking-[0.25em] uppercase text-zinc-500">
                     <div className="flex items-center gap-2">
                       <span className="w-2 h-2 bg-teal-600 dark:bg-teal-400 rounded-none inline-block animate-pulse" />
-                      <span className="font-bold text-foreground">SECTION V • PLANETARY SENSORS & TELEMETRY</span>
+                      <span className="font-bold text-foreground">SECTION IV • PLANETARY SENSORS & TELEMETRY</span>
                     </div>
                     <div className="hidden sm:flex items-center gap-3 text-zinc-400">
                       <span>LIVE TELEMETRY</span>
@@ -433,28 +424,108 @@ function App() {
                   </div>
                 </section>
 
-                {/* Section VI: Wire Feed Index */}
+                {/* Section V: All Published Articles with Dedicated Filter & Search */}
                 <section className="w-full pb-6" id="wire-releases-section">
-                  <div className="flex justify-between items-center border-b border-zinc-250 dark:border-zinc-850 pb-2.5 mb-8 text-[9.5px] font-mono tracking-[0.25em] uppercase text-zinc-500">
+                  <div className="flex justify-between items-center border-b border-zinc-250 dark:border-zinc-850 pb-2.5 mb-6 text-[9.5px] font-mono tracking-[0.25em] uppercase text-zinc-500">
                     <div className="flex items-center gap-2">
                       <Newspaper className="w-3.5 h-3.5 text-emerald-600" />
-                      <span className="font-bold text-foreground">SECTION VI • ALL PUBLISHED ARTICLES</span>
+                      <span className="font-bold text-foreground">SECTION V • ALL PUBLISHED ARTICLES</span>
                     </div>
                     <span className="text-[9px] font-mono text-zinc-400">CHRONOLOGICAL ARCHIVE</span>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {liveArticles.map((art) => (
-                      <ArticleCard
-                        key={art.id}
-                        article={art}
-                        density="grid"
-                        isBookmarked={bookmarks.includes(art.id)}
-                        onBookmarkToggle={handleBookmarkToggle}
-                        onSelect={() => handleSelectArticle(art)}
-                      />
-                    ))}
+                  {/* Dedicated Search & Category Filter Bar for All Articles */}
+                  <div className="mb-8 p-4 bg-zinc-100/80 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
+                    {/* Category Filter Pills */}
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      {(["all", "science", "tech", "politics", "culture", "finance"] as (Category | "all")[]).map((cat) => (
+                        <button
+                          key={cat}
+                          onClick={() => setAllArticlesCategory(cat)}
+                          className={`px-3 py-1 text-[9px] font-mono uppercase tracking-wider font-bold transition-all ${
+                            allArticlesCategory === cat
+                              ? "bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 shadow-sm"
+                              : "bg-white dark:bg-zinc-800/80 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-700 border border-zinc-250 dark:border-zinc-700/60"
+                          }`}
+                        >
+                          {cat === "all" ? "All Categories" : cat}
+                        </button>
+                      ))}
+                    </div>
+
+                    {/* Search Field & Clear Button */}
+                    <div className="flex items-center gap-2">
+                      <div className="relative flex items-center flex-1 sm:w-64">
+                        <Search className="w-3.5 h-3.5 text-zinc-400 absolute left-2.5 pointer-events-none" />
+                        <input
+                          type="text"
+                          placeholder="Filter these articles..."
+                          value={allArticlesSearch}
+                          onChange={(e) => setAllArticlesSearch(e.target.value)}
+                          className="w-full pl-8 pr-3 py-1.5 bg-white dark:bg-zinc-950 text-xs font-sans text-foreground border border-zinc-300 dark:border-zinc-700 focus:outline-none focus:border-emerald-600 dark:focus:border-emerald-400 placeholder-zinc-400"
+                        />
+                      </div>
+                      {(allArticlesCategory !== "all" || allArticlesSearch) && (
+                        <button
+                          onClick={() => {
+                            setAllArticlesCategory("all");
+                            setAllArticlesSearch("");
+                          }}
+                          className="px-2.5 py-1.5 text-[9px] font-mono uppercase tracking-wider text-amber-700 dark:text-amber-400 hover:underline flex items-center gap-1 font-bold shrink-0"
+                          title="Reset section filter"
+                        >
+                          <RotateCcw className="w-3 h-3" /> Clear
+                        </button>
+                      )}
+                    </div>
                   </div>
+
+                  {/* Articles Grid or Filter Empty State */}
+                  {(() => {
+                    const sectionArticles = liveArticles.filter((art) => {
+                      const matchesCat = allArticlesCategory === "all" || art.category === allArticlesCategory;
+                      const matchesSearch =
+                        !allArticlesSearch ||
+                        art.title.toLowerCase().includes(allArticlesSearch.toLowerCase()) ||
+                        art.subtitle.toLowerCase().includes(allArticlesSearch.toLowerCase()) ||
+                        art.content.toLowerCase().includes(allArticlesSearch.toLowerCase()) ||
+                        art.author.toLowerCase().includes(allArticlesSearch.toLowerCase());
+                      return matchesCat && matchesSearch;
+                    });
+
+                    if (sectionArticles.length === 0) {
+                      return (
+                        <div className="text-center py-14 border border-dashed border-zinc-300 dark:border-zinc-800 bg-white/50 dark:bg-zinc-950/30 my-4">
+                          <p className="font-serif text-lg text-foreground font-semibold">No articles match your filter</p>
+                          <p className="text-xs text-zinc-500 mt-1">Try selecting another category or clearing your search term.</p>
+                          <button
+                            onClick={() => {
+                              setAllArticlesCategory("all");
+                              setAllArticlesSearch("");
+                            }}
+                            className="mt-4 px-3.5 py-1.5 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs font-mono uppercase tracking-wider hover:opacity-90"
+                          >
+                            Show All Articles
+                          </button>
+                        </div>
+                      );
+                    }
+
+                    return (
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {sectionArticles.map((art) => (
+                          <ArticleCard
+                            key={art.id}
+                            article={art}
+                            density="grid"
+                            isBookmarked={bookmarks.includes(art.id)}
+                            onBookmarkToggle={handleBookmarkToggle}
+                            onSelect={() => handleSelectArticle(art)}
+                          />
+                        ))}
+                      </div>
+                    );
+                  })()}
                 </section>
               </div>
             </div>

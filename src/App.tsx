@@ -15,7 +15,7 @@ import MarketTicker from "./components/MarketTicker";
 import BiosphereTelemetryWidget from "./components/BiosphereTelemetryWidget";
 import PlanetaryMap from "./components/PlanetaryMap";
 import Footer from "./components/ui/Footer";
-import { Article, Video, Comment, ReadingTheme, TextSize, Category, User, ShopItem, ShopEvent, CartItem } from "./types";
+import { Article, Video, Comment, ReadingTheme, TextSize, Category, User } from "./types";
 import {
   loadArticles,
   saveArticles,
@@ -25,10 +25,6 @@ import {
   saveComments,
   loadBookmarks,
   saveBookmarks,
-  loadShopItems,
-  loadShopEvents,
-  loadCart,
-  saveCart,
   getCurrentUser,
   setCurrentUser as persistCurrentUser,
   logoutUser as persistLogoutUser,
@@ -41,9 +37,6 @@ function App() {
   const [videos, setVideosState] = useState<Video[]>([]);
   const [comments, setCommentsState] = useState<Comment[]>([]);
   const [bookmarks, setBookmarksState] = useState<string[]>([]);
-  const [shopItems, setShopItemsState] = useState<ShopItem[]>([]);
-  const [shopEvents, setShopEventsState] = useState<ShopEvent[]>([]);
-  const [cart, setCartState] = useState<CartItem[]>([]);
   const [currentUser, setCurrentUserState] = useState<User | null>(null);
 
   // Navigation / UI State
@@ -70,9 +63,6 @@ function App() {
       setVideosState(loadVideos());
       setCommentsState(loadComments());
       setBookmarksState(loadBookmarks());
-      setShopItemsState(loadShopItems());
-      setShopEventsState(loadShopEvents());
-      setCartState(loadCart());
       setCurrentUserState(getCurrentUser());
     };
 
@@ -103,47 +93,6 @@ function App() {
       window.removeEventListener("paen_navigate", handleCustomNavigate);
     };
   }, []);
-
-  // Cart Handlers
-  const handleAddToCart = (item: ShopItem | ShopEvent, type: "item" | "event", variant?: string) => {
-    const existing = cart.find((c) => c.id === item.id);
-    let updatedCart: CartItem[];
-    if (existing) {
-      updatedCart = cart.map((c) => (c.id === item.id ? { ...c, quantity: c.quantity + 1 } : c));
-    } else {
-      updatedCart = [
-        ...cart,
-        {
-          id: item.id,
-          type,
-          title: item.title,
-          price: item.price,
-          quantity: 1,
-          imageUrl: item.imageUrl,
-          variant,
-        },
-      ];
-    }
-    setCartState(updatedCart);
-    saveCart(updatedCart);
-  };
-
-  const handleUpdateCartQty = (id: string, qty: number) => {
-    const updatedCart = cart.map((c) => (c.id === id ? { ...c, quantity: qty } : c));
-    setCartState(updatedCart);
-    saveCart(updatedCart);
-  };
-
-  const handleRemoveFromCart = (id: string) => {
-    const updatedCart = cart.filter((c) => c.id !== id);
-    setCartState(updatedCart);
-    saveCart(updatedCart);
-  };
-
-  const handleClearCart = () => {
-    setCartState([]);
-    saveCart([]);
-  };
 
   // Auth Handlers
   const handleLoginSuccess = (user: User) => {
@@ -278,13 +227,6 @@ function App() {
       {isShopOpen ? (
         <main className="flex-grow">
           <ShopView
-            items={shopItems}
-            events={shopEvents}
-            cart={cart}
-            onAddToCart={handleAddToCart}
-            onUpdateCartQty={handleUpdateCartQty}
-            onRemoveFromCart={handleRemoveFromCart}
-            onClearCart={handleClearCart}
             onBack={() => {
               setIsShopOpen(false);
               window.scrollTo({ top: 0, behavior: "smooth" });

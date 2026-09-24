@@ -1,0 +1,123 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Default-deny catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+    function isAuthor() {
+      return isSignedIn() && (
+        isAdmin() || (
+          exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'author' &&
+          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.status == 'approved'
+        )
+      );
+    }
+
+    function isValidArticle(data) {
+      return data.id is string && data.id.size() <= 128 &&
+             data.title is string && data.title.size() <= 500 &&
+             data.category is string && data.category.size() <= 64 &&
+             data.author is string && data.author.size() <= 128 &&
+             data.date is string && data.date.size() <= 128 &&
+             data.content is string && data.content.size() <= 50000;
+    }
+
+    function isValidVideo(data) {
+      return data.id is string && data.id.size() <= 128 &&
+             data.title is string && data.title.size() <= 500 &&
+             data.videoUrl is string && data.videoUrl.size() <= 2000 &&
+             data.thumbnailUrl is string && data.thumbnailUrl.size() <= 2000 &&
+             data.publishedDate is string && data.publishedDate.size() <= 128;
+    }
+
+    function isValidComment(data) {
+      return data.id is string && data.id.size() <= 128 &&
+             data.articleId is string && data.articleId.size() <= 128 &&
+             data.author is string && data.author.size() <= 128 &&
+             data.text is string && data.text.size() <= 5000 &&
+             data.date is string && data.date.size() <= 128;
+    }
+
+    function isValidUser(data) {
+      return data.id is string && data.id.size() <= 128 &&
+             data.name is string && data.name.size() <= 128 &&
+             data.email is string && data.email.size() <= 256 &&
+             data.role is string && data.role.size() <= 64;
+    }
+
+    // Admins Collection
+    match /admins/{userId} {
+      allow get: if isSignedIn();
+      allow list: if isAdmin();
+      allow write: if isAdmin();
+    }
+
+    // Articles Collection (Public Read, CMS / Author Managed)
+    match /articles/{articleId} {
+      allow get, list: if true;
+      allow create: if isValidId(articleId) && (isAdmin() || (isAuthor() && incoming().authorId == request.auth.uid)) && isValidArticle(incoming());
+      allow update: if isValidId(articleId) && isValidArticle(incoming()) && (
+        isAdmin() || (isAuthor() && existing().authorId == request.auth.uid && incoming().authorId == request.auth.uid)
+      );
+      allow delete: if isValidId(articleId) && (isAdmin() || (isAuthor() && existing().authorId == request.auth.uid));
+    }
+
+    // Videos Collection (Public Read, Admin Managed)
+    match /videos/{videoId} {
+      allow get, list: if true;
+      allow create: if isValidId(videoId) && isAdmin() && isValidVideo(incoming());
+      allow update: if isValidId(videoId) && isAdmin() && isValidVideo(incoming());
+      allow delete: if isValidId(videoId) && isAdmin();
+    }
+
+    // Comments Collection
+    match /comments/{commentId} {
+      allow get, list: if true;
+      allow create: if isValidId(commentId) && isValidComment(incoming());
+      allow update: if isValidId(commentId) && isValidComment(incoming()) && (isAdmin() || (isSignedIn() && existing().authorId == request.auth.uid));
+      allow delete: if isValidId(commentId) && (isAdmin() || (isSignedIn() && existing().authorId == request.auth.uid));
+    }
+
+    // Users Collection
+    match /users/{userId} {
+      allow get: if isSignedIn() && (request.auth.uid == userId || isAdmin());
+      allow list: if isAdmin();
+      allow create: if isSignedIn() && request.auth.uid == userId && isValidUser(incoming()) && (
+        incoming().role == 'user' || incoming().role == 'author'
+      );
+      allow update: if isSignedIn() && isValidUser(incoming()) && (
+        isAdmin() || (
+          request.auth.uid == userId &&
+          incoming().role == existing().role &&
+          incoming().email == existing().email
+        )
+      );
+      allow delete: if isAdmin() || (isSignedIn() && request.auth.uid == userId);
+    }
+  }
+}

@@ -1,17 +1,25 @@
 import { Article, Video, Comment, User, ShopItem, ShopEvent, CartItem } from "../types";
 import { INITIAL_ARTICLES, INITIAL_VIDEOS } from "../data/initialData";
 import { INITIAL_SHOP_ITEMS, INITIAL_SHOP_EVENTS } from "../data/shopData";
+import { db, handleFirestoreError, OperationType } from "./firebase";
+import {
+  collection,
+  doc,
+  setDoc,
+  deleteDoc,
+  onSnapshot,
+} from "firebase/firestore";
 
-const ARTICLES_KEY = "paen_articles_v4";
-const VIDEOS_KEY = "paen_videos_v4";
-const COMMENTS_KEY = "paen_comments_v4";
-const BOOKMARKS_KEY = "paen_bookmarks_v4";
-const USERS_KEY = "paen_users_v4";
-const CURRENT_USER_KEY = "paen_current_user_v4";
-const ADMIN_PASSWORD_KEY = "paen_admin_password_v4";
-const SHOP_ITEMS_KEY = "paen_shop_items_v1";
-const SHOP_EVENTS_KEY = "paen_shop_events_v1";
-const CART_KEY = "paen_cart_v1";
+const ARTICLES_KEY = "paen_articles_v5";
+const VIDEOS_KEY = "paen_videos_v5";
+const COMMENTS_KEY = "paen_comments_v5";
+const BOOKMARKS_KEY = "paen_bookmarks_v5";
+const USERS_KEY = "paen_users_v5";
+const CURRENT_USER_KEY = "paen_current_user_v5";
+const ADMIN_PASSWORD_KEY = "paen_admin_password_v5";
+const SHOP_ITEMS_KEY = "paen_shop_items_v2";
+const SHOP_EVENTS_KEY = "paen_shop_events_v2";
+const CART_KEY = "paen_cart_v2";
 
 export const DEFAULT_ADMIN_PASS = "paen123";
 
@@ -50,15 +58,296 @@ export const INITIAL_USERS: User[] = [
     bio: "Botanical archivist and lifelong reader of ecological journals.",
     createdAt: "September 24, 2026",
     avatarUrl: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=150&auto=format&fit=crop",
-  }
+  },
 ];
 
 export function emitDataSync(entity: string) {
   if (typeof window !== "undefined") {
-    window.dispatchEvent(new CustomEvent("paen_data_sync", { detail: { entity, timestamp: Date.now() } }));
+    window.dispatchEvent(
+      new CustomEvent("paen_data_sync", { detail: { entity, timestamp: Date.now() } })
+    );
   }
 }
 
+// ----------------------------------------------------
+// Real-Time Firestore Synchronization Engine
+// ----------------------------------------------------
+let isFirestoreInitialized = false;
+
+export function initFirestoreRealtimeSync() {
+  if (isFirestoreInitialized || typeof window === "undefined") return;
+  isFirestoreInitialized = true;
+
+  try {
+    // 1. Articles Sync Listener
+    const articlesCol = collection(db, "articles");
+    onSnapshot(
+      articlesCol,
+      (snapshot) => {
+        if (!snapshot.empty) {
+          const remoteArticles: Article[] = [];
+          snapshot.forEach((docSnap) => {
+            remoteArticles.push(docSnap.data() as Article);
+          });
+          // Sort by date / priority
+          localStorage.setItem(ARTICLES_KEY, JSON.stringify(remoteArticles));
+          emitDataSync("articles");
+        } else {
+          // If Firestore is empty, seed initial data to cloud
+          seedInitialFirestoreArticles();
+        }
+      },
+      (error) => {
+        console.warn("Firestore articles listener status:", error.message);
+      }
+    );
+
+    // 2. Videos Sync Listener
+    const videosCol = collection(db, "videos");
+    onSnapshot(
+      videosCol,
+      (snapshot) => {
+        if (!snapshot.empty) {
+          const remoteVideos: Video[] = [];
+          snapshot.forEach((docSnap) => {
+            remoteVideos.push(docSnap.data() as Video);
+          });
+          localStorage.setItem(VIDEOS_KEY, JSON.stringify(remoteVideos));
+          emitDataSync("videos");
+        } else {
+          seedInitialFirestoreVideos();
+        }
+      },
+      (error) => {
+        console.warn("Firestore videos listener status:", error.message);
+      }
+    );
+
+    // 3. Comments Sync Listener
+    const commentsCol = collection(db, "comments");
+    onSnapshot(
+      commentsCol,
+      (snapshot) => {
+        if (!snapshot.empty) {
+          const remoteComments: Comment[] = [];
+          snapshot.forEach((docSnap) => {
+            remoteComments.push(docSnap.data() as Comment);
+          });
+          localStorage.setItem(COMMENTS_KEY, JSON.stringify(remoteComments));
+          emitDataSync("comments");
+        }
+      },
+      (error) => {
+        console.warn("Firestore comments listener status:", error.message);
+      }
+    );
+  } catch (err) {
+    console.warn("Firestore sync initialization warning: ", err);
+  }
+}
+
+async function seedInitialFirestoreArticles() {
+  try {
+    for (const art of INITIAL_ARTICLES) {
+      await setDoc(doc(db, "articles", art.id), art);
+    }
+  } catch (error) {
+    console.warn("Initial article seed note:", error);
+  }
+}
+
+async function seedInitialFirestoreVideos() {
+  try {
+    for (const vid of INITIAL_VIDEOS) {
+      await setDoc(doc(db, "videos", vid.id), vid);
+    }
+  } catch (error) {
+    console.warn("Initial video seed note:", error);
+  }
+}
+
+// Automatically initiate sync on module import
+initFirestoreRealtimeSync();
+
+// ----------------------------------------------------
+// CMS Article Operations
+// ----------------------------------------------------
+export function loadArticles(): Article[] {
+  const data = localStorage.getItem(ARTICLES_KEY);
+  if (!data) {
+    localStorage.setItem(ARTICLES_KEY, JSON.stringify(INITIAL_ARTICLES));
+    return INITIAL_ARTICLES;
+  }
+  try {
+    return JSON.parse(data);
+  } catch {
+    return INITIAL_ARTICLES;
+  }
+}
+
+export function saveArticles(articles: Article[]) {
+  const previousArticles = loadArticles();
+  localStorage.setItem(ARTICLES_KEY, JSON.stringify(articles));
+  emitDataSync("articles");
+
+  // Sync mutations to Firestore in background
+  (async () => {
+    try {
+      // Find deleted articles
+      const currentIds = new Set(articles.map((a) => a.id));
+      for (const prev of previousArticles) {
+        if (!currentIds.has(prev.id)) {
+          await deleteDoc(doc(db, "articles", prev.id));
+        }
+      }
+      // Upsert new or modified articles
+      for (const art of articles) {
+        await setDoc(doc(db, "articles", art.id), art, { merge: true });
+      }
+    } catch (err) {
+      console.warn("Firestore article write note:", err);
+    }
+  })();
+}
+
+export async function saveSingleArticleToCloud(article: Article) {
+  try {
+    await setDoc(doc(db, "articles", article.id), article, { merge: true });
+  } catch (error) {
+    handleFirestoreError(error, OperationType.WRITE, `articles/${article.id}`);
+  }
+}
+
+export async function deleteArticleFromCloud(articleId: string) {
+  try {
+    await deleteDoc(doc(db, "articles", articleId));
+  } catch (error) {
+    handleFirestoreError(error, OperationType.DELETE, `articles/${articleId}`);
+  }
+}
+
+// ----------------------------------------------------
+// CMS Video Operations
+// ----------------------------------------------------
+export function loadVideos(): Video[] {
+  const data = localStorage.getItem(VIDEOS_KEY);
+  if (!data) {
+    localStorage.setItem(VIDEOS_KEY, JSON.stringify(INITIAL_VIDEOS));
+    return INITIAL_VIDEOS;
+  }
+  try {
+    return JSON.parse(data);
+  } catch {
+    return INITIAL_VIDEOS;
+  }
+}
+
+export function saveVideos(videos: Video[]) {
+  const prevVideos = loadVideos();
+  localStorage.setItem(VIDEOS_KEY, JSON.stringify(videos));
+  emitDataSync("videos");
+
+  // Cloud sync
+  (async () => {
+    try {
+      const currentIds = new Set(videos.map((v) => v.id));
+      for (const prev of prevVideos) {
+        if (!currentIds.has(prev.id)) {
+          await deleteDoc(doc(db, "videos", prev.id));
+        }
+      }
+      for (const vid of videos) {
+        await setDoc(doc(db, "videos", vid.id), vid, { merge: true });
+      }
+    } catch (err) {
+      console.warn("Firestore video write note:", err);
+    }
+  })();
+}
+
+// ----------------------------------------------------
+// Comments Operations
+// ----------------------------------------------------
+const INITIAL_COMMENTS: Comment[] = [
+  {
+    id: "com-1",
+    articleId: "art-1",
+    author: "Dr. Charles G.",
+    text: "This is a masterpiece of environmental reporting. Bioacoustics provides a completely objective metric for biodiversity. We've seen similar patterns in marine biomes where sonar tracks reef health prior to bleaching.",
+    date: "August 18, 2026, 4:12 PM",
+  },
+  {
+    id: "com-2",
+    articleId: "art-1",
+    author: "Miranda V.",
+    text: "Fascinating point about the 'silent migration'. If a forest becomes biologically dead but structurally standing, satellites will continue reporting it as preserved. This is a severe gap in existing carbon-credit tracking models.",
+    date: "August 18, 2026, 8:45 PM",
+  },
+  {
+    id: "com-3",
+    articleId: "art-2",
+    author: "Linus_K",
+    text: "Diamond semiconductors are the ultimate endgame. The main hurdle has always been lattice matching when depositing on silicon. The Ulm team's direct gallium-nitride bonding is a massive breakthrough. Excited for the future of processing.",
+    date: "August 16, 2026, 11:30 AM",
+  },
+  {
+    id: "com-4",
+    articleId: "art-4",
+    author: "RetroCoder88",
+    text: "The Lumina Registry is doing sacred work. I was active in several web forums in 2003, and looking back, those were some of the most intellectually honest digital spaces. Losing them to domain decay is a tragedy. Thank you for this.",
+    date: "August 11, 2026, 9:02 AM",
+  },
+];
+
+export function loadComments(): Comment[] {
+  const data = localStorage.getItem(COMMENTS_KEY);
+  if (!data) {
+    localStorage.setItem(COMMENTS_KEY, JSON.stringify(INITIAL_COMMENTS));
+    return INITIAL_COMMENTS;
+  }
+  try {
+    return JSON.parse(data);
+  } catch {
+    return INITIAL_COMMENTS;
+  }
+}
+
+export function saveComments(comments: Comment[]) {
+  localStorage.setItem(COMMENTS_KEY, JSON.stringify(comments));
+  emitDataSync("comments");
+
+  (async () => {
+    try {
+      for (const com of comments) {
+        await setDoc(doc(db, "comments", com.id), com, { merge: true });
+      }
+    } catch (err) {
+      console.warn("Firestore comment write note:", err);
+    }
+  })();
+}
+
+// ----------------------------------------------------
+// Bookmarks & Preferences
+// ----------------------------------------------------
+export function loadBookmarks(): string[] {
+  const data = localStorage.getItem(BOOKMARKS_KEY);
+  if (!data) return [];
+  try {
+    return JSON.parse(data);
+  } catch {
+    return [];
+  }
+}
+
+export function saveBookmarks(bookmarks: string[]) {
+  localStorage.setItem(BOOKMARKS_KEY, JSON.stringify(bookmarks));
+  emitDataSync("bookmarks");
+}
+
+// ----------------------------------------------------
+// User Accounts & Authentication
+// ----------------------------------------------------
 export function loadUsers(): User[] {
   const data = localStorage.getItem(USERS_KEY);
   if (!data) {
@@ -115,7 +404,6 @@ export function getAdminPassword(): string {
 export function setAdminPassword(newPass: string) {
   localStorage.setItem(ADMIN_PASSWORD_KEY, newPass);
   localStorage.setItem("paen_has_changed_password", "true");
-  // Also synchronize in the admin user record in users list
   const users = loadUsers();
   const updatedUsers = users.map((u) =>
     u.role === "admin" ? { ...u, password: newPass } : u
@@ -123,109 +411,9 @@ export function setAdminPassword(newPass: string) {
   saveUsers(updatedUsers);
 }
 
-// Seed initial comments
-const INITIAL_COMMENTS: Comment[] = [
-  {
-    id: "com-1",
-    articleId: "art-1",
-    author: "Dr. Charles G.",
-    text: "This is a masterpiece of environmental reporting. Bioacoustics provides a completely objective metric for biodiversity. We've seen similar patterns in marine biomes where sonar tracks reef health prior to bleaching.",
-    date: "August 18, 2026, 4:12 PM"
-  },
-  {
-    id: "com-2",
-    articleId: "art-1",
-    author: "Miranda V.",
-    text: "Fascinating point about the 'silent migration'. If a forest becomes biologically dead but structurally standing, satellites will continue reporting it as preserved. This is a severe gap in existing carbon-credit tracking models.",
-    date: "August 18, 2026, 8:45 PM"
-  },
-  {
-    id: "com-3",
-    articleId: "art-2",
-    author: "Linus_K",
-    text: "Diamond semiconductors are the ultimate endgame. The main hurdle has always been lattice matching when depositing on silicon. The Ulm team's direct gallium-nitride bonding is a massive breakthrough. Excited for the future of processing.",
-    date: "August 16, 2026, 11:30 AM"
-  },
-  {
-    id: "com-4",
-    articleId: "art-4",
-    author: "RetroCoder88",
-    text: "The Lumina Registry is doing sacred work. I was active in several web forums in 2003, and looking back, those were some of the most intellectually honest digital spaces. Losing them to domain decay is a tragedy. Thank you for this.",
-    date: "August 11, 2026, 9:02 AM"
-  }
-];
-
-export function loadArticles(): Article[] {
-  const data = localStorage.getItem(ARTICLES_KEY);
-  if (!data) {
-    localStorage.setItem(ARTICLES_KEY, JSON.stringify(INITIAL_ARTICLES));
-    return INITIAL_ARTICLES;
-  }
-  try {
-    return JSON.parse(data);
-  } catch {
-    return INITIAL_ARTICLES;
-  }
-}
-
-export function saveArticles(articles: Article[]) {
-  localStorage.setItem(ARTICLES_KEY, JSON.stringify(articles));
-  emitDataSync("articles");
-}
-
-export function loadVideos(): Video[] {
-  const data = localStorage.getItem(VIDEOS_KEY);
-  if (!data) {
-    localStorage.setItem(VIDEOS_KEY, JSON.stringify(INITIAL_VIDEOS));
-    return INITIAL_VIDEOS;
-  }
-  try {
-    return JSON.parse(data);
-  } catch {
-    return INITIAL_VIDEOS;
-  }
-}
-
-export function saveVideos(videos: Video[]) {
-  localStorage.setItem(VIDEOS_KEY, JSON.stringify(videos));
-  emitDataSync("videos");
-}
-
-export function loadComments(): Comment[] {
-  const data = localStorage.getItem(COMMENTS_KEY);
-  if (!data) {
-    localStorage.setItem(COMMENTS_KEY, JSON.stringify(INITIAL_COMMENTS));
-    return INITIAL_COMMENTS;
-  }
-  try {
-    return JSON.parse(data);
-  } catch {
-    return INITIAL_COMMENTS;
-  }
-}
-
-export function saveComments(comments: Comment[]) {
-  localStorage.setItem(COMMENTS_KEY, JSON.stringify(comments));
-  emitDataSync("comments");
-}
-
-export function loadBookmarks(): string[] {
-  const data = localStorage.getItem(BOOKMARKS_KEY);
-  if (!data) {
-    return [];
-  }
-  try {
-    return JSON.parse(data);
-  } catch {
-    return [];
-  }
-}
-
-export function saveBookmarks(bookmarks: string[]) {
-  localStorage.setItem(BOOKMARKS_KEY, JSON.stringify(bookmarks));
-  emitDataSync("bookmarks");
-}
-
+// ----------------------------------------------------
+// Shop & Provisions Placeholders
+// ----------------------------------------------------
 export function loadShopItems(): ShopItem[] {
   const data = localStorage.getItem(SHOP_ITEMS_KEY);
   if (!data) {
@@ -276,4 +464,3 @@ export function saveCart(cart: CartItem[]) {
   localStorage.setItem(CART_KEY, JSON.stringify(cart));
   emitDataSync("cart");
 }
-

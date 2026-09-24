@@ -1,0 +1,115 @@
+{
+  "entities": {
+    "Article": {
+      "title": "Article",
+      "description": "Editorial journal article and field dispatch",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "title": { "type": "string", "maxLength": 500 },
+        "subtitle": { "type": "string", "maxLength": 1000 },
+        "category": { "type": "string", "maxLength": 64 },
+        "author": { "type": "string", "maxLength": 128 },
+        "authorId": { "type": "string", "maxLength": 128 },
+        "date": { "type": "string", "maxLength": 128 },
+        "readTime": { "type": "string", "maxLength": 64 },
+        "excerpt": { "type": "string", "maxLength": 2000 },
+        "content": { "type": "string", "maxLength": 50000 },
+        "imageUrl": { "type": "string", "maxLength": 2000 },
+        "imageCaption": { "type": "string", "maxLength": 1000 },
+        "featured": { "type": "boolean" },
+        "trending": { "type": "boolean" },
+        "views": { "type": "number" },
+        "likes": { "type": "number" },
+        "tags": { "type": "array" }
+      },
+      "required": ["id", "title", "category", "author", "date", "content"]
+    },
+    "Video": {
+      "title": "Video",
+      "description": "Video dispatch and broadcast item",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "title": { "type": "string", "maxLength": 500 },
+        "subtitle": { "type": "string", "maxLength": 1000 },
+        "category": { "type": "string", "maxLength": 64 },
+        "hostOrPresenter": { "type": "string", "maxLength": 128 },
+        "duration": { "type": "string", "maxLength": 64 },
+        "publishedDate": { "type": "string", "maxLength": 128 },
+        "views": { "type": "string", "maxLength": 64 },
+        "synopsis": { "type": "string", "maxLength": 4000 },
+        "videoUrl": { "type": "string", "maxLength": 2000 },
+        "thumbnailUrl": { "type": "string", "maxLength": 2000 },
+        "status": { "type": "string", "maxLength": 64 },
+        "tags": { "type": "array" },
+        "chapters": { "type": "array" }
+      },
+      "required": ["id", "title", "videoUrl", "thumbnailUrl", "publishedDate"]
+    },
+    "Comment": {
+      "title": "Comment",
+      "description": "Reader comment on an article",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "articleId": { "type": "string", "maxLength": 128 },
+        "author": { "type": "string", "maxLength": 128 },
+        "authorId": { "type": "string", "maxLength": 128 },
+        "text": { "type": "string", "maxLength": 5000 },
+        "date": { "type": "string", "maxLength": 128 }
+      },
+      "required": ["id", "articleId", "author", "text", "date"]
+    },
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Registered user profile",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "name": { "type": "string", "maxLength": 128 },
+        "email": { "type": "string", "maxLength": 256 },
+        "role": { "type": "string", "maxLength": 64 },
+        "status": { "type": "string", "maxLength": 64 },
+        "bio": { "type": "string", "maxLength": 2000 },
+        "institution": { "type": "string", "maxLength": 256 },
+        "avatarUrl": { "type": "string", "maxLength": 2000 },
+        "createdAt": { "type": "string", "maxLength": 128 }
+      },
+      "required": ["id", "name", "email", "role"]
+    },
+    "Admin": {
+      "title": "Admin",
+      "description": "Admin identity entry",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "email": { "type": "string", "maxLength": 256 },
+        "createdAt": { "type": "string", "maxLength": 128 }
+      },
+      "required": ["id", "email"]
+    }
+  },
+  "firestore": {
+    "/articles/{articleId}": {
+      "schema": "Article",
+      "description": "Collection of journal articles and dispatches"
+    },
+    "/videos/{videoId}": {
+      "schema": "Video",
+      "description": "Collection of documentary videos and broadcasts"
+    },
+    "/comments/{commentId}": {
+      "schema": "Comment",
+      "description": "Collection of reader comments"
+    },
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "Collection of registered profiles"
+    },
+    "/admins/{userId}": {
+      "schema": "Admin",
+      "description": "Collection of authorized administrative identifiers"
+    }
+  }
+}

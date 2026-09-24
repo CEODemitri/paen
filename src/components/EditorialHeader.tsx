@@ -293,8 +293,7 @@ export default function EditorialHeader({
           className="sticky top-0 w-full select-none flex flex-col justify-between overflow-hidden bg-[#f4ecd9] text-[#1a2b3c] border-b-2 border-[#162738]"
           style={{
             height: "calc(100vh - 74px)",
-            minHeight: "600px",
-            maxHeight: "calc(100vh - 74px)",
+            minHeight: "560px",
           }}
         >
         {/* Full-Width Background Video Stretching Across the Entire Page */}
@@ -317,51 +316,51 @@ export default function EditorialHeader({
         </div>
 
         {/* Poster Top Sub-Bar */}
-        <div className="relative z-10 w-full px-4 sm:px-8 md:px-12 pt-3 sm:pt-4 pb-1.5 flex items-center justify-between border-b border-[#1b2a3a]/15 text-[9.5px] sm:text-[11px] font-mono tracking-[0.28em] uppercase text-[#1a2b3c]">
-          <div className="flex items-center gap-2 sm:gap-3 z-10">
-            <span className="font-bold flex items-center gap-1.5 text-[#1a2b3c]">
-              <span className="w-2 h-2 bg-[#d9483b] rounded-full inline-block" />
+        <div className="relative z-10 w-full px-3 sm:px-8 md:px-12 pt-2 sm:pt-4 pb-1 sm:pb-1.5 flex items-center justify-between border-b border-[#1b2a3a]/15 text-[8.5px] sm:text-[11px] font-mono tracking-[0.2em] sm:tracking-[0.28em] uppercase text-[#1a2b3c] shrink-0">
+          <div className="flex items-center gap-1.5 sm:gap-3 z-10">
+            <span className="font-bold flex items-center gap-1 text-[#1a2b3c]">
+              <span className="w-1.5 sm:w-2 h-1.5 sm:h-2 bg-[#d9483b] rounded-full inline-block" />
               PAEN
             </span>
             <span className="hidden sm:inline text-zinc-400">/</span>
             <span className="hidden sm:inline text-[#1a2b3c]/70 font-medium">SPECIAL FIELD EDITION</span>
           </div>
 
-          <div className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center gap-2 sm:gap-4 font-bold tracking-[0.32em] text-[10px] sm:text-xs text-center text-[#1a2b3c] pointer-events-auto">
-            <span className="text-[#d9483b] text-xs">✦</span>
+          <div className="flex items-center justify-center gap-1.5 sm:gap-4 font-bold tracking-[0.25em] sm:tracking-[0.32em] text-[8.5px] sm:text-xs text-center text-[#1a2b3c] pointer-events-auto">
+            <span className="text-[#d9483b] text-[10px] sm:text-xs">✦</span>
             <span className="text-center">TRAVEL DEEPER</span>
-            <span className="text-[#d9483b] text-xs">✦</span>
+            <span className="text-[#d9483b] text-[10px] sm:text-xs">✦</span>
           </div>
 
-          <div className="flex items-center gap-2.5 sm:gap-3 z-10">
+          <div className="flex items-center gap-1.5 sm:gap-3 z-10">
             {/* Elemental Symbols: Ice, Fire, Earth, Air */}
-            <div className="flex items-center gap-1.5 sm:gap-2 text-[#1a2b3c]" title="Elements: Ice • Fire • Earth • Air">
+            <div className="flex items-center gap-1 sm:gap-2 text-[#1a2b3c]" title="Elements: Ice • Fire • Earth • Air">
               {/* Ice Symbol */}
-              <span className="p-1 rounded hover:bg-[#1a2b3c]/10 transition-colors flex items-center justify-center text-[#3c6b8c]" title="Ice">
-                <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-current fill-none" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <span className="p-0.5 sm:p-1 rounded hover:bg-[#1a2b3c]/10 transition-colors flex items-center justify-center text-[#3c6b8c]" title="Ice">
+                <svg viewBox="0 0 24 24" className="w-3 h-3 sm:w-4 sm:h-4 stroke-current fill-none" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M12 2v20M2 12h20M4.93 4.93l14.14 14.14M4.93 19.07l14.14-14.14" />
                   <circle cx="12" cy="12" r="2.5" fill="currentColor" />
                 </svg>
               </span>
 
               {/* Fire Symbol */}
-              <span className="p-1 rounded hover:bg-[#1a2b3c]/10 transition-colors flex items-center justify-center text-[#d9483b]" title="Fire">
-                <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-current fill-none" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <span className="p-0.5 sm:p-1 rounded hover:bg-[#1a2b3c]/10 transition-colors flex items-center justify-center text-[#d9483b]" title="Fire">
+                <svg viewBox="0 0 24 24" className="w-3 h-3 sm:w-4 sm:h-4 stroke-current fill-none" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 3z" />
                 </svg>
               </span>
 
               {/* Earth Symbol */}
-              <span className="p-1 rounded hover:bg-[#1a2b3c]/10 transition-colors flex items-center justify-center text-[#7a5e38]" title="Earth">
-                <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-current fill-none" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <span className="p-0.5 sm:p-1 rounded hover:bg-[#1a2b3c]/10 transition-colors flex items-center justify-center text-[#7a5e38]" title="Earth">
+                <svg viewBox="0 0 24 24" className="w-3 h-3 sm:w-4 sm:h-4 stroke-current fill-none" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                   <polygon points="12 3 2 21 22 21 12 3" />
                   <line x1="6" y1="14" x2="18" y2="14" />
                 </svg>
               </span>
 
               {/* Air Symbol */}
-              <span className="p-1 rounded hover:bg-[#1a2b3c]/10 transition-colors flex items-center justify-center text-[#35727a]" title="Air">
-                <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-current fill-none" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <span className="p-0.5 sm:p-1 rounded hover:bg-[#1a2b3c]/10 transition-colors flex items-center justify-center text-[#35727a]" title="Air">
+                <svg viewBox="0 0 24 24" className="w-3 h-3 sm:w-4 sm:h-4 stroke-current fill-none" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2" />
                 </svg>
               </span>
@@ -373,19 +372,19 @@ export default function EditorialHeader({
           </div>
         </div>
 
-        {/* Massive Vintage Headline: Tall & Thicker Sans Font Spread Edge-to-Edge with 4px vertical padding */}
-        <div className="relative z-10 w-full px-4 sm:px-8 md:px-12 pt-0.5 sm:pt-1 pb-0.5 sm:pb-1">
+        {/* Massive Vintage Headline: Tall & Thicker Sans Font Spread Edge-to-Edge */}
+        <div className="relative z-10 w-full px-3 sm:px-8 md:px-12 pt-0.5 sm:pt-1 pb-0.5 sm:pb-1 shrink-0">
           <h1
             className="w-full flex justify-between items-baseline font-black uppercase text-[#1a2b3c] drop-shadow-sm cursor-pointer hover:text-[#111e2b] transition-colors"
             style={{
               fontFamily: "'Arial Black', 'Montserrat', 'Inter', 'Impact', 'Helvetica Neue', sans-serif",
-              fontSize: "clamp(2.85rem, 12.5vw, 9.6rem)",
+              fontSize: "clamp(2.1rem, 11.8vw, 9.6rem)",
               fontWeight: 950,
-              lineHeight: 0.82,
-              paddingTop: "16px",
-              paddingBottom: "16px",
-              WebkitTextStroke: "1.2px currentColor",
-              transform: "scaleY(1.3)",
+              lineHeight: 0.85,
+              paddingTop: "6px",
+              paddingBottom: "6px",
+              WebkitTextStroke: "1px currentColor",
+              transform: "scaleY(1.15)",
               transformOrigin: "center center",
               textShadow: "0 2px 8px rgba(26,43,60,0.08)",
             }}
@@ -405,11 +404,11 @@ export default function EditorialHeader({
         </div>
 
         {/* Central Visual Art Overlay Canvas & Right Vertical Banner */}
-        <div className="relative z-10 flex-1 w-full mx-auto px-4 sm:px-8 md:px-12 py-2 sm:py-3 flex items-stretch justify-between gap-3 sm:gap-5 min-h-0">
-          {/* Main Visual Canvas Frame (reduced width with preserved internal elements) */}
-          <div className="relative w-1/4 h-full min-h-0 overflow-hidden border border-[#1b2a3a]/25 shadow-md bg-[#121e2a]/20 backdrop-blur-[2px] group">
+        <div className="relative z-10 flex-1 w-full mx-auto px-3 sm:px-8 md:px-12 py-1.5 sm:py-3 flex items-stretch justify-between gap-2.5 sm:gap-5 min-h-0">
+          {/* Main Visual Canvas Frame (original full-height structure) */}
+          <div className="relative w-36 sm:w-52 md:w-64 lg:w-1/4 h-full min-h-0 overflow-hidden border border-[#1b2a3a]/25 shadow-md bg-[#121e2a]/20 backdrop-blur-[2px] group shrink-0">
             {/* Glowing Sun / Moon in mountain mist */}
-            <div className="absolute top-[8%] left-[46%] w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-[#faecd0]/40 blur-xl pointer-events-none" />
+            <div className="absolute top-[8%] left-[46%] w-16 h-16 sm:w-28 sm:h-28 rounded-full bg-[#faecd0]/40 blur-xl pointer-events-none" />
 
             {/* Overlaid Powerlines & Overhead Cables */}
             <svg
@@ -427,17 +426,17 @@ export default function EditorialHeader({
             </svg>
 
             {/* Top-Left: "探求 / THE JOURNEY OF DISCOVERY UNCOVERS CREATIVITY" */}
-            <div className="absolute top-3 sm:top-5 left-3 sm:left-5 z-20 flex flex-col gap-1 text-[#f8f5ed] drop-shadow-md max-w-[240px]">
-              <span className="text-2xl sm:text-3xl font-serif font-extrabold tracking-wider text-[#f5ebd6]">
+            <div className="absolute top-2.5 sm:top-5 left-2.5 sm:left-5 z-20 flex flex-col gap-0.5 sm:gap-1 text-[#f8f5ed] drop-shadow-md max-w-[240px]">
+              <span className="text-xl sm:text-3xl font-serif font-extrabold tracking-wider text-[#f5ebd6]">
                 探求
               </span>
-              <div className="text-[8.5px] sm:text-[9.5px] font-mono tracking-[0.22em] uppercase font-bold leading-tight text-[#e6decb]">
+              <div className="text-[7.5px] sm:text-[9.5px] font-mono tracking-[0.18em] sm:tracking-[0.22em] uppercase font-bold leading-tight text-[#e6decb]">
                 THE JOURNEY OF <br />
                 DISCOVERY UNCOVERS <br />
                 CREATIVITY
               </div>
               {/* Botanical Mon Crest */}
-              <div className="mt-1 w-5 h-5 text-[#eed9b3] opacity-90">
+              <div className="mt-0.5 sm:mt-1 w-3.5 h-3.5 sm:w-5 sm:h-5 text-[#eed9b3] opacity-90">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
                   <circle cx="12" cy="12" r="10" />
                   <path d="M12 2a10 10 0 0 1 0 20M2 12a10 10 0 0 1 20 0" />
@@ -447,27 +446,27 @@ export default function EditorialHeader({
             </div>
 
             {/* Bottom-Left: "宇宙の律動に、波長を合わせて。" & "TUNE INTO THE COSMIC RHYTHM" */}
-            <div className="absolute bottom-3 sm:bottom-5 left-3 sm:left-5 z-20 flex flex-col gap-1 text-[#f8f5ed] max-w-[280px]">
+            <div className="absolute bottom-2.5 sm:bottom-5 left-2.5 sm:left-5 z-20 flex flex-col gap-0.5 sm:gap-1 text-[#f8f5ed] max-w-[280px]">
               <span className="text-xs sm:text-sm font-serif font-bold text-[#f5ebd6] tracking-wider">
                 宇宙の律動に、波長を合わせて。
               </span>
-              <div className="text-[8px] sm:text-[9px] font-mono tracking-[0.22em] uppercase text-[#e2d8c3] leading-relaxed">
+              <div className="text-[7px] sm:text-[9px] font-mono tracking-[0.18em] sm:tracking-[0.22em] uppercase text-[#e2d8c3] leading-tight sm:leading-relaxed">
                 TUNE INTO THE <br />
                 COSMIC RHYTHM.
               </div>
-              <div className="mt-0.5 pt-1 border-t border-white/20 text-[7.5px] sm:text-[8.5px] font-mono uppercase tracking-[0.25em] text-[#eed9b3] font-bold">
+              <div className="mt-0.5 pt-1 border-t border-white/20 text-[7px] sm:text-[8.5px] font-mono uppercase tracking-[0.2em] sm:tracking-[0.25em] text-[#eed9b3] font-bold">
                 VOL. 1 • EST. SEPT 24, 2026
               </div>
             </div>
           </div>
 
           {/* Right Group: Red Action Button & Vertical Banner */}
-          <div className="flex items-end gap-3 sm:gap-4 shrink-0 h-full">
+          <div className="flex items-end gap-2 sm:gap-4 shrink-0 h-full">
             {/* Free-Standing Red Action Button */}
-            <div className="z-30 pointer-events-auto pb-1 sm:pb-2">
+            <div className="z-30 pointer-events-auto pb-0.5 sm:pb-2">
               <a
                 href="#editorial-lead-section"
-                className="px-3.5 sm:px-4 py-2 bg-[#d9483b] hover:bg-[#c23d30] text-white text-[8.5px] sm:text-[9.5px] md:text-[10px] font-mono uppercase tracking-widest font-bold flex items-center gap-2 transition-all shadow-xl rounded-sm hover:scale-105 border border-white/20 whitespace-nowrap"
+                className="px-2.5 sm:px-4 py-1.5 sm:py-2 bg-[#d9483b] hover:bg-[#c23d30] text-white text-[7.5px] sm:text-[9.5px] md:text-[10px] font-mono uppercase tracking-wider sm:tracking-widest font-bold flex items-center gap-1 sm:gap-2 transition-all shadow-xl rounded-sm hover:scale-105 border border-white/20 whitespace-nowrap"
                 id="hero-read-dispatches-btn"
               >
                 <span>READ ARTICLES</span>
@@ -477,11 +476,11 @@ export default function EditorialHeader({
 
             {/* Right Deep Indigo Vertical Banner */}
             <aside
-              className="w-16 sm:w-24 md:w-32 lg:w-40 h-full bg-[#122030]/95 backdrop-blur-md text-[#f4ecd9] p-2 sm:p-3 flex flex-col justify-between items-center relative border border-[#1d334c] shadow-2xl shrink-0 overflow-hidden group"
+              className="w-14 sm:w-24 md:w-32 lg:w-40 h-full bg-[#122030]/95 backdrop-blur-md text-[#f4ecd9] p-1.5 sm:p-3 flex flex-col justify-between items-center relative border border-[#1d334c] shadow-2xl shrink-0 overflow-hidden group"
               id="kyoto-poster-side-banner"
             >
               {/* Top Station Status Strip */}
-              <div className="w-full flex items-center justify-between pt-0.5 border-b border-white/15 pb-1.5 text-[7px] sm:text-[8px] font-mono tracking-[0.2em] text-[#d9ab6a] uppercase">
+              <div className="w-full flex items-center justify-between pt-0.5 border-b border-white/15 pb-1 sm:pb-1.5 text-[6.5px] sm:text-[8px] font-mono tracking-[0.15em] sm:tracking-[0.2em] text-[#d9ab6a] uppercase">
                 <span className="font-bold flex items-center gap-1">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse inline-block" />
                   LIVE
@@ -490,9 +489,9 @@ export default function EditorialHeader({
               </div>
 
               {/* Center Area: Soaring Eagle Celestial Glyph & Vertical Poetry */}
-              <div className="flex-1 flex flex-col items-center justify-center my-1.5 sm:my-2 gap-2 sm:gap-2.5 w-full">
+              <div className="flex-1 flex flex-col items-center justify-center my-1 sm:my-2 gap-1.5 sm:gap-2.5 w-full">
                 {/* Bespoke PAEN Eagle & Celestial River Crest */}
-                <div className="w-8 h-8 sm:w-10 sm:h-10 text-[#d9ab6a] relative flex items-center justify-center">
+                <div className="w-6 h-6 sm:w-10 sm:h-10 text-[#d9ab6a] relative flex items-center justify-center">
                   <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" className="w-full h-full" strokeWidth="1.4">
                     {/* Orbit & Meridian Rings */}
                     <circle cx="32" cy="32" r="28" stroke="currentColor" strokeWidth="0.8" strokeDasharray="3 3" opacity="0.5" />
@@ -519,11 +518,11 @@ export default function EditorialHeader({
 
                 {/* Vertical Japanese Calligraphy: "蒼穹を翔る、生命の鼓動。" */}
                 <div
-                  className="text-sm sm:text-lg md:text-xl font-serif font-bold text-[#f8f5ed] tracking-[0.25em] select-none drop-shadow-sm leading-tight"
+                  className="text-xs sm:text-lg md:text-xl font-serif font-bold text-[#f8f5ed] tracking-[0.2em] sm:tracking-[0.25em] select-none drop-shadow-sm leading-tight"
                   style={{
                     writingMode: "vertical-rl",
                     textOrientation: "upright",
-                    letterSpacing: "0.26em",
+                    letterSpacing: "0.22em",
                   }}
                   title="蒼穹を翔る、生命の鼓動。(Soaring the azure skies, the heartbeat of life.)"
                 >
@@ -531,27 +530,27 @@ export default function EditorialHeader({
                 </div>
 
                 {/* Subtitle in Warm Gold Typography */}
-                <div className="text-[6.5px] sm:text-[7.5px] md:text-[8px] font-mono tracking-[0.2em] text-[#d9ab6a] uppercase text-center leading-snug font-bold">
+                <div className="text-[6px] sm:text-[7.5px] md:text-[8px] font-mono tracking-[0.16em] sm:tracking-[0.2em] text-[#d9ab6a] uppercase text-center leading-snug font-bold">
                   ELEVATING DISCOVERY <br />
                   TO COSMIC SCALE.
                 </div>
 
                 {/* Biosphere Audio Resonance Equalizer Wave */}
-                <div className="flex items-center justify-center gap-1 pt-0.5 opacity-80" title="Audio Soundscape Frequency">
-                  <span className="w-0.5 h-2 bg-amber-400 animate-pulse" />
-                  <span className="w-0.5 h-4 bg-amber-400 animate-pulse delay-75" />
-                  <span className="w-0.5 h-3 bg-amber-400 animate-pulse delay-150" />
-                  <span className="w-0.5 h-5 bg-amber-400 animate-pulse delay-300" />
-                  <span className="w-0.5 h-2.5 bg-amber-400 animate-pulse delay-100" />
-                  <span className="text-[6.5px] sm:text-[7px] font-mono tracking-widest text-emerald-300 font-bold ml-1">
+                <div className="flex items-center justify-center gap-0.5 sm:gap-1 pt-0.5 opacity-80" title="Audio Soundscape Frequency">
+                  <span className="w-0.5 h-1.5 sm:h-2 bg-amber-400 animate-pulse" />
+                  <span className="w-0.5 h-3 sm:h-4 bg-amber-400 animate-pulse delay-75" />
+                  <span className="w-0.5 h-2 sm:h-3 bg-amber-400 animate-pulse delay-150" />
+                  <span className="w-0.5 h-3.5 sm:h-5 bg-amber-400 animate-pulse delay-300" />
+                  <span className="w-0.5 h-2 bg-amber-400 animate-pulse delay-100" />
+                  <span className="text-[5.5px] sm:text-[7px] font-mono tracking-widest text-emerald-300 font-bold ml-0.5 sm:ml-1">
                     432 Hz
                   </span>
                 </div>
               </div>
 
               {/* Bottom: Coordinates & Radar */}
-              <div className="w-full border-t border-white/15 pt-1.5 flex flex-col items-center gap-1">
-                <div className="relative w-8 sm:w-10 h-7 flex items-center justify-center">
+              <div className="w-full border-t border-white/15 pt-1 flex flex-col items-center gap-0.5 sm:gap-1">
+                <div className="relative w-6 sm:w-10 h-5 sm:h-7 flex items-center justify-center">
                   <svg viewBox="0 0 80 60" fill="none" stroke="currentColor" className="w-full h-full text-zinc-400">
                     <line x1="10" y1="30" x2="70" y2="30" stroke="currentColor" strokeWidth="0.8" strokeDasharray="2 2" opacity="0.6" />
                     <line x1="40" y1="5" x2="40" y2="55" stroke="currentColor" strokeWidth="0.8" strokeDasharray="2 2" opacity="0.6" />
@@ -562,7 +561,7 @@ export default function EditorialHeader({
                   </svg>
                 </div>
 
-                <div className="text-[6px] sm:text-[7px] font-mono text-zinc-300/80 tracking-wider text-center leading-tight">
+                <div className="text-[5.5px] sm:text-[7px] font-mono text-zinc-300/80 tracking-wider text-center leading-tight">
                   <div className="text-[#d9ab6a]/90 font-bold">HORIZON 35°N</div>
                   <div>135.7681° E</div>
                 </div>
@@ -572,7 +571,7 @@ export default function EditorialHeader({
         </div>
 
         {/* Date and Navigation Strip */}
-        <div className="w-full flex flex-col sm:flex-row justify-between items-center border-t border-[#1b2a3a]/15 bg-[#ebdcc4]/60 px-4 sm:px-8 md:px-12 py-2 text-[10px] text-[#1b2a3a] font-mono">
+        <div className="w-full flex flex-col sm:flex-row justify-between items-center border-t border-[#1b2a3a]/15 bg-[#ebdcc4]/60 px-3 sm:px-8 md:px-12 py-1.5 sm:py-2 text-[8.5px] sm:text-[10px] text-[#1b2a3a] font-mono gap-1 sm:gap-0">
           <div className="flex items-center gap-2 tracking-wide font-medium">
             <span>{formattedDate}</span>
             <span className="text-[#1b2a3a]/40">•</span>

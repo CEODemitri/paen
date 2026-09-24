@@ -58,24 +58,34 @@ export default function EditorialHeader({
 
   const [currentTime, setCurrentTime] = useState(new Date());
   const heroVideoRef = useRef<HTMLVideoElement | null>(null);
+  const heroTrackRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const handleScroll = () => {
       const video = heroVideoRef.current;
-      if (!video || !video.duration) return;
-      const scrollY = window.scrollY || window.pageYOffset;
-      const maxScroll = window.innerHeight * 1.5;
-      const progress = Math.min(Math.max(scrollY / maxScroll, 0), 1);
-      
-      // Scrub video time: repeat and scrub twice (2 full cycles) across the scroll threshold
-      if (Number.isFinite(video.duration)) {
-        const doubleCycleProgress = (progress * 2) % 1;
-        video.currentTime = doubleCycleProgress * video.duration;
-      }
+      const track = heroTrackRef.current;
+      if (!video || !track || !video.duration || !Number.isFinite(video.duration)) return;
+
+      const rect = track.getBoundingClientRect();
+      const trackScrollableDist = track.offsetHeight - window.innerHeight;
+      if (trackScrollableDist <= 0) return;
+
+      // Scrolled distance within the pinned track
+      const scrolled = -rect.top;
+      const progress = Math.min(Math.max(scrolled / trackScrollableDist, 0), 1);
+
+      // Repeat and scrub twice (2 full cycles) before scrolling away
+      const cycle = progress * 2;
+      const cycleProgress = cycle >= 2 ? 0.999 : cycle % 1;
+      video.currentTime = cycleProgress * video.duration;
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+    window.addEventListener("resize", handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleScroll);
+    };
   }, []);
 
   useEffect(() => {
@@ -240,15 +250,53 @@ export default function EditorialHeader({
         </div>
       </div>
 
-      {/* Main Classical Masthead transformed into 100vh Kyoto Poster Intro Hero */}
+      {/* BBC/NatGeo Styled Category Navigation Bar (Top Nav/Info Bar) */}
+      <nav className="bg-zinc-100/90 dark:bg-zinc-950/90 border-b border-[#2d271e]/15 dark:border-amber-500/10 transition-colors duration-500 relative z-20 backdrop-blur-sm">
+        <div className="max-w-7xl mx-auto px-4">
+          <ul className="flex justify-start md:justify-center overflow-x-auto whitespace-nowrap scrollbar-none py-1 gap-2 md:gap-5 scroll-smooth">
+            {categories.map((cat) => {
+              const isActive = currentCategory === cat.value;
+              return (
+                <li key={cat.value}>
+                  <button
+                    id={`nav-cat-${cat.value}`}
+                    onClick={() => setCategory(cat.value)}
+                    className={`px-3 sm:px-4 py-1.5 sm:py-2 text-[10.5px] sm:text-xs font-sans uppercase tracking-[0.2em] font-semibold transition-all duration-300 relative ${
+                      isActive
+                        ? "text-amber-700 dark:text-amber-400 font-extrabold"
+                        : "text-zinc-600 dark:text-zinc-400 hover:text-amber-600 dark:hover:text-amber-500"
+                    }`}
+                  >
+                    {cat.label}
+                    {isActive && (
+                      <span className="absolute bottom-0 left-3 right-3 sm:left-4 sm:right-4 h-0.5 bg-amber-500" />
+                    )}
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      </nav>
+
+      {/* Pinned Scroll Track for Hero Section: video scrubs 2 full cycles before scrolling */}
       <div
-        className="w-full relative select-none flex flex-col justify-between overflow-hidden bg-[#f4ecd9] text-[#1a2b3c] border-b-2 border-[#162738]"
+        ref={heroTrackRef}
+        className="relative w-full"
         style={{
-          height: "calc(100vh - 37px)",
-          minHeight: "640px",
-          maxHeight: "calc(100vh - 37px)",
+          height: "260vh",
         }}
+        id="hero-pinned-scroll-track"
       >
+        {/* Main Classical Masthead transformed into 100vh Kyoto Poster Intro Hero (Pinned / Sticky) */}
+        <div
+          className="sticky top-0 w-full select-none flex flex-col justify-between overflow-hidden bg-[#f4ecd9] text-[#1a2b3c] border-b-2 border-[#162738]"
+          style={{
+            height: "calc(100vh - 74px)",
+            minHeight: "600px",
+            maxHeight: "calc(100vh - 74px)",
+          }}
+        >
         {/* Full-Width Background Video Stretching Across the Entire Page */}
         <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none z-0">
           <video
@@ -496,35 +544,7 @@ export default function EditorialHeader({
           </div>
         </div>
       </div>
-
-      {/* BBC/NatGeo Styled Category Navigation Bar */}
-      <nav className="bg-zinc-100/50 dark:bg-zinc-950/40 border-t border-b border-zinc-250 dark:border-zinc-850/80 transition-colors duration-500">
-        <div className="max-w-7xl mx-auto px-4">
-          <ul className="flex justify-start md:justify-center overflow-x-auto whitespace-nowrap scrollbar-none py-1 gap-2 md:gap-5 scroll-smooth">
-            {categories.map((cat) => {
-              const isActive = currentCategory === cat.value;
-              return (
-                <li key={cat.value}>
-                  <button
-                    id={`nav-cat-${cat.value}`}
-                    onClick={() => setCategory(cat.value)}
-                    className={`px-4 py-2 text-xs font-sans uppercase tracking-[0.2em] font-semibold transition-all duration-300 relative ${
-                      isActive
-                        ? "text-amber-700 dark:text-amber-400 font-extrabold"
-                        : "text-zinc-600 dark:text-zinc-400 hover:text-amber-600 dark:hover:text-amber-500"
-                    }`}
-                  >
-                    {cat.label}
-                    {isActive && (
-                      <span className="absolute bottom-0 left-4 right-4 h-0.5 bg-amber-500" />
-                    )}
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
-        </div>
-      </nav>
+    </div>
     </header>
   );
 }

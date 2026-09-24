@@ -192,15 +192,15 @@ export default function EditorialHero({
           </div>
 
           {/* Special Editorial Quotation Card */}
-          <div className="bg-[#0f241c]/90 border border-emerald-800/50 p-4.5 mt-2 relative shadow-md">
+          <div className="bg-[#0f241c]/90 border border-emerald-800/50 py-7 sm:py-8 px-6 sm:px-7 mt-3 relative shadow-md flex flex-col justify-between">
             <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-amber-400 to-emerald-400" />
-            <div className="text-[8.5px] font-mono text-emerald-300/70 uppercase tracking-widest flex items-center gap-1 mb-2">
-              <Sparkles className="w-3 h-3 text-amber-400" /> EDITOR’S OBSERVATION
+            <div className="text-[8.5px] sm:text-[9px] font-mono text-emerald-300/70 uppercase tracking-widest flex items-center gap-1.5 mb-3">
+              <Sparkles className="w-3.5 h-3.5 text-amber-400" /> EDITOR’S OBSERVATION
             </div>
-            <p className="font-serif italic text-sm text-[#f5ebd6] leading-snug">
+            <p className="font-serif italic text-sm sm:text-[15px] text-[#f5ebd6] leading-relaxed my-1">
               “When an ecosystem degrades, its sonic partition collapses long before the trees fall. Acoustics is the planetary stethoscope.”
             </p>
-            <div className="text-[9px] font-mono text-emerald-400 mt-2 font-semibold">
+            <div className="text-[9px] sm:text-[9.5px] font-mono text-emerald-400 mt-3.5 pt-2.5 border-t border-emerald-800/40 font-semibold tracking-wide">
               — Paen Botanical Board, Field Directive IV
             </div>
           </div>

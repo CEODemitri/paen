@@ -1,65 +1,40 @@
 import { Article, Video, Comment, User } from "../types";
 import { INITIAL_ARTICLES, INITIAL_VIDEOS } from "../data/initialData";
 
-const ARTICLES_KEY = "paen_articles_v2";
-const VIDEOS_KEY = "paen_videos_v2";
-const COMMENTS_KEY = "paen_comments_v2";
-const BOOKMARKS_KEY = "paen_bookmarks_v2";
-const USERS_KEY = "paen_users_v2";
-const CURRENT_USER_KEY = "paen_current_user_v2";
-const ADMIN_PASSWORD_KEY = "paen_admin_password_v2";
+const ARTICLES_KEY = "paen_articles_v4";
+const VIDEOS_KEY = "paen_videos_v4";
+const COMMENTS_KEY = "paen_comments_v4";
+const BOOKMARKS_KEY = "paen_bookmarks_v4";
+const USERS_KEY = "paen_users_v4";
+const CURRENT_USER_KEY = "paen_current_user_v4";
+const ADMIN_PASSWORD_KEY = "paen_admin_password_v4";
 
 export const DEFAULT_ADMIN_PASS = "paen123";
 
 export const INITIAL_USERS: User[] = [
   {
-    id: "usr-admin-1",
-    name: "Editor-in-Chief",
-    email: "admin@paen.earth",
+    id: "usr-demitri",
+    name: "ceoDemitri",
+    email: "demitri@paen.earth",
     password: DEFAULT_ADMIN_PASS,
     role: "admin",
     status: "approved",
-    bio: "Chief Editorial Director of Paen Natura Botanical & Earth Systems Journal.",
-    institution: "Paen Natura Press Board",
-    createdAt: "August 1, 2026",
-    avatarUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=150&auto=format&fit=crop",
+    bio: "Founder & Chief Explorer at Paen. Investigating the convergence of technology, natural biomes, planetary finance, and creative discovery.",
+    institution: "Paen Planetary Institute",
+    createdAt: "September 24, 2026",
+    avatarUrl: "https://github.com/ceoDemitri.png",
   },
   {
-    id: "usr-author-1",
-    name: "Dr. Alastair Vance",
-    email: "alastair@bioacoustic.org",
+    id: "usr-author-demitri",
+    name: "ceoDemitri",
+    email: "author@paen.earth",
     password: "author123",
     role: "author",
     status: "approved",
-    bio: "Senior Field Acoustician & Amazonian Biodiversity Fellow.",
-    institution: "Juruá Bioacoustics Observatory",
-    createdAt: "August 3, 2026",
-    avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=150&auto=format&fit=crop",
-  },
-  {
-    id: "usr-author-2",
-    name: "Miranda Vance",
-    email: "miranda@climateledger.int",
-    password: "author123",
-    role: "author",
-    status: "approved",
-    bio: "Satellite Telemetry & Global Carbon Registry Specialist.",
-    institution: "Global Carbon Observation Network",
-    createdAt: "August 5, 2026",
-    avatarUrl: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=150&auto=format&fit=crop",
-  },
-  {
-    id: "usr-applicant-1",
-    name: "Linus Thorne",
-    email: "linus.thorne@abyssal.res",
-    password: "applicant123",
-    role: "user",
-    requestedRole: "author",
-    status: "pending_approval",
-    bio: "Submersible explorer investigating hydrothermal vent ecological microclimates.",
-    institution: "Pacific Trench Marine Station",
-    createdAt: "August 12, 2026",
-    avatarUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=150&auto=format&fit=crop",
+    bio: "Founder & Chief Explorer at Paen. Investigating the convergence of technology, natural biomes, planetary finance, and creative discovery.",
+    institution: "Paen Editorial Board",
+    createdAt: "September 24, 2026",
+    avatarUrl: "https://github.com/ceoDemitri.png",
   },
   {
     id: "usr-reader-1",
@@ -69,7 +44,7 @@ export const INITIAL_USERS: User[] = [
     role: "user",
     status: "approved",
     bio: "Botanical archivist and lifelong reader of ecological journals.",
-    createdAt: "August 14, 2026",
+    createdAt: "September 24, 2026",
     avatarUrl: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=150&auto=format&fit=crop",
   }
 ];

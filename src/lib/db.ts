@@ -10,7 +10,7 @@ import {
   onSnapshot,
 } from "firebase/firestore";
 
-const ARTICLES_KEY = "paen_articles_v5";
+const ARTICLES_KEY = "paen_articles_v7";
 const VIDEOS_KEY = "paen_videos_v5";
 const COMMENTS_KEY = "paen_comments_v5";
 const BOOKMARKS_KEY = "paen_bookmarks_v5";
@@ -89,8 +89,24 @@ export function initFirestoreRealtimeSync() {
           snapshot.forEach((docSnap) => {
             remoteArticles.push(docSnap.data() as Article);
           });
-          // Sort by date / priority
-          localStorage.setItem(ARTICLES_KEY, JSON.stringify(remoteArticles));
+          // Ensure all 5 core category articles from INITIAL_ARTICLES are present
+          const remoteIds = new Set(remoteArticles.map((a) => a.id));
+          let hasMissing = false;
+          for (const initArt of INITIAL_ARTICLES) {
+            if (!remoteIds.has(initArt.id)) {
+              remoteArticles.push(initArt);
+              hasMissing = true;
+            }
+          }
+          // Filter to only the 5 official articles plus any author-created articles (removing extra test articles)
+          const initialIds = new Set(INITIAL_ARTICLES.map((a) => a.id));
+          const cleanedArticles = remoteArticles.filter(
+            (a) => initialIds.has(a.id) || a.authorId
+          );
+          if (hasMissing) {
+            seedInitialFirestoreArticles();
+          }
+          localStorage.setItem(ARTICLES_KEY, JSON.stringify(cleanedArticles));
           emitDataSync("articles");
         } else {
           // If Firestore is empty, seed initial data to cloud
@@ -149,7 +165,18 @@ export function initFirestoreRealtimeSync() {
 async function seedInitialFirestoreArticles() {
   try {
     for (const art of INITIAL_ARTICLES) {
-      await setDoc(doc(db, "articles", art.id), art);
+      await setDoc(doc(db, "articles", art.id), art, { merge: true });
+    }
+    // Delete any of the extra test articles from Firestore if present
+    for (let i = 2; i <= 5; i++) {
+      for (const cat of ["science", "tech", "politics", "culture", "finance"]) {
+        const extraId = `art-${cat}-${i}`;
+        try {
+          await deleteDoc(doc(db, "articles", extraId));
+        } catch {
+          // Document may not exist in cloud
+        }
+      }
     }
   } catch (error) {
     console.warn("Initial article seed note:", error);
@@ -179,7 +206,26 @@ export function loadArticles(): Article[] {
     return INITIAL_ARTICLES;
   }
   try {
-    return JSON.parse(data);
+    const parsed = JSON.parse(data);
+    if (Array.isArray(parsed) && parsed.length > 0) {
+      const initialIds = new Set(INITIAL_ARTICLES.map((a) => a.id));
+      // Keep only the 5 official articles and any custom author articles
+      const filtered = parsed.filter((a: Article) => initialIds.has(a.id) || a.authorId);
+      const existingIds = new Set(filtered.map((a: Article) => a.id));
+      const result = [...filtered];
+      let hasMissing = false;
+      for (const initArt of INITIAL_ARTICLES) {
+        if (!existingIds.has(initArt.id)) {
+          result.push(initArt);
+          hasMissing = true;
+        }
+      }
+      if (hasMissing || filtered.length !== parsed.length) {
+        localStorage.setItem(ARTICLES_KEY, JSON.stringify(result));
+      }
+      return result;
+    }
+    return INITIAL_ARTICLES;
   } catch {
     return INITIAL_ARTICLES;
   }

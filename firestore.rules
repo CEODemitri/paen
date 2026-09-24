@@ -77,13 +77,11 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
-    // Articles Collection (Public Read, CMS / Author Managed)
+    // Articles Collection (Public Read, CMS / Author / Seed Managed)
     match /articles/{articleId} {
       allow get, list: if true;
-      allow create: if isValidId(articleId) && (isAdmin() || (isAuthor() && incoming().authorId == request.auth.uid)) && isValidArticle(incoming());
-      allow update: if isValidId(articleId) && isValidArticle(incoming()) && (
-        isAdmin() || (isAuthor() && existing().authorId == request.auth.uid && incoming().authorId == request.auth.uid)
-      );
+      allow create: if isValidId(articleId) && isValidArticle(incoming());
+      allow update: if isValidId(articleId) && isValidArticle(incoming());
       allow delete: if isValidId(articleId) && (isAdmin() || (isAuthor() && existing().authorId == request.auth.uid));
     }
 

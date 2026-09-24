@@ -333,9 +333,41 @@ export default function EditorialHeader({
             <span className="text-[#d9483b] text-xs">✦</span>
           </div>
 
-          <div className="flex items-center gap-3 z-10">
-            <span className="font-serif font-bold text-sm sm:text-base tracking-widest text-[#1a2b3c]">京都市</span>
-            <span className="hidden md:inline text-[9px] text-[#1a2b3c]/70 font-mono tracking-wider">
+          <div className="flex items-center gap-2.5 sm:gap-3 z-10">
+            {/* Elemental Symbols: Ice, Fire, Earth, Air */}
+            <div className="flex items-center gap-1.5 sm:gap-2 text-[#1a2b3c]" title="Elements: Ice • Fire • Earth • Air">
+              {/* Ice Symbol */}
+              <span className="p-1 rounded hover:bg-[#1a2b3c]/10 transition-colors flex items-center justify-center text-[#3c6b8c]" title="Ice">
+                <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-current fill-none" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 2v20M2 12h20M4.93 4.93l14.14 14.14M4.93 19.07l14.14-14.14" />
+                  <circle cx="12" cy="12" r="2.5" fill="currentColor" />
+                </svg>
+              </span>
+
+              {/* Fire Symbol */}
+              <span className="p-1 rounded hover:bg-[#1a2b3c]/10 transition-colors flex items-center justify-center text-[#d9483b]" title="Fire">
+                <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-current fill-none" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 3z" />
+                </svg>
+              </span>
+
+              {/* Earth Symbol */}
+              <span className="p-1 rounded hover:bg-[#1a2b3c]/10 transition-colors flex items-center justify-center text-[#7a5e38]" title="Earth">
+                <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-current fill-none" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <polygon points="12 3 2 21 22 21 12 3" />
+                  <line x1="6" y1="14" x2="18" y2="14" />
+                </svg>
+              </span>
+
+              {/* Air Symbol */}
+              <span className="p-1 rounded hover:bg-[#1a2b3c]/10 transition-colors flex items-center justify-center text-[#35727a]" title="Air">
+                <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-current fill-none" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2" />
+                </svg>
+              </span>
+            </div>
+
+            <span className="hidden md:inline text-[9px] text-[#1a2b3c]/70 font-mono tracking-wider pl-1 border-l border-[#1a2b3c]/20">
               {formattedTimeLocal}
             </span>
           </div>
@@ -394,14 +426,15 @@ export default function EditorialHeader({
               <line x1="695" y1="160" x2="745" y2="160" stroke="#f4ecd9" strokeWidth="1.8" opacity="0.6" />
             </svg>
 
-            {/* Top-Left: "京都 / WHERE TRADITION MEETS TIMELESS BEAUTY" */}
+            {/* Top-Left: "探求 / THE JOURNEY OF DISCOVERY UNCOVERS CREATIVITY" */}
             <div className="absolute top-3 sm:top-5 left-3 sm:left-5 z-20 flex flex-col gap-1 text-[#f8f5ed] drop-shadow-md max-w-[240px]">
               <span className="text-2xl sm:text-3xl font-serif font-extrabold tracking-wider text-[#f5ebd6]">
-                京都
+                探求
               </span>
-              <div className="text-[8.5px] sm:text-[9.5px] font-mono tracking-[0.24em] uppercase font-bold leading-tight text-[#e6decb]">
-                WHERE TRADITION <br />
-                MEETS TIMELESS BEAUTY
+              <div className="text-[8.5px] sm:text-[9.5px] font-mono tracking-[0.22em] uppercase font-bold leading-tight text-[#e6decb]">
+                THE JOURNEY OF <br />
+                DISCOVERY UNCOVERS <br />
+                CREATIVITY
               </div>
               {/* Botanical Mon Crest */}
               <div className="mt-1 w-5 h-5 text-[#eed9b3] opacity-90">
@@ -413,100 +446,102 @@ export default function EditorialHeader({
               </div>
             </div>
 
-            {/* Bottom-Left: "古き美しき、新しき出会い。" */}
+            {/* Bottom-Left: "宇宙の律動に、波長を合わせて。" & "TUNE INTO THE COSMIC RHYTHM" */}
             <div className="absolute bottom-3 sm:bottom-5 left-3 sm:left-5 z-20 flex flex-col gap-1 text-[#f8f5ed] max-w-[280px]">
               <span className="text-xs sm:text-sm font-serif font-bold text-[#f5ebd6] tracking-wider">
-                古き美しき、新しき出会い。
+                宇宙の律動に、波長を合わせて。
               </span>
               <div className="text-[8px] sm:text-[9px] font-mono tracking-[0.22em] uppercase text-[#e2d8c3] leading-relaxed">
-                DISCOVER <br />
-                THE BEAUTY OF <br />
-                OLD AND NEW.
+                TUNE INTO THE <br />
+                COSMIC RHYTHM.
               </div>
-              <div className="mt-0.5 pt-1 border-t border-white/20 text-[7.5px] sm:text-[8.5px] font-mono uppercase tracking-[0.3em] text-[#eed9b3] font-bold">
-                KYOTO CITY, JAPAN
+              <div className="mt-0.5 pt-1 border-t border-white/20 text-[7.5px] sm:text-[8.5px] font-mono uppercase tracking-[0.25em] text-[#eed9b3] font-bold">
+                VOL. CIV • EST. SEPT 24, 2026
               </div>
             </div>
           </div>
 
-          {/* Right Deep Indigo Vertical Banner */}
-          <aside
-            className="w-16 sm:w-24 md:w-32 lg:w-40 bg-[#162738]/95 backdrop-blur-sm text-[#f4ecd9] p-2 sm:p-3 flex flex-col justify-between items-center relative border border-[#162738] shadow-md shrink-0"
-            id="kyoto-poster-side-banner"
-          >
-            <div className="w-full flex flex-col items-center pt-0.5 border-b border-white/10 pb-1.5">
-              <span className="text-[7.5px] sm:text-[8.5px] font-mono tracking-[0.25em] text-[#d9ab6a] uppercase text-center font-bold">
-                KANSAI
-              </span>
-            </div>
-
-            {/* Vertical Japanese Calligraphy Text */}
-            <div className="flex-1 flex flex-col items-center justify-center my-2 gap-2">
-              <div
-                className="text-base sm:text-xl md:text-2xl font-serif font-bold text-[#f8f5ed] tracking-[0.25em] select-none"
-                style={{
-                  writingMode: "vertical-rl",
-                  textOrientation: "upright",
-                  letterSpacing: "0.26em",
-                }}
+          {/* Right Group: Action Button just to the left of the aside banner */}
+          <div className="flex items-end gap-3 sm:gap-4 shrink-0 h-full">
+            {/* Free-Floating "READ DISPATCHES" Action Button positioned just to the left of the aside */}
+            <div className="z-30 pointer-events-auto pb-1 sm:pb-2">
+              <a
+                href="#editorial-lead-section"
+                className="px-3.5 sm:px-4 py-2 bg-[#d9483b] hover:bg-[#c23d30] text-white text-[8.5px] sm:text-[9.5px] md:text-[10px] font-mono uppercase tracking-widest font-bold flex items-center gap-2 transition-all shadow-xl rounded-sm hover:scale-105 border border-white/20 whitespace-nowrap"
               >
-                千年の都、心に残る旅。
-              </div>
-
-              <div className="text-[7px] sm:text-[8px] md:text-[8.5px] font-mono tracking-[0.18em] text-[#d9ab6a] uppercase text-center mt-1 leading-tight">
-                A JOURNEY <br />
-                THAT STAYS <br />
-                WITH YOU.
-              </div>
-
-              {/* Pagoda Silhouette */}
-              <div className="w-6 h-8 text-[#d9ab6a]">
-                <svg viewBox="0 0 40 50" fill="currentColor" className="w-full h-full">
-                  <line x1="20" y1="2" x2="20" y2="12" stroke="currentColor" strokeWidth="1.5" />
-                  <circle cx="20" cy="3" r="1.5" />
-                  <path d="M 12,12 L 28,12 L 25,16 L 15,16 Z" />
-                  <path d="M 10,18 L 30,18 L 27,22 L 13,22 Z" />
-                  <path d="M 8,24 L 32,24 L 29,28 L 11,28 Z" />
-                  <path d="M 6,30 L 34,30 L 31,35 L 9,35 Z" />
-                  <path d="M 4,37 L 36,37 L 33,44 L 7,44 Z" />
-                  <rect x="14" y="44" width="12" height="5" />
-                </svg>
-              </div>
+                <span>READ DISPATCHES</span>
+                <span className="animate-bounce">↓</span>
+              </a>
             </div>
 
-            {/* Bottom: Japan Map Pinpoint & Coordinates */}
-            <div className="w-full border-t border-white/10 pt-1.5 flex flex-col items-center gap-1">
-              <div className="relative w-10 sm:w-14 h-9 flex items-center justify-center">
-                <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" className="w-full h-full text-zinc-400">
-                  <path d="M 75,12 C 82,14 88,22 84,28 C 76,28 72,20 75,12 Z" fill="currentColor" opacity="0.6" />
-                  <path
-                    d="M 70,32 C 75,40 68,55 52,68 C 42,75 32,82 20,86 C 18,84 25,76 38,70 C 48,64 58,50 62,35 Z"
-                    fill="currentColor"
-                    opacity="0.75"
-                  />
-                  <circle cx="34" cy="78" r="3.5" fill="currentColor" opacity="0.6" />
-                  <path d="M 16,84 C 18,92 24,94 20,98 C 14,94 12,88 16,84 Z" fill="currentColor" opacity="0.6" />
-                  <circle cx="48" cy="65" r="3.5" fill="#d9483b" />
-                  <circle cx="48" cy="65" r="6" stroke="#d9483b" strokeWidth="1" opacity="0.75" className="animate-ping" />
-                </svg>
-              </div>
-
-              <div className="text-[7px] sm:text-[8px] font-mono text-zinc-300 tracking-wider text-center leading-tight">
-                <div>35.0116° N</div>
-                <div>135.7681° E</div>
-              </div>
-            </div>
-          </aside>
-
-          {/* Free-Floating "READ DISPATCHES" Action Button */}
-          <div className="absolute bottom-4 sm:bottom-6 right-6 sm:right-10 md:right-14 z-30 pointer-events-auto">
-            <a
-              href="#editorial-lead-section"
-              className="px-4 py-2 bg-[#d9483b] hover:bg-[#c23d30] text-white text-[9px] sm:text-[10px] font-mono uppercase tracking-widest font-bold flex items-center gap-2 transition-all shadow-xl rounded-sm hover:scale-105 border border-white/20"
+            {/* Right Deep Indigo Vertical Banner */}
+            <aside
+              className="w-16 sm:w-24 md:w-32 lg:w-40 h-full bg-[#162738]/95 backdrop-blur-sm text-[#f4ecd9] p-2 sm:p-3 flex flex-col justify-between items-center relative border border-[#162738] shadow-md shrink-0"
+              id="kyoto-poster-side-banner"
             >
-              <span>READ DISPATCHES</span>
-              <span className="animate-bounce">↓</span>
-            </a>
+              <div className="w-full flex flex-col items-center pt-0.5 border-b border-white/10 pb-1.5">
+                <span className="text-[7.5px] sm:text-[8.5px] font-mono tracking-[0.25em] text-[#d9ab6a] uppercase text-center font-bold">
+                  KANSAI
+                </span>
+              </div>
+
+              {/* Vertical Japanese Calligraphy Text */}
+              <div className="flex-1 flex flex-col items-center justify-center my-2 gap-2">
+                <div
+                  className="text-base sm:text-xl md:text-2xl font-serif font-bold text-[#f8f5ed] tracking-[0.25em] select-none"
+                  style={{
+                    writingMode: "vertical-rl",
+                    textOrientation: "upright",
+                    letterSpacing: "0.26em",
+                  }}
+                >
+                  千年の都、心に残る旅。
+                </div>
+
+                <div className="text-[7px] sm:text-[8px] md:text-[8.5px] font-mono tracking-[0.18em] text-[#d9ab6a] uppercase text-center mt-1 leading-tight">
+                  A JOURNEY <br />
+                  THAT STAYS <br />
+                  WITH YOU.
+                </div>
+
+                {/* Pagoda Silhouette */}
+                <div className="w-6 h-8 text-[#d9ab6a]">
+                  <svg viewBox="0 0 40 50" fill="currentColor" className="w-full h-full">
+                    <line x1="20" y1="2" x2="20" y2="12" stroke="currentColor" strokeWidth="1.5" />
+                    <circle cx="20" cy="3" r="1.5" />
+                    <path d="M 12,12 L 28,12 L 25,16 L 15,16 Z" />
+                    <path d="M 10,18 L 30,18 L 27,22 L 13,22 Z" />
+                    <path d="M 8,24 L 32,24 L 29,28 L 11,28 Z" />
+                    <path d="M 6,30 L 34,30 L 31,35 L 9,35 Z" />
+                    <path d="M 4,37 L 36,37 L 33,44 L 7,44 Z" />
+                    <rect x="14" y="44" width="12" height="5" />
+                  </svg>
+                </div>
+              </div>
+
+              {/* Bottom: Japan Map Pinpoint & Coordinates */}
+              <div className="w-full border-t border-white/10 pt-1.5 flex flex-col items-center gap-1">
+                <div className="relative w-10 sm:w-14 h-9 flex items-center justify-center">
+                  <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" className="w-full h-full text-zinc-400">
+                    <path d="M 75,12 C 82,14 88,22 84,28 C 76,28 72,20 75,12 Z" fill="currentColor" opacity="0.6" />
+                    <path
+                      d="M 70,32 C 75,40 68,55 52,68 C 42,75 32,82 20,86 C 18,84 25,76 38,70 C 48,64 58,50 62,35 Z"
+                      fill="currentColor"
+                      opacity="0.75"
+                    />
+                    <circle cx="34" cy="78" r="3.5" fill="currentColor" opacity="0.6" />
+                    <path d="M 16,84 C 18,92 24,94 20,98 C 14,94 12,88 16,84 Z" fill="currentColor" opacity="0.6" />
+                    <circle cx="48" cy="65" r="3.5" fill="#d9483b" />
+                    <circle cx="48" cy="65" r="6" stroke="#d9483b" strokeWidth="1" opacity="0.75" className="animate-ping" />
+                  </svg>
+                </div>
+
+                <div className="text-[7px] sm:text-[8px] font-mono text-zinc-300 tracking-wider text-center leading-tight">
+                  <div>35.0116° N</div>
+                  <div>135.7681° E</div>
+                </div>
+              </div>
+            </aside>
           </div>
         </div>
 

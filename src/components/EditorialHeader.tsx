@@ -456,7 +456,7 @@ export default function EditorialHeader({
                 COSMIC RHYTHM.
               </div>
               <div className="mt-0.5 pt-1 border-t border-white/20 text-[7.5px] sm:text-[8.5px] font-mono uppercase tracking-[0.25em] text-[#eed9b3] font-bold">
-                VOL. CIV • EST. SEPT 24, 2026
+                VOL. 1 • EST. SEPT 24, 2026
               </div>
             </div>
           </div>
@@ -486,7 +486,7 @@ export default function EditorialHeader({
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse inline-block" />
                   LIVE
                 </span>
-                <span className="text-[#f4ecd9]/70 font-semibold tracking-widest">VOL. CIV</span>
+                <span className="text-[#f4ecd9]/70 font-semibold tracking-widest">VOL. 1</span>
               </div>
 
               {/* Center Area: Soaring Eagle Celestial Glyph & Vertical Poetry */}

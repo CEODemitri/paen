@@ -1,14 +1,21 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, MouseEvent } from "react";
 import "./App.css";
 import EditorialHeader from "./components/EditorialHeader";
+import EditorialHero from "./components/EditorialHero";
+import CuratedBentoGrid from "./components/CuratedBentoGrid";
+import CorrespondentsGrid from "./components/CorrespondentsGrid";
+import ArchivalIndex from "./components/ArchivalIndex";
 import AdminPortal from "./components/AdminPortal";
-import AdminLogin from "./components/AdminLogin";
+import AuthorPortal from "./components/AuthorPortal";
+import AuthModal from "./components/AuthModal";
 import ArticleCard from "./components/ArticleCard";
 import ArticleDetail from "./components/ArticleDetail";
 import VideoBroadcast from "./components/VideoBroadcast";
 import MarketTicker from "./components/MarketTicker";
+import BiosphereTelemetryWidget from "./components/BiosphereTelemetryWidget";
+import PlanetaryMap from "./components/PlanetaryMap";
 import Footer from "./components/ui/Footer";
-import { Article, Video, Comment, ReadingTheme, TextSize, Category } from "./types";
+import { Article, Video, Comment, ReadingTheme, TextSize, Category, User } from "./types";
 import {
   loadArticles,
   saveArticles,
@@ -18,8 +25,11 @@ import {
   saveComments,
   loadBookmarks,
   saveBookmarks,
+  getCurrentUser,
+  setCurrentUser as persistCurrentUser,
+  logoutUser as persistLogoutUser,
 } from "./lib/db";
-import { Search, Globe, Award, Newspaper } from "lucide-react";
+import { Search, Globe, Award, Newspaper, RotateCcw } from "lucide-react";
 
 function App() {
   // DB State
@@ -27,25 +37,64 @@ function App() {
   const [videos, setVideosState] = useState<Video[]>([]);
   const [comments, setCommentsState] = useState<Comment[]>([]);
   const [bookmarks, setBookmarksState] = useState<string[]>([]);
+  const [currentUser, setCurrentUserState] = useState<User | null>(null);
 
   // Navigation / UI State
   const [currentCategory, setCategory] = useState<Category | "all" | "saved" | "videos">("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [activeArticle, setActiveArticle] = useState<Article | null>(null);
   const [isAdminMode, setIsAdminMode] = useState(false);
-  const [isAdminLoginOpen, setIsAdminLoginOpen] = useState(false);
+  const [isAuthorMode, setIsAuthorMode] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
   // Reader Settings
   const [readingTheme, setReadingTheme] = useState<ReadingTheme>("standard");
   const [textSize, setTextSize] = useState<TextSize>("base");
 
-  // Load Initial Data once
+  // Load Initial Data & set up reactive sync listeners
   useEffect(() => {
-    setArticlesState(loadArticles());
-    setVideosState(loadVideos());
-    setCommentsState(loadComments());
-    setBookmarksState(loadBookmarks());
+    const refreshAllData = () => {
+      setArticlesState(loadArticles());
+      setVideosState(loadVideos());
+      setCommentsState(loadComments());
+      setBookmarksState(loadBookmarks());
+      setCurrentUserState(getCurrentUser());
+    };
+
+    refreshAllData();
+
+    const handleSync = () => {
+      refreshAllData();
+    };
+
+    window.addEventListener("paen_data_sync", handleSync);
+    window.addEventListener("storage", handleSync);
+
+    return () => {
+      window.removeEventListener("paen_data_sync", handleSync);
+      window.removeEventListener("storage", handleSync);
+    };
   }, []);
+
+  // Auth Handlers
+  const handleLoginSuccess = (user: User) => {
+    setCurrentUserState(user);
+    persistCurrentUser(user);
+    if (user.role === "admin") {
+      setIsAdminMode(true);
+      setIsAuthorMode(false);
+    } else if (user.role === "author" && user.status === "approved") {
+      setIsAuthorMode(true);
+      setIsAdminMode(false);
+    }
+  };
+
+  const handleLogout = () => {
+    persistLogoutUser();
+    setCurrentUserState(null);
+    setIsAdminMode(false);
+    setIsAuthorMode(false);
+  };
 
   // Sync state helpers
   const handleSetArticles = (newArticles: Article[]) => {
@@ -53,14 +102,32 @@ function App() {
     saveArticles(newArticles);
   };
 
+  const handleAuthorSaveArticle = (article: Article) => {
+    const existingIndex = articles.findIndex((a) => a.id === article.id);
+    let updated: Article[];
+    if (existingIndex >= 0) {
+      updated = articles.map((a) => (a.id === article.id ? article : a));
+    } else {
+      updated = [article, ...articles];
+    }
+    setArticlesState(updated);
+    saveArticles(updated);
+  };
+
+  const handleAuthorDeleteArticle = (id: string) => {
+    const updated = articles.filter((a) => a.id !== id);
+    setArticlesState(updated);
+    saveArticles(updated);
+  };
+
   const handleSetVideos = (newVideos: Video[]) => {
     setVideosState(newVideos);
     saveVideos(newVideos);
   };
 
-  const handleBookmarkToggle = (id: string, e?: React.MouseEvent) => {
+  const handleBookmarkToggle = (id: string, e?: MouseEvent) => {
     if (e) {
-      e.stopPropagation(); // prevent card click
+      e.stopPropagation();
     }
     let updated;
     if (bookmarks.includes(id)) {
@@ -73,11 +140,11 @@ function App() {
   };
 
   const handleAddComment = (articleId: string, text: string) => {
+    const authorName = currentUser ? currentUser.name : "Correspondent Reader";
     const newComment: Comment = {
       id: `com-${Date.now()}`,
       articleId,
-      author: "Correspondent Reader",
-      text,
+      author: authorName,
       date: new Date().toLocaleDateString("en-US", {
         month: "long",
         day: "numeric",
@@ -85,18 +152,22 @@ function App() {
         hour: "2-digit",
         minute: "2-digit",
       }),
+      text,
     };
     const updated = [newComment, ...comments];
     setCommentsState(updated);
     saveComments(updated);
   };
 
+  // Published articles for the general broadsheet
+  const liveArticles = articles.filter((art) => art.status === "published" || !art.status);
+
   // Filters calculation
-  const filteredArticles = articles.filter((art) => {
+  const filteredArticles = liveArticles.filter((art) => {
     // 1. Category check
     if (currentCategory === "saved") {
       if (!bookmarks.includes(art.id)) return false;
-    } else if (currentCategory !== "all") {
+    } else if (currentCategory !== "all" && currentCategory !== "videos") {
       if (art.category !== currentCategory) return false;
     }
 
@@ -113,9 +184,9 @@ function App() {
     return true;
   });
 
-  // Pick Lead Story: Highest objectivity rating or first matching article
+  // Pick Lead Story and secondary splits
   const leadArticle = filteredArticles.length > 0 ? filteredArticles[0] : null;
-  const secondaryArticles = filteredArticles.length > 1 ? filteredArticles.slice(1) : [];
+  const sideArticles = filteredArticles.length > 1 ? filteredArticles.slice(1) : [];
 
   const handleSelectArticle = (art: Article) => {
     setActiveArticle(art);
@@ -124,19 +195,24 @@ function App() {
 
   // CSS theme settings
   const themeStyles: Record<ReadingTheme, string> = {
-    standard: "bg-[#fcfcfc] text-zinc-900",
-    "editorial-sepia": "bg-[#fdf6e3] text-[#586e75]",
-    "high-contrast": "bg-[#131313] text-zinc-100",
+    standard: "bg-[#f4f3ec] text-[#121a15]",
+    "editorial-sepia": "bg-[#f5ebd6] text-[#4a3f35]",
+    "high-contrast": "bg-[#060d09] text-[#e3ded4]",
   };
 
   return (
-    <div className={`min-h-screen flex flex-col font-sans transition-colors duration-300 ${themeStyles[readingTheme]}`} id="root-app-container">
+    <div
+      className={`min-h-screen w-full flex flex-col font-sans transition-colors duration-300 ${themeStyles[readingTheme]}`}
+      id="root-app-container"
+    >
       {/* Top Masthead */}
       <EditorialHeader
         currentCategory={currentCategory}
         setCategory={(cat) => {
           setCategory(cat);
-          setActiveArticle(null); // return to lists
+          setActiveArticle(null);
+          setIsAdminMode(false);
+          setIsAuthorMode(false);
         }}
         bookmarksCount={bookmarks.length}
         readingTheme={readingTheme}
@@ -145,12 +221,19 @@ function App() {
         setTextSize={setTextSize}
         onAdminToggle={() => {
           setIsAdminMode(!isAdminMode);
+          setIsAuthorMode(false);
           setActiveArticle(null);
         }}
         isAdminMode={isAdminMode}
-        onAdminLoginRequest={() => {
-          setIsAdminLoginOpen(true);
+        onOpenAuth={() => setIsAuthModalOpen(true)}
+        currentUser={currentUser}
+        onLogout={handleLogout}
+        onOpenAuthorDesk={() => {
+          setIsAuthorMode(!isAuthorMode);
+          setIsAdminMode(false);
+          setActiveArticle(null);
         }}
+        isAuthorMode={isAuthorMode}
       />
 
       {/* Admin Interface Panel */}
@@ -161,6 +244,18 @@ function App() {
             setArticles={handleSetArticles}
             videos={videos}
             setVideos={handleSetVideos}
+            onExit={() => setIsAdminMode(false)}
+          />
+        </main>
+      ) : isAuthorMode && currentUser && currentUser.role === "author" ? (
+        /* Author Field Desk */
+        <main className="flex-grow">
+          <AuthorPortal
+            currentUser={currentUser}
+            articles={articles}
+            onSaveArticle={handleAuthorSaveArticle}
+            onDeleteArticle={handleAuthorDeleteArticle}
+            onExit={() => setIsAuthorMode(false)}
           />
         </main>
       ) : activeArticle ? (
@@ -184,178 +279,187 @@ function App() {
         </main>
       ) : (
         /* Main Newspaper Frontpage layout */
-        <main className="flex-grow w-full px-6 md:px-10 xl:px-16 py-12 md:py-16">
-          {/* Frontpage Grid Column Layout */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-            
-            {/* Primary Columns: Stories (8 of 12 columns) */}
-            <div className="lg:col-span-8 flex flex-col gap-12">
-              
-              {/* Keyword Search Filter Bar - Elevated Editorial Console Style */}
-              <div className="flex w-full border-b border-zinc-300 dark:border-zinc-800 bg-transparent items-center py-2 transition-all duration-300 focus-within:border-amber-500">
-                <span className="pr-3 text-zinc-400">
-                  <Search className="w-4 h-4" />
-                </span>
-                <input
-                  type="text"
-                  placeholder="QUERY REGISTRY: keywords, reporters, sources..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full bg-transparent text-foreground text-xs font-mono uppercase tracking-wider focus:outline-none placeholder-zinc-400"
-                  id="frontpage-search-input"
-                />
-                {searchQuery && (
-                  <button
-                    onClick={() => setSearchQuery("")}
-                    className="pl-3 text-[10px] font-mono uppercase tracking-widest text-zinc-400 hover:text-amber-600 transition-colors"
-                  >
-                    Clear
-                  </button>
-                )}
-              </div>
-
-              {/* Filtering summary bar */}
-              {(currentCategory !== "all" || searchQuery) && (
-                <div className="flex justify-between items-center bg-[#faf7f2] dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 p-4 rounded-none text-xs">
-                  <div className="font-mono uppercase tracking-widest text-zinc-600 dark:text-zinc-400">
-                    RESULTS METRIC: {filteredArticles.length} MATCHES IN{" "}
-                    <strong className="text-amber-600 dark:text-amber-500 font-extrabold">
-                      {currentCategory.toUpperCase()}
-                    </strong>{" "}
-                    {searchQuery && `FOR "${searchQuery.toUpperCase()}"`}
-                  </div>
-                  <button
-                    onClick={() => {
-                      setCategory("all");
-                      setSearchQuery("");
-                    }}
-                    className="text-[9px] font-mono text-zinc-500 hover:text-amber-600 uppercase tracking-widest font-extrabold"
-                  >
-                    Reset Grid
-                  </button>
-                </div>
-              )}
-
-              {filteredArticles.length === 0 ? (
-                /* Empty state */
-                <div className="text-center py-24 border border-dashed border-zinc-300 dark:border-zinc-800 bg-[#faf7f2]/40 dark:bg-zinc-950/20">
-                  <Globe className="w-10 h-10 text-zinc-300 dark:text-zinc-700 mx-auto mb-5 animate-spin-slow" />
-                  <h3 className="font-serif font-medium text-xl text-foreground">No circular stories matched</h3>
-                  <p className="text-xs text-zinc-500 mt-2.5 max-w-sm mx-auto leading-relaxed font-sans font-light">
-                    Adjust your query parameters. If you are browsing bookmarked archives, ensure you have saved stories.
-                  </p>
-                </div>
-              ) : (
-                /* Dynamic News Layout */
-                <div className="flex flex-col gap-12">
-                  {/* LEAD STORY: Takes full span of column list */}
-                  {leadArticle && (
-                    <ArticleCard
-                      article={leadArticle}
-                      density="lead"
-                      isBookmarked={bookmarks.includes(leadArticle.id)}
-                      onBookmarkToggle={handleBookmarkToggle}
-                      onSelect={() => handleSelectArticle(leadArticle)}
-                    />
-                  )}
-
-                  {/* SECONDARY GRID: 2 Columns of secondary articles */}
-                  {secondaryArticles.length > 0 && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-10 pt-4">
-                      {secondaryArticles.map((art) => (
-                        <ArticleCard
-                          key={art.id}
-                          article={art}
-                          density="grid"
-                          isBookmarked={bookmarks.includes(art.id)}
-                          onBookmarkToggle={handleBookmarkToggle}
-                          onSelect={() => handleSelectArticle(art)}
-                        />
-                      ))}
-                    </div>
-                  )}
-                </div>
-              )}
+        <main className="flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+          {/* Editorial Search & Filter Console */}
+          <div className="border border-zinc-300/80 dark:border-zinc-800 bg-[#faf7f2] dark:bg-zinc-950/60 p-4 mb-10 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-3 flex-1">
+              <Search className="w-4 h-4 text-emerald-700 dark:text-emerald-400 shrink-0" />
+              <input
+                type="text"
+                placeholder="SEARCH DOSSIERS: keywords, fellows, topics, coordinates..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full bg-transparent text-foreground text-xs font-mono uppercase tracking-wider focus:outline-none placeholder-zinc-400"
+                id="frontpage-search-input"
+              />
             </div>
 
-            {/* Sidebar Column: Detailed metadata & Brief listings (4 of 12 columns) */}
-            <aside className="lg:col-span-4 flex flex-col gap-10 border-t border-zinc-200 dark:border-zinc-800 lg:border-t-0 lg:border-l lg:pl-10 pt-10 lg:pt-0">
-              
-              {/* Editorial Quality Stamp */}
-              <div className="border border-zinc-250 dark:border-zinc-800 p-6 relative bg-[#faf7f2] dark:bg-zinc-950/30">
-                <div className="absolute top-0 left-0 right-0 h-0.5 bg-emerald-600" />
-                <div className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-widest text-emerald-700 dark:text-emerald-400 font-bold mb-3">
-                  <Award className="w-4 h-4" /> Editorial Integrity Pledge
-                </div>
-                <h4 className="font-serif font-semibold text-base text-foreground mb-2">Objectivity & Peer Review</h4>
-                <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed text-justify font-sans font-light">
-                  Every field log, botanical telemetry update, and climate model published under the Paen Natura banner is subjected to rigorous peer verification. Our environmental statistics are generated continuously on immutable records.
-                </p>
-                <div className="flex items-center gap-4 text-[9px] font-mono text-zinc-400 mt-4 pt-3 border-t border-zinc-150 dark:border-zinc-900 font-semibold tracking-wider">
-                  <span>OK-STATUS</span>
-                  <span>•</span>
-                  <span>SHA-256 SECURED</span>
-                </div>
-              </div>
+            <div className="flex items-center gap-3 shrink-0 text-[10px] font-mono text-zinc-500 justify-between sm:justify-end border-t sm:border-t-0 border-zinc-250 dark:border-zinc-800 pt-2 sm:pt-0">
+              <span className="uppercase tracking-widest font-semibold">
+                INDEX: <strong className="text-foreground">{filteredArticles.length} DOSSIERS</strong>
+              </span>
+              {(currentCategory !== "all" || searchQuery) && (
+                <button
+                  onClick={() => {
+                    setCategory("all");
+                    setSearchQuery("");
+                  }}
+                  className="flex items-center gap-1 text-amber-700 dark:text-amber-400 hover:underline uppercase tracking-wider font-bold"
+                >
+                  <RotateCcw className="w-3 h-3" /> Reset
+                </button>
+              )}
+            </div>
+          </div>
 
-              {/* Live Market Ticker & Terminal Dashboard */}
-              <MarketTicker />
+          {filteredArticles.length === 0 ? (
+            /* Empty State */
+            <div className="text-center py-24 border border-dashed border-zinc-300 dark:border-zinc-800 bg-[#faf7f2]/40 dark:bg-zinc-950/20 my-10">
+              <Globe className="w-12 h-12 text-zinc-400 dark:text-zinc-600 mx-auto mb-4 animate-spin-slow" />
+              <h3 className="font-serif font-semibold text-2xl text-foreground">No Research Dossiers Matched</h3>
+              <p className="text-xs text-zinc-500 mt-2 max-w-md mx-auto font-sans font-light">
+                No articles matching your current filter criteria were found. Please check spelling or reset filters.
+              </p>
+              <button
+                onClick={() => {
+                  setCategory("all");
+                  setSearchQuery("");
+                }}
+                className="mt-6 px-4 py-2 bg-emerald-700 text-white text-xs font-mono uppercase tracking-widest hover:bg-emerald-800 transition-colors"
+              >
+                Reset Dossier Grid
+              </button>
+            </div>
+          ) : (
+            <div className="flex flex-col">
+              {/* Section I: Lead Investigation & Dispatch Ledger */}
+              {leadArticle && (
+                <EditorialHero
+                  leadArticle={leadArticle}
+                  sideArticles={sideArticles}
+                  bookmarks={bookmarks}
+                  onBookmarkToggle={handleBookmarkToggle}
+                  onSelectArticle={handleSelectArticle}
+                />
+              )}
 
-              {/* Quick brief listing (Latest stories feed) */}
-              <div>
-                <h3 className="text-[10px] font-mono uppercase tracking-[0.25em] text-zinc-500 mb-5 border-b border-zinc-200 dark:border-zinc-800 pb-2 flex items-center justify-between font-bold">
-                  <span>LATEST WIRE RELEASES</span>
-                  <Newspaper className="w-3.5 h-3.5 text-emerald-600" />
-                </h3>
-                <div className="flex flex-col">
-                  {articles.slice(0, 5).map((art) => (
+              {/* Section II: Curated Bento Grid (Deep Inquiries & Longreads) */}
+              {sideArticles.length > 0 && (
+                <CuratedBentoGrid
+                  articles={sideArticles}
+                  bookmarks={bookmarks}
+                  onBookmarkToggle={handleBookmarkToggle}
+                  onSelectArticle={handleSelectArticle}
+                />
+              )}
+
+              {/* Section III: Principal Fellows & Field Researchers Directory */}
+              <CorrespondentsGrid
+                onSearchAuthor={(name) => {
+                  setSearchQuery(name);
+                  window.scrollTo({ top: 120, behavior: "smooth" });
+                }}
+              />
+
+              {/* Section IV: Research Taxonomy & Topic Index */}
+              <ArchivalIndex
+                onSelectCategory={(cat) => {
+                  setCategory(cat);
+                  window.scrollTo({ top: 120, behavior: "smooth" });
+                }}
+                onSearchQuery={(query) => {
+                  setSearchQuery(query);
+                  window.scrollTo({ top: 120, behavior: "smooth" });
+                }}
+              />
+
+              {/* Section V: Biosphere Telemetry & Live Sensor Matrix */}
+              <section className="w-full border-b-2 border-double border-zinc-300 dark:border-zinc-800 pb-14 mb-14" id="planetary-telemetry-section">
+                <div className="flex justify-between items-center border-b border-zinc-250 dark:border-zinc-850 pb-2.5 mb-8 text-[9.5px] font-mono tracking-[0.25em] uppercase text-zinc-500">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 bg-teal-600 dark:bg-teal-400 rounded-none inline-block animate-pulse" />
+                    <span className="font-bold text-foreground">SECTION V • EMPIRICAL BIOSPHERE SENSORY MATRIX</span>
+                  </div>
+                  <div className="hidden sm:flex items-center gap-3 text-zinc-400">
+                    <span>STATION TELEMETRY</span>
+                    <span>✦</span>
+                    <span>SYNCHRONIZED FEED</span>
+                  </div>
+                </div>
+
+                {/* Geospatial Observation Grid */}
+                <PlanetaryMap
+                  onSelectStationDispatch={(title) => {
+                    const match = articles.find((a) => a.title.toLowerCase().includes(title.toLowerCase()) || title.toLowerCase().includes(a.title.toLowerCase()));
+                    if (match) {
+                      handleSelectArticle(match);
+                    } else {
+                      setSearchQuery(title.split(" ")[0]);
+                      window.scrollTo({ top: 120, behavior: "smooth" });
+                    }
+                  }}
+                />
+
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mt-8">
+                  {/* Left Column: Planetary Telemetry Terminal (8 cols) */}
+                  <div className="lg:col-span-8 flex flex-col gap-6">
+                    <MarketTicker />
+                  </div>
+
+                  {/* Right Column: Sensor Matrix Overview & Quality Pledge (4 cols) */}
+                  <div className="lg:col-span-4 flex flex-col gap-6">
+                    <BiosphereTelemetryWidget />
+
+                    {/* Editorial Integrity Capsule */}
+                    <div className="border border-zinc-250 dark:border-zinc-800 p-5 bg-[#faf7f2] dark:bg-zinc-950/40 relative">
+                      <div className="absolute top-0 left-0 right-0 h-0.5 bg-emerald-600" />
+                      <div className="flex items-center gap-2 text-[9.5px] font-mono uppercase tracking-widest text-emerald-700 dark:text-emerald-400 font-bold mb-2">
+                        <Award className="w-4 h-4" /> Peer-Verification Accord
+                      </div>
+                      <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed font-sans font-light text-justify">
+                        All botanical data streams, chemical vapor deposition specifications, and polar acoustic metrics are verified in accordance with the International Planetary Press Charter.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              {/* Section VI: Wire Feed Index */}
+              <section className="w-full pb-6" id="wire-releases-section">
+                <div className="flex justify-between items-center border-b border-zinc-250 dark:border-zinc-850 pb-2.5 mb-8 text-[9.5px] font-mono tracking-[0.25em] uppercase text-zinc-500">
+                  <div className="flex items-center gap-2">
+                    <Newspaper className="w-3.5 h-3.5 text-emerald-600" />
+                    <span className="font-bold text-foreground">SECTION VI • COMPLETE WIRE ARCHIVES</span>
+                  </div>
+                  <span className="text-[9px] font-mono text-zinc-400">CHRONOLOGICAL DISPATCHES</span>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {liveArticles.map((art) => (
                     <ArticleCard
                       key={art.id}
                       article={art}
-                      density="compact"
+                      density="grid"
                       isBookmarked={bookmarks.includes(art.id)}
                       onBookmarkToggle={handleBookmarkToggle}
                       onSelect={() => handleSelectArticle(art)}
                     />
                   ))}
                 </div>
-              </div>
-
-              {/* Dynamic Micro Tickers */}
-              <div className="border border-zinc-200 dark:border-zinc-800 p-5 font-mono text-[9px] text-zinc-500 flex flex-col gap-3 bg-[#faf7f2] dark:bg-zinc-950/20">
-                <span className="uppercase tracking-[0.18em] text-zinc-400 font-bold border-b border-zinc-200 dark:border-zinc-800 pb-2 block">
-                  PLANETARY BIOSPHERE TELEMETRY
-                </span>
-                <div className="flex justify-between items-center">
-                  <span>CANOPY TRANSPIRATION RATE</span>
-                  <span className="text-emerald-500 font-bold">4.2 L/m²/d</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span>JURUÁ SOIL MOISTURE</span>
-                  <span className="text-zinc-400 font-semibold">32.8% NOMINAL</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span>CONSERVATION PATROLS</span>
-                  <span className="text-emerald-600 dark:text-emerald-400 font-bold">14 ACTIVE TEAMS</span>
-                </div>
-              </div>
-            </aside>
-            
-          </div>
+              </section>
+            </div>
+          )}
         </main>
       )}
 
       {/* Footer Area */}
       <Footer />
 
-      {/* Admin Login Cryptographic Gate */}
-      <AdminLogin
-        isOpen={isAdminLoginOpen}
-        onClose={() => setIsAdminLoginOpen(false)}
-        onLoginSuccess={() => {
-          setIsAdminMode(true);
-          setActiveArticle(null);
-        }}
+      {/* Global Auth Modal for Reader, Author & Admin */}
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        onLoginSuccess={handleLoginSuccess}
       />
     </div>
   );

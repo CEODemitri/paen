@@ -1,3 +1,4 @@
+import { MouseEvent } from "react";
 import { Article, Category } from "../types";
 import { BookMarked, ArrowUpRight, Scale, CheckCircle2 } from "lucide-react";
 
@@ -5,7 +6,7 @@ interface ArticleCardProps {
   article: Article;
   density: "lead" | "grid" | "compact";
   isBookmarked: boolean;
-  onBookmarkToggle: (id: string, e: React.MouseEvent) => void;
+  onBookmarkToggle: (id: string, e: MouseEvent) => void;
   onSelect: () => void;
 }
 

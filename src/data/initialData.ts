@@ -7,7 +7,7 @@ export const INITIAL_ARTICLES: Article[] = [
     subtitle: "In the heart of the Juruá basin, conservationists and AI researchers have deployed thousands of micro-sensors. What they are hearing is rewriting the laws of tropical ecology.",
     content: `Deep within the flooded Igapó forests of the western Amazon, a quiet revolution is taking place—one that is heard rather than seen. Hanging from the buttressed roots of ancient kapok trees, small, olive-drab canisters about the size of a hand radio are listening. These are acoustic monitoring arrays, and they are capturing the entire sonic signature of one of the most biodiverse places on Earth.
 
-Over the past eighteen months, a joint team from the Mamirauá Institute and the London Center for Advanced AI has deployed 1,200 of these bioacoustic sensors across a 50,000-square-kilometer grid. Operating continuously, they log everything: the high-frequency clicking of bats, the low-frequency rumble of jaguars, the crackle of dry twigs, and the distant, ominous hum of outlaw gold dredges.
+Over the past eighteen months, a joint team from the Mamirauá Institute and the London Center for Advanced AI has deployed 1,248 of these bioacoustic sensors across a 50,000-square-kilometer grid. Operating continuously, they log everything: the high-frequency clicking of bats, the low-frequency rumble of jaguars, the crackle of dry twigs, and the distant, ominous hum of outlaw gold dredges.
 
 ### Deciphering the Chorus
 
@@ -33,16 +33,17 @@ As nations prepare for the upcoming UN Biodiversity Summit, the Mamirauá projec
     authorImage: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=150&auto=format&fit=crop",
     authorBio: "Alastair Vance is a senior science correspondent who spent five years reporting on ecological frontiers in the Amazon basin. Former editor at Nature Intelligence.",
     imageUrl: "https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?q=80&w=1000&auto=format&fit=crop",
-    date: "July 5, 2026",
+    date: "August 18, 2026",
     readTime: "7 min read",
     sources: [
-      "Mamirauá Institute for Sustainable Development - Annual Bioacoustic Report 2025",
-      "Journal of Tropical Ecology: Neural Classification of Acoustic Biomes (May 2026)",
+      "Mamirauá Institute for Sustainable Development - Annual Bioacoustic Report (August 2026)",
+      "Journal of Tropical Ecology: Neural Classification of Acoustic Biomes (Vol. 42)",
       "Interviews with Dr. Elena Rostova and Juruá Indigenous Protection Council"
     ],
     factChecked: true,
     objectivityRating: 98,
-    likes: 342
+    likes: 384,
+    status: "published"
   },
   {
     id: "art-2",
@@ -78,16 +79,17 @@ The implications are clear: the next digital frontier will not be written on san
     authorImage: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=150&auto=format&fit=crop",
     authorBio: "Elena Rostova is a technology analyst and investigative journalist specializing in advanced computing hardware, mineral supply chains, and micro-infrastructure.",
     imageUrl: "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop",
-    date: "July 3, 2026",
+    date: "August 16, 2026",
     readTime: "5 min read",
     sources: [
-      "European Semiconductor Syndicate: Quarterly Materials Briefing (Q2 2026)",
+      "European Semiconductor Syndicate: Quarterly Materials Briefing (Q3 2026)",
       "IEEE Transactions on Electron Devices: Diamond-Substrate HEMT Performance Review",
       "Ulm Institute of Quantum Engineering CVD Laboratory data logs"
     ],
     factChecked: true,
     objectivityRating: 96,
-    likes: 512
+    likes: 541,
+    status: "published"
   },
   {
     id: "art-3",
@@ -123,21 +125,22 @@ Ultimately, we are entering a new era of "sovereign capitalism," where the state
     authorImage: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=150&auto=format&fit=crop",
     authorBio: "Sarah Lin is an international finance scholar, former advisor to the Asian Development Bank, and author of 'The New Sovereign Ledger.'",
     imageUrl: "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?q=80&w=1000&auto=format&fit=crop",
-    date: "June 29, 2026",
+    date: "August 13, 2026",
     readTime: "8 min read",
     sources: [
-      "Sovereign Wealth Fund Institute: Annual Asset Allocation Review (2025)",
-      "Bank for International Settlements: Global Liquidity Report Working Paper No. 104",
+      "Sovereign Wealth Fund Institute: Annual Asset Allocation Review (2026)",
+      "Bank for International Settlements: Global Liquidity Report Working Paper No. 108",
       "Interviews with current executives at GIC, PIF, and Temasek Holdings"
     ],
     factChecked: true,
     objectivityRating: 94,
-    likes: 289
+    likes: 312,
+    status: "published"
   },
   {
     id: "art-4",
     title: "The Ghost Epoch: Preserving the Ephemeral Artifacts of Early Digital Communes",
-    subtitle: "As the early architectures of the web rot away, a dedicated collective of digital conservators is fighting to map and catalog the fragile ruins of the early 2000s net culture.",
+    subtitle: "As the early architectures of the web rot away, a dedicated collective of digital conservators is fighting to map and catalog the fragile ruins of early 2000s net culture.",
     content: `We live in the most heavily documented era in human history, yet we are on the verge of a cultural dark age. The early digital communes—the forums, the webrings, the self-hosted diaries, and the collaborative visual boards of the early 2000s—are disappearing at a rate of thousands of pages per hour.
 
 This is the "digital rot." Unlike physical paper, which degrades gracefully over centuries, digital media fails catastrophically and silently. A single unpaid domain fee, a server hosting transition, or an unmaintained database schema update can wipe out entire communities and decades of cultural dialogue in a fraction of a second.
@@ -168,16 +171,17 @@ Until then, the conservators will keep scraping, capturing the digital dust of o
     authorImage: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=150&auto=format&fit=crop",
     authorBio: "Jean-Baptiste Coutau is a digital archivist, code historian, and regular consultant for the UNESCO Digital Memory of the World program.",
     imageUrl: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop",
-    date: "June 25, 2026",
+    date: "August 10, 2026",
     readTime: "6 min read",
     sources: [
-      "Lumina Registry Technical Documentation: Emulation of Legacy Web Environments (2025)",
-      "UNESCO Guidelines for the Preservation of Digital Heritage (Section 4)",
+      "Lumina Registry Technical Documentation: Emulation of Legacy Web Environments (2026)",
+      "UNESCO Guidelines for the Preservation of Digital Heritage (Section 4 Revision)",
       "The Archive Team: Scraping Logs and Domain Rot Statistics"
     ],
     factChecked: true,
     objectivityRating: 97,
-    likes: 418
+    likes: 438,
+    status: "published"
   },
   {
     id: "art-5",
@@ -191,7 +195,7 @@ Over the past three years, the northern coastlines of Norway, Canada, and Russia
 
 ### The Rush for the Open Sea
 
-The driving force behind this militarization is simple: geography is changing. With summer sea ice projected to disappear entirely by 2035, the Northern Sea Route (NSR) and the Northwest Passage are transitioning from legendary maritime hazards to vital, commercial shipping lanes that reduce travel times between Europe and Asia by 40%.
+The driving force behind this militarization is simple: geography is changing. With summer sea ice projected to hit new seasonal minimums, the Northern Sea Route (NSR) and the Northwest Passage are transitioning from legendary maritime hazards to vital, commercial shipping lanes that reduce travel times between Europe and Asia by 40%.
 
 "The Arctic is no longer a protective barrier; it is an active corridor," says Dr. Karl Sundstrom, senior researcher at the Stockholm Polar Institute. "And whoever controls the chokepoints of that corridor controls the new trade routes of the global north."
 
@@ -215,16 +219,17 @@ But with geopolitical trust at historic lows, the prospects for a polar freeze l
     authorImage: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=150&auto=format&fit=crop",
     authorBio: "Dr. Karl Sundstrom is a polar geopolitical analyst and author of 'The Thinning Ice: Geopolitics at eighty-five degrees North.'",
     imageUrl: "https://images.unsplash.com/photo-1517783999520-f068d7431a60?q=80&w=1000&auto=format&fit=crop",
-    date: "June 20, 2026",
+    date: "August 6, 2026",
     readTime: "9 min read",
     sources: [
-      "Stockholm Polar Institute Strategic Arctic Briefing Paper (June 2026)",
+      "Stockholm Polar Institute Strategic Arctic Briefing Paper (August 2026)",
       "UN Convention on the Law of the Sea (UNCLOS) - Polar Code Annex",
       "Satellite analysis of military radar installations in Murmansk and Alert"
     ],
     factChecked: true,
     objectivityRating: 95,
-    likes: 304
+    likes: 326,
+    status: "published"
   }
 ];
 
@@ -234,10 +239,10 @@ export const INITIAL_VIDEOS: Video[] = [
     title: "The Sound of the Jungle: Setting up the Bioacoustic Micro-Arrays",
     description: "Dr. Elena Rostova and her team hike into the deep Amazonian canopy to mount the acoustic capsules and capture the wild's sonic pulse. Watch the raw setup and listen to the pristine atmospheric tracks of the biophonic chorus.",
     category: "science",
-    videoUrl: "https://vjs.zencdn.net/v/oceans.mp4", // Extremely reliable public sample video
+    videoUrl: "https://vjs.zencdn.net/v/oceans.mp4",
     thumbnailUrl: "https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?q=80&w=600&auto=format&fit=crop",
     duration: "1:45",
-    date: "July 4, 2026",
+    date: "August 17, 2026",
     author: "Alastair Vance"
   },
   {
@@ -248,7 +253,7 @@ export const INITIAL_VIDEOS: Video[] = [
     videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
     thumbnailUrl: "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=600&auto=format&fit=crop",
     duration: "0:15",
-    date: "July 2, 2026",
+    date: "August 15, 2026",
     author: "Elena Rostova"
   },
   {
@@ -259,7 +264,7 @@ export const INITIAL_VIDEOS: Video[] = [
     videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
     thumbnailUrl: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=600&auto=format&fit=crop",
     duration: "1:12",
-    date: "June 24, 2026",
+    date: "August 9, 2026",
     author: "Jean-Baptiste Coutau"
   }
 ];

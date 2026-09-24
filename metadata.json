@@ -1,0 +1,6 @@
+{
+  "name": "Paen Natura",
+  "description": "The Botanical & Ecological Journal of Earth Systems & Planetary Preservation",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,46 +1,98 @@
+/* Root container layout reset */
 #root {
   width: 100%;
+  min-height: 100vh;
   margin: 0;
   padding: 0;
   text-align: left;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+/* Authentic Newspaper Double-line Borders */
+.border-editorial-double {
+  border-bottom: 3px double currentColor;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
+.border-editorial-top-double {
+  border-top: 3px double currentColor;
+}
+
+/* Subtle Column Separation Borders */
+.editorial-column-divider {
+  position: relative;
+}
+
+@media (min-width: 1024px) {
+  .editorial-column-divider::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: -1.5rem;
+    bottom: 0;
+    width: 1px;
+    background: currentColor;
+    opacity: 0.12;
   }
-  to {
-    transform: rotate(360deg);
+}
+
+/* Drop Cap Styling for Broadsheet Articles */
+.editorial-drop-cap::first-letter {
+  font-family: 'Cormorant Garamond', 'Playfair Display', serif;
+  float: left;
+  font-size: 3.85rem;
+  line-height: 0.8;
+  font-weight: 700;
+  margin-right: 0.5rem;
+  margin-top: 0.2rem;
+  color: #0f5132;
+}
+
+.dark .editorial-drop-cap::first-letter {
+  color: #34d399;
+}
+
+/* Smooth continuous marquee animation */
+@keyframes marquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
   }
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+.animate-marquee {
+  display: inline-flex;
+  white-space: nowrap;
+  animation: marquee 38s linear infinite;
 }
 
-.card {
-  padding: 2em;
+.animate-marquee:hover {
+  animation-play-state: paused;
 }
 
-.read-the-docs {
-  color: #888;
+/* Clean image hover effect */
+.editorial-img-hover {
+  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease;
 }
 
-.vert-text {
-  transform: rotate(-90deg);
+.editorial-img-hover:hover {
+  transform: scale(1.02);
 }
+
+/* Pull-quote decoration */
+.editorial-pull-quote {
+  font-family: 'Cormorant Garamond', 'Playfair Display', serif;
+  font-style: italic;
+  position: relative;
+}
+
+.editorial-pull-quote::before {
+  content: '“';
+  font-size: 4rem;
+  position: absolute;
+  top: -1.5rem;
+  left: -1rem;
+  opacity: 0.2;
+  font-family: serif;
+}
+

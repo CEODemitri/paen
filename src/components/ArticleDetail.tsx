@@ -1,6 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Article, Comment, ReadingTheme, TextSize } from "../types";
-import { ArrowLeft, BookMarked, MessageSquare, CheckCircle2, Calendar, Clock, Share2, Award, Heart, Wind, Pause, ChevronsDown } from "lucide-react";
+import { ArrowLeft, BookMarked, MessageSquare, CheckCircle2, Calendar, Clock, Share2, Award, Heart, Wind, Pause, ChevronsDown, FileText } from "lucide-react";
+import AudioSpectrogramPlayer from "./AudioSpectrogramPlayer";
+import CitationExportModal from "./CitationExportModal";
 
 const FIELD_BRIEFS: Record<string, string[]> = {
   "art-1": [
@@ -200,6 +202,7 @@ export default function ArticleDetail({
   const [driftActive, setDriftActive] = useState(false);
   const [driftSpeed, setDriftSpeed] = useState<"slow" | "medium" | "fast">("medium");
   const [briefExpanded, setBriefExpanded] = useState(false);
+  const [isCitationOpen, setIsCitationOpen] = useState(false);
 
   useEffect(() => {
     if (!rhythmActive) return;
@@ -339,6 +342,15 @@ export default function ArticleDetail({
               <span className="hidden sm:inline">{isBookmarked ? "Saved" : "Save"}</span>
             </button>
             <button
+              id="detail-cite-button"
+              onClick={() => setIsCitationOpen(true)}
+              className="flex items-center gap-1.5 px-2 py-1 text-xs font-mono uppercase tracking-wider hover:text-emerald-600 dark:hover:text-emerald-400 transition-all"
+              title="Academic Citation and DOI Export"
+            >
+              <FileText className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+              <span className="hidden sm:inline">Cite</span>
+            </button>
+            <button
               id="detail-share-button"
               onClick={() => {
                 navigator.clipboard.writeText(window.location.href);
@@ -451,6 +463,15 @@ export default function ArticleDetail({
               </span>
               {renderTextWithJargon(dropCapRest)}
             </p>
+          )}
+
+          {/* Integrated Canopy Bioacoustic Spectrogram Node (For Environmental / Science articles) */}
+          {(article.category === "tech" || article.category === "science" || article.id === "art-1") && (
+            <AudioSpectrogramPlayer
+              title={`Acoustic Field Telemetry: ${article.title}`}
+              stationName="Mamirauá Biosphere Research Array #04"
+              biome="Amazonian Sub-Canopy Sensor Grid (34m Elevation)"
+            />
           )}
 
           {/* Remaining Paragraphs */}
@@ -659,6 +680,12 @@ export default function ArticleDetail({
           </div>
         </div>
       )}
+      {/* Academic Citation & Archival Export Modal */}
+      <CitationExportModal
+        article={article}
+        isOpen={isCitationOpen}
+        onClose={() => setIsCitationOpen(false)}
+      />
     </div>
   );
 }
